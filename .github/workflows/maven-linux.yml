@@ -28,10 +28,10 @@ jobs:
     - name: Generate JUnit Report
       run: mvn surefire-report:report-only site:site -DgenerateReports=false
       working-directory: ${{ env.workdir }}
-      if: ${{ always() }}
+      if: ${{ failure() }}
     - name: Archive JUnit Report
       uses: actions/upload-artifact@v2
-      if: ${{ always() }}
+      if: ${{ failure() }}
       with:
         name: surefire-report
         path: '**/target/site'
