@@ -17,6 +17,7 @@ jobs:
             additional-maven-args: >
               -Pjacoco
               -DrepoToken=$COVERALLS_REPO_TOKEN
+              -DpullRequest=${{ github.event.pull_request.number }}
               coveralls:report
           - java: 11
 
