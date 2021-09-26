@@ -27,6 +27,16 @@
     <failsafe.version>2.22.1</failsafe.version>
     <build.helper.maven.version>3.0.0</build.helper.maven.version>
     <coveralls.version>4.3.0</coveralls.version>
+    <sonar.version>3.8.0.2131</sonar.version>
+    
+    <sonar.coverage.exclusions>
+      **/model/*.*,
+      **/EShopSwingApp.*
+    </sonar.coverage.exclusions>
+    
+    <sonar.junit.reportPaths>
+      ${project.build.directory}/surefire-reports
+    </sonar.junit.reportPaths>
   </properties>
 
   <dependencies>
@@ -40,6 +50,14 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.2.3</version>
+    </dependency>
+    <dependency>
+      <!-- Needed to avoid a false positive from SonarQube:
+        https://jira.sonarsource.com/browse/SONARJAVA-2785 -->
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -133,6 +151,12 @@
               <version>2.3.1</version>
             </dependency>
           </dependencies>
+        </plugin>
+        <!-- SonarQube maven plugin -->
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
