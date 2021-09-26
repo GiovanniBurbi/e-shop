@@ -19,6 +19,7 @@
     <assertj.swing.version>3.17.1</assertj.swing.version>
     <junit.version>4.13.1</junit.version>
     <cucumber.version>5.5.0</cucumber.version>
+    <jacoco.version>0.8.5</jacoco.version>
   </properties>
 
   <dependencies>
@@ -65,7 +66,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.5</version>
+          <version>${jacoco.version}</version>
           <configuration>
             <excludes>
               <exclude>**/model/*.*</exclude>
@@ -119,11 +120,23 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <!-- configured in pluginManagement -->
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
     </plugins>
   </build>
+  
+  <profiles>
+    <!-- To enable this profile type -Pjacoco at the end of the maven comand -->
+    <profile>
+      <id>jacoco</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- configured in pluginManagement -->
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
 </project>
