@@ -27,9 +27,7 @@ public class EShopSwingViewSteps {
 				return "eShop View".equals(frame.getTitle()) && frame.isShowing();
 			}
 
-		}).using(BasicRobot.robotWithCurrentAwtHierarchy());
-		
-		throw new io.cucumber.java.PendingException();
+		}).using(BasicRobot.robotWithCurrentAwtHierarchy());		
 	}
 
 	@Then("The product list contains an element with id {string}, name {string} and price {double}")
