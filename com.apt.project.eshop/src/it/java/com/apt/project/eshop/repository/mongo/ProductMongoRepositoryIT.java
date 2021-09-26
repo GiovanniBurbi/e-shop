@@ -1,9 +1,11 @@
 package com.apt.project.eshop.repository.mongo;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -27,7 +29,7 @@ public class ProductMongoRepositoryIT {
 
 	private MongoClient client;
 	private ProductMongoRepository productRepository;
-	private MongoCollection<Document> productCollection;
+	private MongoCollection<Product> productCollection;
 	
 	@Before
 	public void setup() {
@@ -36,7 +38,8 @@ public class ProductMongoRepositoryIT {
 		MongoDatabase database = client.getDatabase(ESHOP_DB_NAME);
 		// start with clean database
 		database.drop();
-		productCollection = database.getCollection(PRODUCTS_COLLECTION_NAME);
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		productCollection = database.getCollection(PRODUCTS_COLLECTION_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	@After
 	public void tearDown() {
@@ -50,11 +53,7 @@ public class ProductMongoRepositoryIT {
 	
 	@Test
 	public void testFindAllWhenDatabaseIsNotEmpty() {
-		addTestProductToTheDatabase("1", "Laptop", 1300);
-		
+		productCollection.insertOne(new Product("1", "Laptop", 1300));
 		assertThat(productRepository.findAll()).containsExactly(new Product("1", "Laptop", 1300));
-	}
-	private void addTestProductToTheDatabase(String id, String name, double price) {
-		productCollection.insertOne(new Document().append("id", id).append("name", name).append("price", price));
 	}
 }
