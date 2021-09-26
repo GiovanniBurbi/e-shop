@@ -15,11 +15,23 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     
+    <mongo.driver.version>3.12.7</mongo.driver.version>
     <junit.version>4.13.1</junit.version>
     <cucumber.version>5.5.0</cucumber.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>${mongo.driver.version}</version>
+    </dependency>
+    <dependency>
+      <!-- required to see Mongo Java Driver logs -->
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.3</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
