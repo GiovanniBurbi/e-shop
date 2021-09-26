@@ -23,7 +23,7 @@ jobs:
               -Pjacoco sonar:sonar
               -Dsonar.organization=giovanniburbi-github
               -Dsonar.host.url=https://sonarcloud.io
-              -Dsonar.projectKey=GiovanniBurbi_eShop
+              -Dsonar.projectKey=GiovanniBurbi_e-shop
 
     name: Build with Java ${{ matrix.java }} on Linux
     steps:
