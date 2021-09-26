@@ -1,7 +1,5 @@
 package com.apt.project.eshop.view.swing;
 
-import java.awt.EventQueue;
-
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -21,22 +19,6 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JPanel contentPane;
 	private JList<Product> productList;
 	private DefaultListModel<Product> productListModel;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					EShopSwingView frame = new EShopSwingView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
