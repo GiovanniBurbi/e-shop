@@ -1,10 +1,17 @@
 package com.apt.project.eshop.repository.mongo;
 
-import static org.junit.Assert.fail;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
+
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 
 public class ProductMongoRepositoryIT {
 	
@@ -15,8 +22,24 @@ public class ProductMongoRepositoryIT {
 	@ClassRule
 	public static final GenericContainer mongo = new GenericContainer("mongo:4.4.3").withExposedPorts(27017);
 
+	private MongoClient client;
+	private ProductMongoRepository productRepository;
+	
+	@Before
+	public void setup() {
+		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		MongoDatabase database = client.getDatabase(ESHOP_DB_NAME);
+		// start with clean database
+		database.drop();
+	}
+	@After
+	public void tearDown() {
+		client.close();
+	}
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testFindAllWhenDatabaseIsEmpty() {
+		assertThat(productRepository.findAll()).isEmpty();
 	}
 }
