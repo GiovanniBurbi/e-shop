@@ -19,7 +19,7 @@ public class EShopSwingViewSteps {
 	@When("The eShop View is shown")
 	public void the_eShop_View_is_shown() {
 		// start the Swing application
-		application("com.aptProject.eShop.app.swing.eShopSwingApp").start();
+		application("com.apt.project.eshop.app.swing.EShopSwingApp").start();
 		// get a reference of its JFrame
 		window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override
