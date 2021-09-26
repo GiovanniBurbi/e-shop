@@ -28,6 +28,7 @@
     <build.helper.maven.version>3.0.0</build.helper.maven.version>
     <coveralls.version>4.3.0</coveralls.version>
     <sonar.version>3.8.0.2131</sonar.version>
+    <testcontainers.version>1.15.1</testcontainers.version>
     
     <!-- For each rule to be ignore, add another eXX and two corresponding properties with eXX in the name as below -->
     <sonar.issue.ignore.multicriteria>e11,e12</sonar.issue.ignore.multicriteria>
@@ -98,6 +99,12 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-swing-junit</artifactId>
       <version>${assertj.swing.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -201,6 +208,7 @@
             </goals>
             <configuration>
               <sources>
+                <source>src/it/java</source>
                 <source>src/bdd/java</source>
               </sources>
             </configuration>
@@ -231,6 +239,13 @@
           </systemPropertyVariables>
         </configuration>
         <executions>
+          <execution>
+            <id>default-it</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
           <execution>
             <id>bdd-tests</id>
             <goals>
