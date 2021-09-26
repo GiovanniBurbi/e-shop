@@ -52,6 +52,14 @@
       <version>1.2.3</version>
     </dependency>
     <dependency>
+      <!-- Needed to avoid a false positive from SonarQube:
+        https://jira.sonarsource.com/browse/SONARJAVA-2785 -->
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
