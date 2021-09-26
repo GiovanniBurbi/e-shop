@@ -21,6 +21,11 @@
     <cucumber.version>5.5.0</cucumber.version>
     <jacoco.version>0.8.5</jacoco.version>
     <pitest.version>1.5.2</pitest.version>
+    <surefire.version>2.22.2</surefire.version>
+    <maven.site.version>3.9.1</maven.site.version>
+    <docker.maven.version>0.34.1</docker.maven.version>
+    <failsafe.version>2.22.1</failsafe.version>
+    <build.helper.maven.version>3.0.0</build.helper.maven.version>
   </properties>
 
   <dependencies>
@@ -116,10 +121,20 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <!-- To store the surefire report artifact in the CI !-->
+      <plugin>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${surefire.version}</version>
+      </plugin>
+      <!-- To store the surefire report artifact in the CI !-->
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${maven.site.version}</version>
+      </plugin>  
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>${build.helper.maven.version}</version>
         <executions>
           <execution>
             <id>add-test-source</id>
@@ -152,7 +167,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.22.1</version>
+        <version>${failsafe.version}</version>
         <configuration>
           <systemPropertyVariables>
             <mongo.port>${mongo.mapped.port}</mongo.port>
@@ -176,7 +191,7 @@
       <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.34.1</version>
+        <version>${docker.maven.version}</version>
         <configuration>
           <images>
             <image>

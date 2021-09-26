@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      workdir: com.apt.project.eshop
 
     steps:
     - uses: actions/checkout@v2
@@ -22,4 +24,14 @@ jobs:
         restore-keys: ${{ runner.os }}-m2-
     - name: Build with Maven
       run: xvfb-run mvn verify
-      working-directory: com.apt.project.eshop
+      working-directory: ${{ env.workdir }}
+    - name: Generate JUnit Report
+      run: mvn surefire-report:report-only site:site -DgenerateReports=false
+      working-directory: ${{ env.workdir }}
+      if: ${{ always() }}
+    - name: Archive JUnit Report
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: surefire-report
+        path: '**/target/site'
