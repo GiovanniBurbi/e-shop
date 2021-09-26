@@ -27,6 +27,12 @@
     <failsafe.version>2.22.1</failsafe.version>
     <build.helper.maven.version>3.0.0</build.helper.maven.version>
     <coveralls.version>4.3.0</coveralls.version>
+    <sonar.version>3.8.0.2131</sonar.version>
+    
+    <sonar.coverage.exclusions>
+      **/model/*.*,
+      **/EShopSwingApp.*
+    </sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
@@ -133,6 +139,12 @@
               <version>2.3.1</version>
             </dependency>
           </dependencies>
+        </plugin>
+        <!-- SonarQube maven plugin -->
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
