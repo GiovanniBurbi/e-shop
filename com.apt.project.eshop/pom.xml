@@ -19,6 +19,7 @@
     <assertj.swing.version>3.17.1</assertj.swing.version>
     <junit.version>4.13.1</junit.version>
     <cucumber.version>5.5.0</cucumber.version>
+    <jacoco.version>0.8.5</jacoco.version>
   </properties>
 
   <dependencies>
@@ -60,6 +61,31 @@
   </dependencies>
   
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+          <configuration>
+            <excludes>
+              <exclude>**/model/*.*</exclude>
+              <exclude>**/EShopSwingApp.*</exclude>
+            </excludes>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <!-- binds by default to the phase "initialize" -->
+                <goal>prepare-agent</goal>
+                <!-- binds by default to the phase "verify" -->
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -96,4 +122,21 @@
       </plugin>
     </plugins>
   </build>
+  
+  <profiles>
+    <!-- To enable this profile type -Pjacoco at the end of the maven comand -->
+    <profile>
+      <id>jacoco</id>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- configured in pluginManagement -->
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
 </project>
