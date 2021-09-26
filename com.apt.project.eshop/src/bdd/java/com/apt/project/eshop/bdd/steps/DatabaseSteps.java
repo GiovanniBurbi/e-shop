@@ -2,6 +2,7 @@ package com.apt.project.eshop.bdd.steps;
 
 import org.bson.Document;
 
+import com.apt.project.eshop.bdd.EShopAppBDD;
 import com.mongodb.MongoClient;
 
 import io.cucumber.java.After;
@@ -16,7 +17,7 @@ public class DatabaseSteps {
 
 	@Before
 	public void setUp() {
-		mongoClient = new MongoClient();
+		mongoClient = new MongoClient("localhost", EShopAppBDD.mongoPort);
 		// to start with an empty database
 		mongoClient.getDatabase(DB_NAME).drop();
 	}
