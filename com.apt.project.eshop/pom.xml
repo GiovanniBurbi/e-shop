@@ -20,6 +20,7 @@
     <junit.version>4.13.1</junit.version>
     <cucumber.version>5.5.0</cucumber.version>
     <jacoco.version>0.8.5</jacoco.version>
+    <pitest.version>1.5.2</pitest.version>
   </properties>
 
   <dependencies>
@@ -84,6 +85,34 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>${pitest.version}</version>
+          <configuration>
+            <excludedClasses>
+              <param>com.apt.project.eshop.app.swing.*</param>
+              <param>com.apt.project.eshop.model.*</param>
+			  <param>com.apt.project.eshop.view.swing.*</param>	
+            </excludedClasses>
+            <excludedTestClasses>
+              <param>com.apt.project.eshop.view.swing.*</param>
+              <param>com.apt.project.eshop.bdd.*</param>
+            </excludedTestClasses>
+            <mutators>
+              <mutator>DEFAULTS</mutator>
+            </mutators>
+            <mutationThreshold>100</mutationThreshold>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>mutationCoverage</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -119,6 +148,11 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+      <!-- configured in pluginManagement -->
+         <groupId>org.pitest</groupId>
+         <artifactId>pitest-maven</artifactId>
       </plugin>
     </plugins>
   </build>
