@@ -147,8 +147,6 @@
             <excludedTestClasses>
               <param>com.apt.project.eshop.view.swing.*</param>
               <param>com.apt.project.eshop.bdd.*</param>
-              <!-- Let a MUTANT SURVIVE -->
-              <param>**.*IT</param>
             </excludedTestClasses>
             <mutators>
               <mutator>DEFAULTS</mutator>
