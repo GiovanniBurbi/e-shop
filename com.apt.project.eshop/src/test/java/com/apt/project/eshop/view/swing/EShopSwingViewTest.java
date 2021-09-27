@@ -33,8 +33,6 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testControlsInitialStates() {
 		window.label(JLabelMatcher.withText("Products"));
 		window.list("productList");
-		// error added on purpose to the CI process
-		fail();
 	}
 
 }
