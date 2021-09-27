@@ -1,7 +1,7 @@
 name: Java CI with Maven and Docker in Linux
 
 on:
-  push:
+  pull_request:
 
 jobs:
   build:
