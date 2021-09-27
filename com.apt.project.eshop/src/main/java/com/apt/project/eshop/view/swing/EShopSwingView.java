@@ -1,5 +1,7 @@
 package com.apt.project.eshop.view.swing;
 
+import java.util.List;
+
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -55,6 +57,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	@Override
+	public void showAllProducts(List<Product> products) {
+		
 	}
 
 }
