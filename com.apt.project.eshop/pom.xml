@@ -296,6 +296,17 @@
       </plugin>
     </plugins>
   </build>
+  <!-- To resolve warning in Github Actions CI process in step "Generate JUnit Report;
+       maven-surefire-report-plugin cause: <Warning:  Unable to locate Test Source XRef to link to - DISABLED> -->
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+    </plugins>
+  </reporting>
   
   <profiles>
     <!-- To enable this profile type -Pjacoco at the end of the maven comand -->
