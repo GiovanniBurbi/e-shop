@@ -1,6 +1,8 @@
 package com.apt.project.eshop.view.swing;
 
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JLabelMatcher;
@@ -10,6 +12,8 @@ import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.apt.project.eshop.model.Product;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -33,6 +37,14 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testControlsInitialStates() {
 		window.label(JLabelMatcher.withText("Products"));
 		window.list("productList");
+	}
+	
+	@Test 
+	public void testShowAllProductsShouldShowsProductsInTheList() {
+		Product product = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(()-> eShopSwingView.showAllProducts(Arrays.asList(product)));
+		String[] listContents = window.list("productList").contents();
+		assertThat(listContents).containsExactly(product.toString());
 	}
 
 }

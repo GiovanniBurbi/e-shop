@@ -61,7 +61,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 	@Override
 	public void showAllProducts(List<Product> products) {
-		
+		products.stream().forEach(productListModel::addElement);
 	}
 
 }
