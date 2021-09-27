@@ -1,7 +1,7 @@
 name: Java CI with Maven and Docker in Linux
 
 on:
-  push:
+  pull_request:
 
 jobs:
   build:
@@ -62,3 +62,15 @@ jobs:
       with:
         name: surefire-report-jdk-${{ matrix.java }}
         path: '**/target/site'
+      # Run PIT only if previous steps are successfully executed
+    - name: Run PIT 
+      id: pit
+      run: mvn org.pitest:pitest-maven:mutationCoverage
+      working-directory: ${{ env.workdir }}
+      # Archive PIT report only if Run PIT fails
+    - name: Archive PIT Report
+      uses: actions/upload-artifact@v2
+      if: ${{ always() && steps.pit.outcome == 'failure' }}
+      with:
+        name: pit-report-jdk-${{ matrix.java }}
+        path: '**/target/pit-reports'

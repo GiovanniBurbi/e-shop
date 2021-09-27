@@ -1,5 +1,7 @@
 package com.apt.project.eshop.view.swing;
 
+import static org.junit.Assert.fail;
+
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JLabelMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
