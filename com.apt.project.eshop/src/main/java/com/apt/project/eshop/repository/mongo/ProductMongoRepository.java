@@ -14,14 +14,17 @@ import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 public class ProductMongoRepository implements ProductRepository {
 
 	private MongoCollection<Product> productCollection;
+	private MongoDatabase database;
 
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		productCollection = client.getDatabase(databaseName).getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
+		database = client.getDatabase(databaseName);
+		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	@Override
@@ -31,6 +34,7 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void loadCatalog(Product product) {
+		database.drop();
 		productCollection.insertOne(product);
 	}
 }
