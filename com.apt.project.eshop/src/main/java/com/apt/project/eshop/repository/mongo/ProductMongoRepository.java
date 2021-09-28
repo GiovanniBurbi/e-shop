@@ -31,6 +31,6 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void loadCatalog(Product product) {
-		
+		productCollection.insertOne(product);
 	}
 }

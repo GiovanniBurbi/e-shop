@@ -3,7 +3,6 @@ package com.apt.project.eshop.repository.mongo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-import static org.junit.Assert.fail;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -59,7 +58,8 @@ public class ProductMongoRepositoryIT {
 	}
 	
 	@Test
-	public void testLoadCatalog() {
-		fail();
+	public void testLoadCatalogWhenDatabaseIsEmpty() {
+		productRepository.loadCatalog(new Product("1", "Laptop", 1300));
+		assertThat(productCollection.find()).containsExactly(new Product("1", "Laptop", 1300));
 	}
 }
