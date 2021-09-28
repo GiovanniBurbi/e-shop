@@ -6,6 +6,8 @@ import com.apt.project.eshop.model.Product;
 
 public interface ProductRepository {
 
-	List<Product> findAll();
+	public List<Product> findAll();
+
+	public void loadCatalog(Product product);
 
 }

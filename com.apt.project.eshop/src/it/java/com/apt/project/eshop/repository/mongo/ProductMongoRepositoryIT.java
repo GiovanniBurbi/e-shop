@@ -56,4 +56,17 @@ public class ProductMongoRepositoryIT {
 		productCollection.insertOne(new Product("1", "Laptop", 1300));
 		assertThat(productRepository.findAll()).containsExactly(new Product("1", "Laptop", 1300));
 	}
+	
+	@Test
+	public void testLoadCatalogWhenDatabaseIsEmpty() {
+		productRepository.loadCatalog(new Product("1", "Laptop", 1300));
+		assertThat(productCollection.find()).containsExactly(new Product("1", "Laptop", 1300));
+	}
+	
+	@Test
+	public void testLoadCatalogWhenDatabaseIsNotEmpty() {
+		productCollection.insertOne(new Product("2", "Iphone", 1000));
+		productRepository.loadCatalog(new Product("1", "Laptop", 1300));
+		assertThat(productCollection.find()).containsExactly(new Product("1", "Laptop", 1300));
+	}
 }
