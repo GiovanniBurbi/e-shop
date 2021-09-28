@@ -1,5 +1,8 @@
 package com.apt.project.eshop.controller;
 
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.verify;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -52,7 +55,8 @@ public class EShopControllerIT {
 
 	@Test
 	public void testAllProducts() {
-		
+		eShopController.allProducts();
+		verify(eShopView).showAllProducts(asList(new Product("1", "Laptop", 1300)));
 	}
 
 }
