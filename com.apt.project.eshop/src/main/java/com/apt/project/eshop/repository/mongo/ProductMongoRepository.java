@@ -28,4 +28,9 @@ public class ProductMongoRepository implements ProductRepository {
 	public List<Product> findAll() {
 		return StreamSupport.stream(productCollection.find().spliterator(), false).collect(Collectors.toList());
 	}
+
+	@Override
+	public void loadCatalog(Product product) {
+		
+	}
 }
