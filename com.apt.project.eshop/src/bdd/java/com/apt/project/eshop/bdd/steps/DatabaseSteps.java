@@ -3,6 +3,9 @@ package com.apt.project.eshop.bdd.steps;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import java.util.List;
+import java.util.Map;
+
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -34,11 +37,14 @@ public class DatabaseSteps {
 	public void tearDown() {
 		mongoClient.close();
 	}
-
-	@Given("The database contains a product with id {string}, name {string} and price {double}")
-	public void the_database_contains_a_product_with_id_name_and_price(String id, String name, Double price) {
-		mongoClient.getDatabase(DB_NAME).getCollection(COLLECTION_NAME, Product.class).withCodecRegistry(pojoCodecRegistry)
-				.insertOne(new Product(id, name, price));
-	}
 	
+	@Given("The database contains products with the following values")
+	public void the_database_contains_products_with_the_following_values(List<Map<String, String>> values) {
+		values.forEach(
+			v -> mongoClient.getDatabase(DB_NAME)
+				.getCollection(COLLECTION_NAME, Product.class)
+				.withCodecRegistry(pojoCodecRegistry)
+				.insertOne(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))))
+		);
+	}	
 }

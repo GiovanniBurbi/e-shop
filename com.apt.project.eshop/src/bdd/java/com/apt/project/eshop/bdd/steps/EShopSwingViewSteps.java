@@ -3,6 +3,9 @@ package com.apt.project.eshop.bdd.steps;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.JFrame;
 
 import org.assertj.swing.core.BasicRobot;
@@ -49,10 +52,12 @@ public class EShopSwingViewSteps {
 		}).using(BasicRobot.robotWithCurrentAwtHierarchy());
 	}
 
-	@Then("The product list contains an element with id {string}, name {string} and price {double}")
-	public void the_product_list_contains_an_element_with_id_name_and_price(String id, String name, Double price) {
-		assertThat(window.list("productList").contents())
-				.anySatisfy(e -> assertThat(e).contains(new Product(id, name, price).toString()));
+	@Then("The list contains an element with the following values")
+	public void the_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
+		values.forEach(
+		    v -> assertThat(window.list("productList").contents())
+		    	.anySatisfy(e -> assertThat(e)
+		    		.contains(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))).toString()))
+		);
 	}
-
 }

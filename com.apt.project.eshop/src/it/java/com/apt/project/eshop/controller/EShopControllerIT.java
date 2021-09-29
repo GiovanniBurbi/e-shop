@@ -43,7 +43,7 @@ public class EShopControllerIT {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// set initial state of the database through the repository
-		productRepository.loadCatalog(new Product("1", "Laptop", 1300)); //TODO
+		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300)));
 		eShopController = new EShopController(productRepository, eShopView);
 	}
 
