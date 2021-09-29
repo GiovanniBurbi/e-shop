@@ -1,5 +1,6 @@
 package com.apt.project.eshop.bdd.steps;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 import javax.swing.JFrame;
@@ -8,6 +9,8 @@ import org.assertj.swing.core.BasicRobot;
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
+
+import com.apt.project.eshop.model.Product;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -32,8 +35,7 @@ public class EShopSwingViewSteps {
 
 	@Then("The product list contains an element with id {string}, name {string} and price {double}")
 	public void the_product_list_contains_an_element_with_id_name_and_price(String id, String name, Double price) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		assertThat(window.list("productList").contents()).anySatisfy(e -> assertThat(e).contains(new Product(id, name, price).toString()));
 	}
 	
 }
