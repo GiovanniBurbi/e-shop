@@ -33,8 +33,8 @@ public class ProductMongoRepository implements ProductRepository {
 	}
 
 	@Override
-	public void loadCatalog(Product product) {
+	public void loadCatalog(List<Product> products) {
 		database.drop();
-		productCollection.insertOne(product);
+		productCollection.insertMany(products);
 	}
 }

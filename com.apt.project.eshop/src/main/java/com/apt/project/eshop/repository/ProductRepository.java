@@ -8,6 +8,6 @@ public interface ProductRepository {
 
 	public List<Product> findAll();
 
-	public void loadCatalog(Product product);
+	public void loadCatalog(List<Product> products);
 
 }

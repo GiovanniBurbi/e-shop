@@ -1,5 +1,6 @@
 package com.apt.project.eshop.view.swing;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.swing.annotation.GUITest;
@@ -40,7 +41,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// make sure to start with the initial configuration
-		productRepository.loadCatalog(new Product("1", "Laptop", 1300));
+		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300)));
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
 			eShopController = new EShopController(productRepository, eShopSwingView);

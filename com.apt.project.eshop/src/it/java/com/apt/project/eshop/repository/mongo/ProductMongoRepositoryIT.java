@@ -1,5 +1,6 @@
 package com.apt.project.eshop.repository.mongo;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -59,14 +60,20 @@ public class ProductMongoRepositoryIT {
 	
 	@Test
 	public void testLoadCatalogWhenDatabaseIsEmpty() {
-		productRepository.loadCatalog(new Product("1", "Laptop", 1300));
+		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300)));
 		assertThat(productCollection.find()).containsExactly(new Product("1", "Laptop", 1300));
 	}
 	
 	@Test
 	public void testLoadCatalogWhenDatabaseIsNotEmpty() {
 		productCollection.insertOne(new Product("2", "Iphone", 1000));
-		productRepository.loadCatalog(new Product("1", "Laptop", 1300));
+		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300)));
 		assertThat(productCollection.find()).containsExactly(new Product("1", "Laptop", 1300));
+	}
+	
+	@Test
+	public void testLoadCatalogWhenCatalogHasFewProducts() {
+		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000)));
+		assertThat(productCollection.find()).containsExactlyInAnyOrder(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000));
 	}
 }
