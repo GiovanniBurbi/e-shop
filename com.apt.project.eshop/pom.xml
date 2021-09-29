@@ -30,6 +30,7 @@
     <sonar.version>3.8.0.2131</sonar.version>
     <testcontainers.version>1.15.1</testcontainers.version>
     <mockito.version>3.7.0</mockito.version>
+    <picocli.version>4.6.1</picocli.version>
     
     <!-- For each rule to be ignore, add another eXX and two corresponding properties with eXX in the name as below -->
     <sonar.issue.ignore.multicriteria>e11,e12</sonar.issue.ignore.multicriteria>
@@ -70,6 +71,11 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>${picocli.version}</version>
     </dependency>
     <dependency>
       <!-- Needed to avoid a false positive from SonarQube:
