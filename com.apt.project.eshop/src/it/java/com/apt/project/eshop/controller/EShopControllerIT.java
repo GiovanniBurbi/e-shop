@@ -21,7 +21,7 @@ import com.mongodb.ServerAddress;
 public class EShopControllerIT {
 
 	private static final String PRODUCTS_COLLECTION_NAME = "products";
-	private static final String SHOP_DB_NAME = "shop";
+	private static final String ESHOP_DB_NAME = "eShop";
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
@@ -41,7 +41,7 @@ public class EShopControllerIT {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
-		productRepository = new ProductMongoRepository(client, SHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(new Product("1", "Laptop", 1300)); //TODO
 		eShopController = new EShopController(productRepository, eShopView);
