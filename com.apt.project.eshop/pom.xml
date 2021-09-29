@@ -155,6 +155,7 @@
               <param>com.apt.project.eshop.view.swing.*</param>
               <param>com.apt.project.eshop.bdd.*</param>
               <param>com.apt.project.eshop.controller.*IT</param>
+              <param>com.apt.project.eshop.view.swing.*IT</param>
             </excludedTestClasses>
             <mutators>
               <mutator>DEFAULTS</mutator>
