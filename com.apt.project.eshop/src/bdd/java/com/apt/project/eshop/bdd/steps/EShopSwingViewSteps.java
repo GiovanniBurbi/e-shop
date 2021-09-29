@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 
@@ -52,11 +53,11 @@ public class EShopSwingViewSteps {
 	}
 
 	@Then("The list contains an element with the following values")
-	public void the_list_contains_an_element_with_the_following_values(List<List<String>> values) {
+	public void the_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
 		values.forEach(
 		    v -> assertThat(window.list("productList").contents())
 		    	.anySatisfy(e -> assertThat(e)
-		    		.contains(new Product(v.get(0), v.get(1), Double.parseDouble(v.get(2))).toString()))
+		    		.contains(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))).toString()))
 		);
 	}
 }
