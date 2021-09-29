@@ -1,10 +1,14 @@
 package com.apt.project.eshop.view.swing;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.testcontainers.containers.GenericContainer;
 
@@ -52,4 +56,12 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		client.close();
 	}
 
+	@Test
+	@GUITest
+	public void testAllProducts() {
+		GuiActionRunner.execute(() -> eShopController.allProducts());
+		// verify that the view's list is populated
+		assertThat(window.list("productList").contents()).containsExactly(new Product("1", "Laptop", 1300).toString());
+	}
+	
 }
