@@ -62,7 +62,7 @@ public class EShopSwingViewSteps {
 	}
 	
 	@When("The user enters in the search text field the name {string}")
-	public void the_user_enters_in_the_search_text_field_the_name(String nameSearch) {
+	public void the_user_enters_in_the_search_text_field_the_name(String nameToSearch) {
 	    throw new io.cucumber.java.PendingException();
 	}
 
@@ -72,7 +72,7 @@ public class EShopSwingViewSteps {
 	}
 
 	@Then("The list shows products with {string} in the name")
-	public void the_list_shows_products_with_in_the_name(String string) {
+	public void the_list_shows_products_with_in_the_name(String nameToSearch) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new io.cucumber.java.PendingException();
 	}
