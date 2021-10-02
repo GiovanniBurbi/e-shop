@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 
 import org.assertj.swing.core.BasicRobot;
 import org.assertj.swing.core.GenericTypeMatcher;
+import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 
@@ -52,12 +53,28 @@ public class EShopSwingViewSteps {
 		}).using(BasicRobot.robotWithCurrentAwtHierarchy());
 	}
 
-	@Then("The list contains an element with the following values")
-	public void the_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
+	@Then("The list contains elements with the following values")
+	public void the_list_contains_elements_with_the_following_values(List<Map<String, String>> values) {
 		values.forEach(
 		    v -> assertThat(window.list("productList").contents())
 		    	.anySatisfy(e -> assertThat(e)
 		    		.contains(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))).toString()))
 		);
+	}
+	
+	@When("The user enters in the search text field the name {string}")
+	public void the_user_enters_in_the_search_text_field_the_name(String nameToSearch) {
+		window.textBox("searchTextBox").enterText(nameToSearch);
+	}
+
+	@When("The user clicks the {string} button")
+	public void the_user_clicks_the_button(String buttonText) {
+		window.button(JButtonMatcher.withText(buttonText)).click();
+	}
+
+	@Then("The list shows products with {string} in the name")
+	public void the_list_shows_products_with_in_the_name(String nameToSearch) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
 	}
 }

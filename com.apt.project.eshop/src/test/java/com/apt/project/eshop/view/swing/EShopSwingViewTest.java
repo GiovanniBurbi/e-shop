@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 
 import org.assertj.swing.annotation.GUITest;
+import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.core.matcher.JLabelMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
@@ -32,14 +33,15 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
-	@Test
-	@GUITest
+	@Test @GUITest
 	public void testControlsInitialStates() {
 		window.label(JLabelMatcher.withText("Products"));
 		window.list("productList");
+		window.textBox("searchTextBox").requireEnabled();
+		window.button(JButtonMatcher.withText("Search")).requireDisabled();
 	}
 	
-	@Test 
+	@Test @GUITest
 	public void testShowAllProductsShouldShowsProductsInTheList() {
 		Product product = new Product("1", "Laptop", 1300);
 		GuiActionRunner.execute(()-> eShopSwingView.showAllProducts(Arrays.asList(product)));
