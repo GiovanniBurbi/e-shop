@@ -3,6 +3,8 @@ package com.apt.project.eshop.controller;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -36,14 +38,21 @@ public class EShopControllerIT {
 	private ProductRepository productRepository;
 	
 	private AutoCloseable closeable;
+	private List<Product> catalog;
 
 	@Before
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
+		catalog = asList(
+				new Product("1", "Laptop", 1300),
+				new Product("2", "Iphone", 1000),
+				new Product("3", "Cuffie", 300),
+				new Product("4", "Lavatrice", 300)
+			);
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// set initial state of the database through the repository
-		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300)));
+		productRepository.loadCatalog(catalog);
 		eShopController = new EShopController(productRepository, eShopView);
 	}
 
@@ -56,7 +65,16 @@ public class EShopControllerIT {
 	@Test
 	public void testAllProducts() {
 		eShopController.allProducts();
-		verify(eShopView).showAllProducts(asList(new Product("1", "Laptop", 1300)));
+		verify(eShopView).showAllProducts(catalog);
+	}
+	
+	@Test
+	public void testSearchProducts() {
+		eShopController.searchProducts("la");
+		verify(eShopView).showSearchedProducts(asList(
+				new Product("1", "Laptop", 1300),
+				new Product("4", "Lavatrice", 300)
+		));
 	}
 
 }
