@@ -48,6 +48,18 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		String[] listContents = window.list("productList").contents();
 		assertThat(listContents).containsExactly(product.toString());
 	}
+	
+	@Test @GUITest
+	public void testWhenSearchTextBoxIsNotEmptyThenSearchButtonShouldBeEnabled() {
+		window.textBox("searchTextBox").enterText("Laptop");
+		window.button(JButtonMatcher.withText("Search")).requireEnabled();
+	}
+	
+	@Test @GUITest
+	public void testWhenSearchTextBoxIsWhiteSpaceThenSearchButtonShouldBeEnabled() {
+		window.textBox("searchTextBox").enterText(" ");
+		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+	}
 
 }
 

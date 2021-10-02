@@ -18,6 +18,8 @@ import com.apt.project.eshop.view.EShopView;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -44,6 +46,12 @@ public class EShopSwingView extends JFrame implements EShopView{
 		JScrollPane scrollPane = new JScrollPane();
 		
 		searchTextBox = new JTextField();
+		searchTextBox.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				btnSearch.setEnabled(!searchTextBox.getText().trim().isEmpty());
+			}
+		});
 		searchTextBox.setName("searchTextBox");
 		searchTextBox.setColumns(10);
 		
