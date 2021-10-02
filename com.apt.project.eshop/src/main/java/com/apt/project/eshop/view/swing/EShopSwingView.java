@@ -13,11 +13,14 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -27,6 +30,15 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private DefaultListModel<Product> productListModel;
 	private JTextField searchTextBox;
 	private JButton btnSearch;
+	private transient EShopController eShopController;
+
+	public DefaultListModel<Product> getProductListModel() {
+		return productListModel;
+	}
+
+	public void setEShopController(EShopController eShopController) {
+		this.eShopController = eShopController;
+	}
 
 	/**
 	 * Create the frame.
@@ -44,10 +56,19 @@ public class EShopSwingView extends JFrame implements EShopView{
 		JScrollPane scrollPane = new JScrollPane();
 		
 		searchTextBox = new JTextField();
+		searchTextBox.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				btnSearch.setEnabled(!searchTextBox.getText().trim().isEmpty());
+			}
+		});
 		searchTextBox.setName("searchTextBox");
 		searchTextBox.setColumns(10);
 		
 		btnSearch = new JButton("Search");
+		btnSearch.addActionListener(
+			e -> eShopController.searchProducts(searchTextBox.getText())
+		);
 		btnSearch.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -82,7 +103,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		);
 
 		productListModel = new DefaultListModel<>();
-		productList = new JList<>(productListModel);
+		productList = new JList<>(getProductListModel());
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
 		contentPane.setLayout(gl_contentPane);
@@ -90,6 +111,12 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 	@Override
 	public void showAllProducts(List<Product> products) {
-		products.stream().forEach(productListModel::addElement);
+		products.stream().forEach(getProductListModel()::addElement);
+	}
+
+	@Override
+	public void showSearchedProducts(List<Product> searchedProducts) {
+		productListModel.clear();
+		searchedProducts.stream().forEach(productListModel::addElement);
 	}
 }

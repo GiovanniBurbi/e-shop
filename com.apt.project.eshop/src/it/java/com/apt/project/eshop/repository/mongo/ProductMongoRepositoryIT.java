@@ -76,4 +76,31 @@ public class ProductMongoRepositoryIT {
 		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000)));
 		assertThat(productCollection.find()).containsExactlyInAnyOrder(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000));
 	}
+	
+	@Test
+	public void testFindByNameWhenDatabaseIsEmpty() {
+		assertThat(productRepository.findByName("Laptop")).isEmpty();
+	}
+	
+	@Test
+	public void testFindByNameShouldShowIntheListOnlyProductsThatContainTheNameSearched () {
+		productCollection.insertOne(new Product("1", "Laptop", 1300));
+		productCollection.insertOne(new Product("2", "Iphone", 1000));
+		productCollection.insertOne(new Product("3", "Lavatrice", 400));
+		assertThat(productRepository.findByName("La")).containsExactlyInAnyOrder(
+			new Product("1", "Laptop", 1300),
+			new Product("3", "Lavatrice", 400)
+		);
+	}
+	
+	@Test
+	public void testFindByNameWhenSearchedNameIsLowerCaseShouldShowIntheListOnlyProductsThatContainTheNameSearchedIgnoringTheCase () {
+		productCollection.insertOne(new Product("1", "Laptop", 1300));
+		productCollection.insertOne(new Product("2", "Iphone", 1000));
+		productCollection.insertOne(new Product("3", "Lavatrice", 400));
+		assertThat(productRepository.findByName("la")).containsExactlyInAnyOrder(
+			new Product("1", "Laptop", 1300),
+			new Product("3", "Lavatrice", 400)
+		);
+	}
 }
