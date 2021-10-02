@@ -8,4 +8,6 @@ public interface EShopView {
 
 	void showAllProducts(List<Product> products);
 
+	void showSearchedProducts(List<Product> searchedProducts);
+
 }
