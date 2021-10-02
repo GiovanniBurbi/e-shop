@@ -45,5 +45,17 @@ public class EShopControllerTest {
 		eShopController.allProducts();
 		then(eShopView).should().showAllProducts(products);
 	}
+	
+	@Test
+	public void testSearchedProducts() {
+		String nameSearch = "laptop";
+		List<Product> searchedProducts = asList(
+									new Product("1", "laptop", 1300),
+									new Product("3", "laptop MSI", 1200)
+								);
+		given(productRepository.findByName(nameSearch)).willReturn(searchedProducts);
+		eShopController.searchProducts(nameSearch);
+		then(eShopView).should().showSearchedProducts(searchedProducts);
+	}
 
 }

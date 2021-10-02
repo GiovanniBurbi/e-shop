@@ -8,6 +8,7 @@ public interface ProductRepository {
 
 	public List<Product> findAll();
 
-	public void loadCatalog(List<Product> products);
+	public List<Product> findByName(String nameSearch);
 
+	public void loadCatalog(List<Product> products);
 }

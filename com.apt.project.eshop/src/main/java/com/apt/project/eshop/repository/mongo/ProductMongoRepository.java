@@ -37,4 +37,10 @@ public class ProductMongoRepository implements ProductRepository {
 		database.drop();
 		productCollection.insertMany(products);
 	}
+
+	@Override
+	public List<Product> findByName(String nameSearch) {
+		//to implement after the controller
+		return null;
+	}
 }
