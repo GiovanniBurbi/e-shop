@@ -52,6 +52,7 @@ public class EShopSwingApp implements Callable<Void> {
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
 				EShopSwingView eShopView = new EShopSwingView();
 				EShopController eShopController = new EShopController(productRepository, eShopView);
+				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);
 				eShopController.allProducts();
 			} catch (Exception e) {

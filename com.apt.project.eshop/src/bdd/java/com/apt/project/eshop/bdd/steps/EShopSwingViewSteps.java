@@ -74,7 +74,8 @@ public class EShopSwingViewSteps {
 
 	@Then("The list shows products with {string} in the name")
 	public void the_list_shows_products_with_in_the_name(String nameToSearch) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		assertThat(window.list("productList").contents()).isNotEmpty(); //A CAUSA DI ALLSATISFY CHE FA SCHIFO QUANDO ASSERISCE LISTA VUOTA
+		assertThat(window.list("productList").contents())
+			.allSatisfy(e -> assertThat(e.toLowerCase()).containsSubsequence(nameToSearch.toLowerCase()));
 	}
 }
