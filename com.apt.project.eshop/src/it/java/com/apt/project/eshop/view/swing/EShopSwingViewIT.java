@@ -3,6 +3,8 @@ package com.apt.project.eshop.view.swing;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
@@ -34,14 +36,21 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private EShopSwingView eShopSwingView;
 	private EShopController eShopController;
 	private FrameFixture window;
+	private List<Product> catalog;
 
 
 	@Override
 	protected void onSetUp() throws Exception {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		catalog = asList(
+				new Product("1", "Laptop", 1300),
+				new Product("2", "Iphone", 1000),
+				new Product("3", "Cuffie", 300),
+				new Product("4", "Lavatrice", 300)
+			);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// make sure to start with the initial configuration
-		productRepository.loadCatalog(asList(new Product("1", "Laptop", 1300)));
+		productRepository.loadCatalog(catalog);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
 			eShopController = new EShopController(productRepository, eShopSwingView);
@@ -57,12 +66,25 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		client.close();
 	}
 
-	@Test
-	@GUITest
+	@Test @GUITest
 	public void testAllProducts() {
 		GuiActionRunner.execute(() -> eShopController.allProducts());
 		// verify that the view's list is populated
-		assertThat(window.list("productList").contents()).containsExactly(new Product("1", "Laptop", 1300).toString());
+		assertThat(window.list("productList").contents()).containsExactly(
+				new Product("1", "Laptop", 1300).toString(),
+				new Product("2", "Iphone", 1000).toString(),
+				new Product("3", "Cuffie", 300).toString(),
+				new Product("4", "Lavatrice", 300).toString()
+		);
+	}
+	
+	@Test @GUITest
+	public void testSearchProducts() {
+		GuiActionRunner.execute(() -> eShopController.searchProducts("la"));
+		assertThat(window.list("productList").contents()).containsExactly(
+				new Product("1", "Laptop", 1300).toString(),
+				new Product("4", "Lavatrice", 300).toString()
+		);
 	}
 	
 }
