@@ -114,6 +114,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		products.stream().forEach(getProductListModel()::addElement);
 	}
 
+	@Override
 	public void showSearchedProducts(List<Product> searchedProducts) {
 		productListModel.clear();
 		searchedProducts.stream().forEach(productListModel::addElement);
