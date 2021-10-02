@@ -17,6 +17,7 @@ import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JButton;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -25,6 +26,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JList<Product> productList;
 	private DefaultListModel<Product> productListModel;
 	private JTextField searchTextBox;
+	private JButton btnSearch;
 
 	/**
 	 * Create the frame.
@@ -44,16 +46,24 @@ public class EShopSwingView extends JFrame implements EShopView{
 		searchTextBox = new JTextField();
 		searchTextBox.setName("searchTextBox");
 		searchTextBox.setColumns(10);
+		
+		btnSearch = new JButton("Search");
+		btnSearch.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(37)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-						.addComponent(searchTextBox, Alignment.LEADING)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addGap(142)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(37)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(searchTextBox)
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(168)
+							.addComponent(btnSearch))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(177)
 							.addComponent(lblProducts)))
 					.addContainerGap(431, Short.MAX_VALUE))
 		);
@@ -62,9 +72,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblProducts, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGap(12)
 					.addComponent(searchTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnSearch)
+					.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 					.addGap(53))
 		);
