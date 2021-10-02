@@ -30,6 +30,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JTextField searchTextBox;
 	private JButton btnSearch;
 
+	public DefaultListModel<Product> getProductListModel() {
+		return productListModel;
+	}
+
 	/**
 	 * Create the frame.
 	 */
@@ -90,7 +94,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		);
 
 		productListModel = new DefaultListModel<>();
-		productList = new JList<>(productListModel);
+		productList = new JList<>(getProductListModel());
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
 		contentPane.setLayout(gl_contentPane);
@@ -98,6 +102,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 	@Override
 	public void showAllProducts(List<Product> products) {
-		products.stream().forEach(productListModel::addElement);
+		products.stream().forEach(getProductListModel()::addElement);
+	}
+
+	public void showSearchedProducts(List<Product> searchedProducts) {
+		productListModel.clear();
+		searchedProducts.stream().forEach(productListModel::addElement);
 	}
 }

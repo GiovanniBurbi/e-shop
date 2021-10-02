@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 
+import javax.swing.DefaultListModel;
+
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.core.matcher.JLabelMatcher;
@@ -61,5 +63,27 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
 	}
 
+	@Test @GUITest
+	public void testShowSearchedProductsShouldShowInTheProductListOnlySearchedProducts() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		Product product3 = new Product("3", "Laptop MSI", 1200);
+		GuiActionRunner.execute(
+			() -> {
+				DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
+				listProductsModel.addElement(product1);
+				listProductsModel.addElement(product2);
+				listProductsModel.addElement(product3);
+			}
+		);
+		
+		GuiActionRunner.execute(
+				() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product3))
+			);
+		
+		String[] listContents = window.list("productList").contents();
+		assertThat(listContents).containsExactly(product1.toString(), product3.toString());
+	}
+	
 }
 
