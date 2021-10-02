@@ -1,6 +1,7 @@
 package com.apt.project.eshop.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 
@@ -15,24 +16,36 @@ import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	
+	@Mock
+	private EShopController eShopController;
 	private EShopSwingView eShopSwingView;
 	private FrameFixture window;
+	private AutoCloseable closeable;
 
 	@Override
 	protected void onSetUp() throws Exception {
+		closeable = MockitoAnnotations.openMocks(this);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView(); // FOR CALLING AND TESTING METHODS OF SHOPVIEW
+			eShopSwingView.setEShopController(eShopController);
 			return eShopSwingView;
 		});
 		window = new FrameFixture(robot(), eShopSwingView); // FOR INTERACTING WITH THE GUI COMPONENTS
 		window.show();
-
+	}
+	
+	@Override
+	protected void onTearDown() throws Exception{
+		closeable.close();
 	}
 
 	@Test @GUITest
@@ -85,5 +98,11 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(listContents).containsExactly(product1.toString(), product3.toString());
 	}
 	
+	@Test
+	public void testSearchButtonShouldDelegateToShopControllerSearchedProducts() {
+		window.textBox("searchTextBox").enterText("Laptop");
+		window.button(JButtonMatcher.withText("Search")).click();
+		verify(eShopController).searchProducts("Laptop");
+	}	
 }
 

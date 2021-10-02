@@ -13,7 +13,11 @@ public class EShopController {
 		this.eShopView = eShopView;
 	}
 
-	public void allProducts() {
+	public void allProducts() {	
 		eShopView.showAllProducts(productRepository.findAll());
+	}
+
+	public void searchProducts(String searchName) {
+		
 	}
 }

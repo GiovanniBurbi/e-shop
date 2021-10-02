@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
 import javax.swing.JTextField;
@@ -29,9 +30,14 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private DefaultListModel<Product> productListModel;
 	private JTextField searchTextBox;
 	private JButton btnSearch;
+	private EShopController eShopController;
 
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
+	}
+
+	public void setEShopController(EShopController eShopController) {
+		this.eShopController = eShopController;
 	}
 
 	/**
@@ -60,6 +66,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 		searchTextBox.setColumns(10);
 		
 		btnSearch = new JButton("Search");
+		btnSearch.addActionListener(
+			e -> eShopController.searchProducts(searchTextBox.getText())
+		);
 		btnSearch.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
