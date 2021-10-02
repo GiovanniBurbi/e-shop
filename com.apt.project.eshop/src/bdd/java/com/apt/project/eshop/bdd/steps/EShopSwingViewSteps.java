@@ -63,7 +63,7 @@ public class EShopSwingViewSteps {
 	
 	@When("The user enters in the search text field the name {string}")
 	public void the_user_enters_in_the_search_text_field_the_name(String nameToSearch) {
-	    throw new io.cucumber.java.PendingException();
+		window.textBox("searchTextBox").enterText(nameToSearch);
 	}
 
 	@When("The user clicks the {string} button")

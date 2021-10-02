@@ -32,14 +32,14 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
-	@Test
-	@GUITest
+	@Test @GUITest
 	public void testControlsInitialStates() {
 		window.label(JLabelMatcher.withText("Products"));
 		window.list("productList");
+		window.textBox("searchTextBox").requireEnabled();
 	}
 	
-	@Test 
+	@Test @GUITest
 	public void testShowAllProductsShouldShowsProductsInTheList() {
 		Product product = new Product("1", "Laptop", 1300);
 		GuiActionRunner.execute(()-> eShopSwingView.showAllProducts(Arrays.asList(product)));
