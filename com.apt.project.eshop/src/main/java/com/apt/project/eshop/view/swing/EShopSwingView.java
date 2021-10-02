@@ -30,7 +30,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private DefaultListModel<Product> productListModel;
 	private JTextField searchTextBox;
 	private JButton btnSearch;
-	private EShopController eShopController;
+	private transient EShopController eShopController;
 
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
