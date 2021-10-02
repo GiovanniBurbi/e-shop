@@ -4,6 +4,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -15,6 +16,7 @@ import com.apt.project.eshop.repository.ProductRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 public class ProductMongoRepository implements ProductRepository {
 
@@ -40,7 +42,10 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public List<Product> findByName(String nameSearch) {
-		//to implement after the controller
-		return null;
+		return StreamSupport.stream(
+				productCollection
+					.find(Filters.regex("name",Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE))).spliterator(), false)
+					.collect(Collectors.toList()
+		);
 	}
 }
