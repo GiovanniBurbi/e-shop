@@ -72,7 +72,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testWhenSearchTextBoxIsWhiteSpaceThenSearchButtonShouldBeEnabled() {
+	public void testWhenSearchTextBoxIsWhiteSpaceThenSearchButtonShouldBeDisabled() {
 		window.textBox("searchTextBox").enterText(" ");
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
 	}
