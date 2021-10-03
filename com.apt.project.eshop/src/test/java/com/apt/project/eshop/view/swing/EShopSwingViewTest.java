@@ -55,6 +55,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("searchTextBox").requireEnabled();
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
 		window.label("errorMessageLabel").requireText("");
+		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
 	}
 	
 	@Test @GUITest
@@ -127,5 +128,15 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("searchTextBox").enterText("g");
 		assertThat(eShopSwingView.getLblErrorLabel().getText()).isEmpty();
 		}
+	
+	@Test @GUITest
+	public void testShowSearchedProductsShouldEnableClearButton() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("3", "Laptop MSI", 1200);
+		GuiActionRunner.execute(
+				() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product2))
+		);
+		window.button(JButtonMatcher.withText("Clear")).requireEnabled();
+	}
 }
 
