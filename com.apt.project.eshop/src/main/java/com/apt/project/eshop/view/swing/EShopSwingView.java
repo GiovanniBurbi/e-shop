@@ -21,6 +21,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.Color;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -70,6 +71,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 			e -> eShopController.searchProducts(searchTextBox.getText())
 		);
 		btnSearch.setEnabled(false);
+		
+		JLabel lblErrorLabel = new JLabel("");
+		lblErrorLabel.setName("errorMessageLabel");
+		lblErrorLabel.setForeground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -79,7 +84,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGap(37)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(searchTextBox)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)))
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+								.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(168)
 							.addComponent(btnSearch))
@@ -97,9 +103,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 					.addComponent(searchTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnSearch)
-					.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-					.addGap(53))
+					.addGap(18)
+					.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+					.addGap(6))
 		);
 
 		productListModel = new DefaultListModel<>();

@@ -54,6 +54,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList");
 		window.textBox("searchTextBox").requireEnabled();
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+		window.label("errorMessageLabel").requireText("");
 	}
 	
 	@Test @GUITest
