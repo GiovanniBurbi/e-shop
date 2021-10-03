@@ -78,4 +78,10 @@ public class EShopSwingViewSteps {
 		assertThat(window.list("productList").contents())
 			.allSatisfy(e -> assertThat(e.toLowerCase()).containsSubsequence(nameToSearch.toLowerCase()));
 	}
+	
+	@Then("An error is shown containing the name searched {string}")
+	public void an_error_is_shown_containing_the_name_searched(String nameSearched) {
+		assertThat(window.label("errorMessageLabel").text()).contains(nameSearched);
+		throw new io.cucumber.java.PendingException();
+	}
 }
