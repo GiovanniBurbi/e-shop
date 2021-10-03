@@ -10,4 +10,6 @@ public interface EShopView {
 
 	void showSearchedProducts(List<Product> searchedProducts);
 
+	void showErrorProductNotFound(String product);
+
 }

@@ -32,6 +32,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JTextField searchTextBox;
 	private JButton btnSearch;
 	private transient EShopController eShopController;
+	private JLabel lblErrorLabel;
 
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
@@ -72,7 +73,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		);
 		btnSearch.setEnabled(false);
 		
-		JLabel lblErrorLabel = new JLabel("");
+		lblErrorLabel = new JLabel("");
 		lblErrorLabel.setName("errorMessageLabel");
 		lblErrorLabel.setForeground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -126,5 +127,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void showSearchedProducts(List<Product> searchedProducts) {
 		productListModel.clear();
 		searchedProducts.stream().forEach(productListModel::addElement);
+	}
+
+	@Override
+	public void showErrorProductNotFound(String product) {
+		lblErrorLabel.setText("Nessun risultato trovato per: \"" + product + "\"");
 	}
 }

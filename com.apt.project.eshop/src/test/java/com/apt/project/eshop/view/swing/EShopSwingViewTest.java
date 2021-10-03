@@ -104,6 +104,16 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("searchTextBox").enterText("Laptop");
 		window.button(JButtonMatcher.withText("Search")).click();
 		verify(eShopController).searchProducts("Laptop");
-	}	
+	}
+	
+	@Test @GUITest
+	public void testShowErrorProductNotFoundShouldShowAMessageInTheErrorLabel() {
+		String product = "Samsung s21";
+		GuiActionRunner.execute(
+				() -> eShopSwingView.showErrorProductNotFound(product)
+		);
+		window.label("errorMessageLabel")
+			.requireText("Nessun risultato trovato per: \"" + product + "\"");
+	}
 }
 
