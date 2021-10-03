@@ -76,6 +76,5 @@ public class EShopControllerIT {
 				new Product("4", "Lavatrice", 300)
 		));
 	}
-
 }
 
