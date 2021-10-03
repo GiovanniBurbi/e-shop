@@ -35,6 +35,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JLabel lblErrorLabel;
 	private JButton btnClear;
 
+
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
 	}
@@ -45,6 +46,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 	public JLabel getLblErrorLabel() {
 		return lblErrorLabel;
+	}
+	
+	public JButton getBtnClear() {
+		return btnClear;
 	}
 	
 	/**
@@ -85,7 +90,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		getLblErrorLabel().setForeground(Color.RED);
 		
 		btnClear = new JButton("Clear");
-		btnClear.setEnabled(false);
+		getBtnClear().setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -101,7 +106,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGap(126)
 							.addComponent(btnSearch)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
+							.addComponent(getBtnClear(), GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(183)
 							.addComponent(lblProducts)))
@@ -117,7 +122,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnClear))
+						.addComponent(getBtnClear()))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
@@ -141,7 +146,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void showSearchedProducts(List<Product> searchedProducts) {
 		productListModel.clear();
 		searchedProducts.stream().forEach(productListModel::addElement);
-		btnClear.setEnabled(true);
+		getBtnClear().setEnabled(true);
 	}
 
 	@Override
@@ -152,5 +157,13 @@ public class EShopSwingView extends JFrame implements EShopView{
 	
 	public void resetErrorLabel() {
 		getLblErrorLabel().setText("");
+	}
+
+	@Override
+	public void clearSearch(List<Product> products) {
+		getBtnClear().setEnabled(false);
+		searchTextBox.setText("");
+		productListModel.clear();
+		showAllProducts(products);
 	}
 }

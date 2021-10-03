@@ -1,5 +1,7 @@
 package com.apt.project.eshop.view.swing;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -137,6 +139,37 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 				() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product2))
 		);
 		window.button(JButtonMatcher.withText("Clear")).requireEnabled();
+	}
+	
+	@Test @GUITest
+	public void testClearSearchShouldDisableClearButtonAndResetSearchTextBox() {
+		window.textBox("searchTextBox").enterText("Laptop");
+		GuiActionRunner.execute(
+				() -> {
+					eShopSwingView.getBtnClear().setEnabled(true);
+					eShopSwingView.clearSearch(emptyList());
+			});
+		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
+		window.textBox("searchTextBox").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testClearSearchShouldMakeTheProductListToShowAllProducts() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		Product product3 = new Product("3", "Laptop MSI", 1200);
+		GuiActionRunner.execute(
+			() -> {
+				DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
+				listProductsModel.addElement(product1);
+				listProductsModel.addElement(product3);
+			}
+		);
+		GuiActionRunner.execute(
+			() -> eShopSwingView.clearSearch(asList(product1, product2, product3))
+		);
+		String[] listContents = window.list("productList").contents();
+		assertThat(listContents).containsExactly(product1.toString(), product2.toString(), product3.toString());
 	}
 }
 
