@@ -155,7 +155,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	@Override
 	public void showErrorProductNotFound(String product) {
 		getLblErrorLabel()
-			.setText("Nessun risultato trovato per: \"" + product + "\"");
+			.setText("Nessun risultato trovato per: \"" + product.trim() + "\"");
 	}
 	
 	public void resetErrorLabel() {
