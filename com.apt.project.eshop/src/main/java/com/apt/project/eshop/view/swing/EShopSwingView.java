@@ -37,11 +37,15 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
 	}
-
+	
 	public void setEShopController(EShopController eShopController) {
 		this.eShopController = eShopController;
 	}
 
+	public JLabel getLblErrorLabel() {
+		return lblErrorLabel;
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -62,6 +66,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 			@Override
 			public void keyReleased(KeyEvent e) {
 				btnSearch.setEnabled(!searchTextBox.getText().trim().isEmpty());
+				if(!getLblErrorLabel().getText().isEmpty())
+					resetErrorLabel();
 			}
 		});
 		searchTextBox.setName("searchTextBox");
@@ -74,8 +80,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 		btnSearch.setEnabled(false);
 		
 		lblErrorLabel = new JLabel("");
-		lblErrorLabel.setName("errorMessageLabel");
-		lblErrorLabel.setForeground(Color.RED);
+		getLblErrorLabel().setName("errorMessageLabel");
+		getLblErrorLabel().setForeground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -86,7 +92,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(searchTextBox)
 								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-								.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+								.addComponent(getLblErrorLabel(), GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(168)
 							.addComponent(btnSearch))
@@ -107,7 +113,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
-					.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+					.addComponent(getLblErrorLabel(), GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
 					.addGap(6))
 		);
 
@@ -131,6 +137,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 	@Override
 	public void showErrorProductNotFound(String product) {
-		lblErrorLabel.setText("Nessun risultato trovato per: \"" + product + "\"");
+		getLblErrorLabel()
+			.setText("Nessun risultato trovato per: \"" + product + "\"");
+	}
+	
+	public void resetErrorLabel() {
+		getLblErrorLabel().setText("");
 	}
 }

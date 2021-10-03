@@ -115,5 +115,17 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("errorMessageLabel")
 			.requireText("Nessun risultato trovato per: \"" + product + "\"");
 	}
+	
+	@Test @GUITest
+	public void testResetErrorLabelWhenReleaseKeyInSearchTextBoxShouldResetErrorLabel() {
+		String product = "Samsun";
+		window.textBox("searchTextBox").enterText(product);
+		GuiActionRunner.execute(
+				() -> eShopSwingView.getLblErrorLabel()
+						.setText("Nessun risultato trovato per: \"" + product + "\"")
+		);
+		window.textBox("searchTextBox").enterText("g");
+		assertThat(eShopSwingView.getLblErrorLabel().getText()).isEmpty();
+		}
 }
 
