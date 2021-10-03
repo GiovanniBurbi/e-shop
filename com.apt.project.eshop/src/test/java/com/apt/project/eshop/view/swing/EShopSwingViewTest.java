@@ -171,5 +171,15 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		String[] listContents = window.list("productList").contents();
 		assertThat(listContents).containsExactly(product1.toString(), product2.toString(), product3.toString());
 	}
+	
+	@Test @GUITest
+	public void testClearButtonShouldDelegateToShopControllerResetSearch() {
+		GuiActionRunner.execute(
+				() -> {
+					eShopSwingView.getBtnClear().setEnabled(true);
+			});
+		window.button(JButtonMatcher.withText("Clear")).click();
+		verify(eShopController).resetSearch();
+	}
 }
 

@@ -28,4 +28,8 @@ public class EShopController {
 		}
 		eShopView.showErrorProductNotFound(searchName);
 	}
+
+	public void resetSearch() {
+		
+	}
 }

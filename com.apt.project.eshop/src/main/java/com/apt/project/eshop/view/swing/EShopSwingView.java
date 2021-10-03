@@ -1,27 +1,27 @@
 package com.apt.project.eshop.view.swing;
 
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JButton;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.Color;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -90,6 +90,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 		getLblErrorLabel().setForeground(Color.RED);
 		
 		btnClear = new JButton("Clear");
+		btnClear.addActionListener(
+			e -> eShopController.resetSearch()	
+		);
 		getBtnClear().setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
