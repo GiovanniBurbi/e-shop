@@ -80,7 +80,10 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	
 	@Test @GUITest
 	public void testSearchProducts() {
-		GuiActionRunner.execute(() -> eShopController.searchProducts("la"));
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+			eShopController.searchProducts("la");		
+		});
 		assertThat(window.list("productList").contents()).containsExactly(
 				new Product("1", "Laptop", 1300).toString(),
 				new Product("4", "Lavatrice", 300).toString()
