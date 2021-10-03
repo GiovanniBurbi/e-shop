@@ -30,6 +30,6 @@ public class EShopController {
 	}
 
 	public void resetSearch() {
-		
+		eShopView.clearSearch(productRepository.findAll());
 	}
 }
