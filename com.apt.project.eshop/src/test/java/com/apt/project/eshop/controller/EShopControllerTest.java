@@ -1,8 +1,11 @@
 package com.apt.project.eshop.controller;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.List;
 
@@ -57,5 +60,13 @@ public class EShopControllerTest {
 		eShopController.searchProducts(nameSearch);
 		then(eShopView).should().showSearchedProducts(searchedProducts);
 	}
-
+	
+	@Test
+	public void testSearchedProductsWhenTheSearchedProductDoesNotExist() {
+		String nameSearch = "samsung";
+		given(productRepository.findByName(nameSearch)).willReturn(emptyList());
+		eShopController.searchProducts(nameSearch);
+		then(eShopView).should().showErrorProductNotFound(nameSearch);
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+	}
 }

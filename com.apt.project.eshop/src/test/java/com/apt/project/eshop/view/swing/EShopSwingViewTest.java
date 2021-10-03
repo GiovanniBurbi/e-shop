@@ -54,6 +54,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList");
 		window.textBox("searchTextBox").requireEnabled();
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
+		window.label("errorMessageLabel").requireText("");
 	}
 	
 	@Test @GUITest
@@ -103,6 +104,28 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("searchTextBox").enterText("Laptop");
 		window.button(JButtonMatcher.withText("Search")).click();
 		verify(eShopController).searchProducts("Laptop");
-	}	
+	}
+	
+	@Test @GUITest
+	public void testShowErrorProductNotFoundShouldShowAMessageInTheErrorLabel() {
+		String product = "Samsung s21";
+		GuiActionRunner.execute(
+				() -> eShopSwingView.showErrorProductNotFound(product)
+		);
+		window.label("errorMessageLabel")
+			.requireText("Nessun risultato trovato per: \"" + product + "\"");
+	}
+	
+	@Test @GUITest
+	public void testResetErrorLabelWhenReleaseKeyInSearchTextBoxShouldResetErrorLabel() {
+		String product = "Samsun";
+		window.textBox("searchTextBox").enterText(product);
+		GuiActionRunner.execute(
+				() -> eShopSwingView.getLblErrorLabel()
+						.setText("Nessun risultato trovato per: \"" + product + "\"")
+		);
+		window.textBox("searchTextBox").enterText("g");
+		assertThat(eShopSwingView.getLblErrorLabel().getText()).isEmpty();
+		}
 }
 

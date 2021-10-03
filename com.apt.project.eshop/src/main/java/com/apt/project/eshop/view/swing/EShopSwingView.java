@@ -21,6 +21,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.Color;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -31,15 +32,20 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JTextField searchTextBox;
 	private JButton btnSearch;
 	private transient EShopController eShopController;
+	private JLabel lblErrorLabel;
 
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
 	}
-
+	
 	public void setEShopController(EShopController eShopController) {
 		this.eShopController = eShopController;
 	}
 
+	public JLabel getLblErrorLabel() {
+		return lblErrorLabel;
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -60,6 +66,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 			@Override
 			public void keyReleased(KeyEvent e) {
 				btnSearch.setEnabled(!searchTextBox.getText().trim().isEmpty());
+				if(!getLblErrorLabel().getText().isEmpty())
+					resetErrorLabel();
 			}
 		});
 		searchTextBox.setName("searchTextBox");
@@ -70,6 +78,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 			e -> eShopController.searchProducts(searchTextBox.getText())
 		);
 		btnSearch.setEnabled(false);
+		
+		lblErrorLabel = new JLabel("");
+		getLblErrorLabel().setName("errorMessageLabel");
+		getLblErrorLabel().setForeground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -79,7 +91,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGap(37)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(searchTextBox)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)))
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+								.addComponent(getLblErrorLabel(), GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(168)
 							.addComponent(btnSearch))
@@ -97,9 +110,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 					.addComponent(searchTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnSearch)
-					.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-					.addGap(53))
+					.addGap(18)
+					.addComponent(getLblErrorLabel(), GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+					.addGap(6))
 		);
 
 		productListModel = new DefaultListModel<>();
@@ -118,5 +133,15 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void showSearchedProducts(List<Product> searchedProducts) {
 		productListModel.clear();
 		searchedProducts.stream().forEach(productListModel::addElement);
+	}
+
+	@Override
+	public void showErrorProductNotFound(String product) {
+		getLblErrorLabel()
+			.setText("Nessun risultato trovato per: \"" + product + "\"");
+	}
+	
+	public void resetErrorLabel() {
+		getLblErrorLabel().setText("");
 	}
 }

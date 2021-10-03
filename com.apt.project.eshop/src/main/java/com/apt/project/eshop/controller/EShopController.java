@@ -1,5 +1,8 @@
 package com.apt.project.eshop.controller;
 
+import java.util.List;
+
+import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.view.EShopView;
 
@@ -18,6 +21,11 @@ public class EShopController {
 	}
 
 	public void searchProducts(String searchName) {
-		eShopView.showSearchedProducts(productRepository.findByName(searchName));
+		List<Product> productsFound = productRepository.findByName(searchName);
+		if (!productsFound.isEmpty()) {
+			eShopView.showSearchedProducts(productsFound);
+			return;
+		}
+		eShopView.showErrorProductNotFound(searchName);
 	}
 }
