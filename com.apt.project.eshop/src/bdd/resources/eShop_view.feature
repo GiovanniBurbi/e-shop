@@ -44,5 +44,27 @@ Feature: eShop View
   	And The user clicks the "Search" button
   	Then An error is shown containing the name searched "samsung s21"
   	
-  	
+  Scenario: Clear the search
+    Given The database contains products with the following values	
+  	  | id | name | price |
+  	  | "1" | "Laptop" | 1300.0 |
+  	  | "2" | "Iphone" | 1000.0 |
+  	  | "3" | "Laptop MSI" | 1250.0 |
+  	  | "4" | "Macbook" | 1400.0 |
+  	  | "5" | "SmartTv UHD" | 400.0 |
+  	  | "6" | "Dyson phon" | 350.0 |
+  	  | "7" | "Playstation 5" | 500.0 |
+  	When The eShop View is shown
+  	And The user search the product "laptop"
+  	And The user clicks the "Clear" button
+  	Then The list contains elements with the following values
+  	  | id | name | price |
+  	  | "1" | "Laptop" | 1300.0 |
+  	  | "2" | "Iphone" | 1000.0 |
+  	  | "3" | "Laptop MSI" | 1250.0 |
+  	  | "4" | "Macbook" | 1400.0 |
+  	  | "5" | "SmartTv UHD" | 400.0 |
+  	  | "6" | "Dyson phon" | 350.0 |
+  	  | "7" | "Playstation 5" | 500.0 |
+  	And The search text box is empty
   	

@@ -83,4 +83,15 @@ public class EShopSwingViewSteps {
 	public void an_error_is_shown_containing_the_name_searched(String nameSearched) {
 		assertThat(window.label("errorMessageLabel").text()).contains(nameSearched);
 	}
+	
+	@When("The user search the product {string}")
+	public void the_user_search_the_product(String nameToSearch) {
+		window.textBox("searchTextBox").enterText(nameToSearch);
+		window.button(JButtonMatcher.withText("Search")).click();
+	}
+
+	@Then("The search text box is empty")
+	public void the_search_text_box_is_empty() {
+		window.textBox("searchTextBox").requireText("");
+	}
 }
