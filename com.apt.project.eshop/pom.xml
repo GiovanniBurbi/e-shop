@@ -47,6 +47,7 @@
     </sonar.issue.ignore.multicriteria.e12.ruleKey>
     <sonar.issue.ignore.multicriteria.e12.resourceKey>
       **/EShopSwingViewTest.java
+      **/EShopSwingViewIT.java
     </sonar.issue.ignore.multicriteria.e12.resourceKey>
     
     <sonar.coverage.exclusions>
