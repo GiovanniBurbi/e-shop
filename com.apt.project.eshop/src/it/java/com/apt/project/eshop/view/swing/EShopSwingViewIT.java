@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import org.assertj.swing.annotation.GUITest;
+import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
@@ -54,6 +55,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
 			eShopController = new EShopController(productRepository, eShopSwingView);
+			eShopSwingView.setEShopController(eShopController);
 			return eShopSwingView;
 		});
 		window = new FrameFixture(robot(), eShopSwingView);
@@ -79,11 +81,12 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testSearchProducts() {
+	public void testSearchButtonSuccess() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
-			eShopController.searchProducts("la");		
 		});
+		window.textBox("searchTextBox").enterText("la");
+		window.button(JButtonMatcher.withText("Search")).click();
 		assertThat(window.list("productList").contents()).containsExactly(
 				new Product("1", "Laptop", 1300).toString(),
 				new Product("4", "Lavatrice", 300).toString()
@@ -91,11 +94,12 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testProductNotFoundError() {
+	public void testSearchBottonProductNotFoundError() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
-			eShopController.searchProducts("samsung");		
 		});
+		window.textBox("searchTextBox").enterText("Samsung");
+		window.button(JButtonMatcher.withText("Search")).click();
 		assertThat(window.list("productList").contents()).containsExactly(
 				new Product("1", "Laptop", 1300).toString(),
 				new Product("2", "Iphone", 1000).toString(),
@@ -103,7 +107,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 				new Product("4", "Lavatrice", 300).toString()
 		);
 		window.label("errorMessageLabel").requireText(
-				"Nessun risultato trovato per: \"samsung\""		
+				"Nessun risultato trovato per: \"Samsung\""		
 		);
 	}
 }
