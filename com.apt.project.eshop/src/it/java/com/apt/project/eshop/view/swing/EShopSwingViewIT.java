@@ -110,4 +110,29 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 				"Nessun risultato trovato per: \"Samsung\""		
 		);
 	}
+	
+	@Test @GUITest
+	public void testClearBotton() {
+		window.textBox("searchTextBox").enterText("la");
+		GuiActionRunner.execute(() -> {
+			eShopController.searchProducts("la");
+		});
+		window.button(JButtonMatcher.withText("Clear")).click();
+		assertThat(window.list("productList").contents()).containsExactly(
+				new Product("1", "Laptop", 1300).toString(),
+				new Product("2", "Iphone", 1000).toString(),
+				new Product("3", "Cuffie", 300).toString(),
+				new Product("4", "Lavatrice", 300).toString()
+		);
+		window.textBox("searchTextBox").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testClearButtonWhenTheSearchFailWithAllProductsShownInTheListShouldStayDisable() {
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+			eShopController.searchProducts("Samsung");
+		});
+		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
+	}
 }
