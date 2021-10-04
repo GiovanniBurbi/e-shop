@@ -166,6 +166,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void clearSearch(List<Product> products) {
 		getBtnClear().setEnabled(false);
 		searchTextBox.setText("");
+		resetErrorLabel();
 		productListModel.clear();
 		showAllProducts(products);
 	}

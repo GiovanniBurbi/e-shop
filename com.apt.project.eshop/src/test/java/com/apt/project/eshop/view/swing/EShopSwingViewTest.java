@@ -137,8 +137,8 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 					.setText("Nessun risultato trovato per: \"" + product + "\"")
 		);
 		window.textBox("searchTextBox").enterText("g");
-		assertThat(eShopSwingView.getLblErrorLabel().getText()).isEmpty();
-		}
+		window.label("errorMessageLabel").requireText("");
+	}
 	
 	@Test @GUITest
 	public void testShowSearchedProductsShouldEnableClearButton() {
@@ -163,7 +163,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testClearSearchShouldMakeTheProductListToShowAllProducts() {
+	public void testClearSearchShouldMakeTheProductListShowAllProducts() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
 		Product product3 = new Product("3", "Laptop MSI", 1200);
@@ -179,6 +179,18 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		);
 		String[] listContents = window.list("productList").contents();
 		assertThat(listContents).containsExactly(product1.toString(), product2.toString(), product3.toString());
+	}
+	
+	@Test @GUITest
+	public void testClearSearchWhenThereWasAProductNotFoundErrorShouldResetTheErrorLabel() {
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.getBtnClear().setEnabled(true);
+				 eShopSwingView.getLblErrorLabel()
+					.setText("Nessun risultato trovato per: \"" + "Samsung" + "\"");
+				eShopSwingView.clearSearch(emptyList());
+		});
+		window.label("errorMessageLabel").requireText("");
 	}
 	
 	@Test @GUITest
