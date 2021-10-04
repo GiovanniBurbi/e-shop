@@ -69,4 +69,12 @@ public class EShopControllerTest {
 		then(eShopView).should().showErrorProductNotFound(nameSearch);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 	}
+	
+	@Test
+	public void testResetSearch() {
+		List<Product> products = asList(new Product("1", "laptop", 1300));
+		given(productRepository.findAll()).willReturn(products);
+		eShopController.resetSearch();
+		then(eShopView).should().clearSearch(products);
+	}
 }

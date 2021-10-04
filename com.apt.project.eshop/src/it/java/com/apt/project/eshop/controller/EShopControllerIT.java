@@ -76,5 +76,11 @@ public class EShopControllerIT {
 				new Product("4", "Lavatrice", 300)
 		));
 	}
+	
+	@Test
+	public void testResetSearch() {
+		eShopController.resetSearch();
+		verify(eShopView).clearSearch(catalog);
+	}
 }
 
