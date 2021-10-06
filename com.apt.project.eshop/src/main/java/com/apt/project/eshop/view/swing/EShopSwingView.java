@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -21,16 +23,10 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -192,11 +188,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 		productListModel = new DefaultListModel<>();
 		productList = new JList<>(getProductListModel());
-		productList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				btnAddToCart.setEnabled(productList.getSelectedIndex() != -1);
-			}
-		});
+		productList.addListSelectionListener(
+			e -> btnAddToCart.setEnabled(productList.getSelectedIndex() != -1)
+		);
 		productList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
