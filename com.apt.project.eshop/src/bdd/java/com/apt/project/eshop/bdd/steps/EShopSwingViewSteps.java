@@ -109,10 +109,6 @@ public class EShopSwingViewSteps {
 
 	@Then("The cart list contains an element with the following values")
 	public void the_cart_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
-		values.forEach(
-		    	v -> assertThat(window.list("productList").contents())
-		    		.anySatisfy(e -> assertThat(e)
-		    			.contains(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))).toString(), v.get("quantity")))
-		    );
+		throw new io.cucumber.java.PendingException();	
 	}
 }
