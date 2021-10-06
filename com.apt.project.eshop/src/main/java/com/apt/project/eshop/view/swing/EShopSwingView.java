@@ -216,8 +216,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 	}
 
 	@Override
-	public void addToCartView(Product product1) {
-		cartListModel.addElement(product1);
+	public void addToCartView(List<Product> products) {
+		cartListModel.clear();
+		products.stream().forEach(cartListModel::addElement);
 	}
 	
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product>{

@@ -223,10 +223,25 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		Product product1 = new Product("1", "Laptop", 1300);
 		GuiActionRunner.execute(
 			() -> {
-				eShopSwingView.addToCartView(product1);
+				eShopSwingView.addToCartView(asList(product1));
 			});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product1.toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testAddToCartViewWhenAddMultipleTimesTheSameProductShouldShowOneIstanceOfTheProductInTheCartListWithTheRightQuantity() {
+		Product product1 = new Product("1", "Laptop", 1300, 1);
+		Product product2 = new Product("2", "eBook", 300, 1);
+		Product product1TwoTimes = new Product("1", "laptop", 1300, 2);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.addToCartView(asList(product1));
+				eShopSwingView.addToCartView(asList(product2));
+				eShopSwingView.addToCartView(asList(product1TwoTimes, product2));				
+			});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product1TwoTimes.toStringExtended(), product2.toStringExtended());
 	}
 }
 

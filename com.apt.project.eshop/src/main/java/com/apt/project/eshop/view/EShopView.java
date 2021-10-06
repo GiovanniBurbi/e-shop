@@ -14,6 +14,6 @@ public interface EShopView {
 
 	void clearSearch(List<Product> products);
 
-	void addToCartView(Product product1);
+	void addToCartView(List<Product> products);
 
 }
