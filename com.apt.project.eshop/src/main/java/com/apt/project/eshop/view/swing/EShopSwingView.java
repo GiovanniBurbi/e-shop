@@ -27,6 +27,8 @@ import javax.swing.event.ListSelectionListener;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -42,6 +44,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JList<Product> cartList;
 	private DefaultListModel<Product> cartListModel;
 
+
+	public DefaultListModel<Product> getCartListModel() {
+		return cartListModel;
+	}
 
 	public DefaultListModel<Product> getProductListModel() {
 		return productListModel;
@@ -67,6 +73,14 @@ public class EShopSwingView extends JFrame implements EShopView{
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 829, 449);
 		contentPane = new JPanel();
+		contentPane.setName("contentPane");
+		contentPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				productList.clearSelection();
+				cartList.clearSelection();
+			}
+		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
@@ -165,7 +179,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		);
 		
 		cartListModel = new DefaultListModel<>();
-		cartList = new JList<>(cartListModel);
+		cartList = new JList<>(getCartListModel());
 		cartList.setCellRenderer(new CartTextRenderer());
 		cartList.setName("cartList");
 		cartList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -217,8 +231,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 
 	@Override
 	public void addToCartView(List<Product> products) {
-		cartListModel.clear();
-		products.stream().forEach(cartListModel::addElement);
+		getCartListModel().clear();
+		products.stream().forEach(getCartListModel()::addElement);
 	}
 	
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product>{

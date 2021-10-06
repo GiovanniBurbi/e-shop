@@ -224,7 +224,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(
 			() -> {
 				eShopSwingView.addToCartView(asList(product1));
-			});
+		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product1.toStringExtended());
 	}
@@ -239,9 +239,34 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 				eShopSwingView.addToCartView(asList(product1));
 				eShopSwingView.addToCartView(asList(product2));
 				eShopSwingView.addToCartView(asList(product1TwoTimes, product2));				
-			});
+		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product1TwoTimes.toStringExtended(), product2.toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testClickInTheContentPaneShouldDeselectElementInTheProductList() {
+		Product product = new Product("1", "Laptop", 1300, 1);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.getProductListModel().addElement(product);
+		});
+		window.list("productList").selectItem(0);
+		window.panel("contentPane").click();
+		window.list("productList").requireNoSelection();
+		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+	}
+	
+	@Test @GUITest
+	public void testClickInTheContentPaneShouldDeselectElementInTheCartList() {
+		Product product = new Product("1", "Laptop", 1300, 1);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.getCartListModel().addElement(product);
+		});
+		window.list("cartList").selectItem(0);
+		window.panel("contentPane").click();
+		window.list("cartList").requireNoSelection();
 	}
 }
 
