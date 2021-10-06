@@ -58,6 +58,9 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
 		window.label("errorMessageLabel").requireText("");
 		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
+		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+		window.label(JLabelMatcher.withText("Cart"));
+		window.list("cartList");
 	}
 	
 	@Test @GUITest
@@ -201,6 +204,84 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		});
 		window.button(JButtonMatcher.withText("Clear")).click();
 		verify(eShopController).resetSearch();
+	}
+	
+	@Test @GUITest
+	public void testAddToCartButtonShouldBeEnabledOnlyWhenAProductInTheProductListIsSelected() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getProductListModel().addElement(new Product("1", "Laptop", 1300));
+		});
+		window.list("productList").selectItem(0);
+		window.button(JButtonMatcher.withText("Add To Cart")).requireEnabled();
+		window.list("productList").clearSelection();
+		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+	}
+	
+	@Test @GUITest
+	public void testAddToCartViewShouldShowAProductInTheCartList() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.addToCartView(asList(product1));
+		});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product1.toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testAddToCartViewWhenAddMultipleTimesTheSameProductShouldShowOneIstanceOfTheProductInTheCartListWithTheRightQuantity() {
+		Product product1 = new Product("1", "Laptop", 1300, 1);
+		Product product2 = new Product("2", "eBook", 300, 1);
+		Product product1TwoTimes = new Product("1", "laptop", 1300, 2);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.addToCartView(asList(product1));
+				eShopSwingView.addToCartView(asList(product2));
+				eShopSwingView.addToCartView(asList(product1TwoTimes, product2));				
+		});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product1TwoTimes.toStringExtended(), product2.toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testClickInTheContentPaneShouldDeselectElementInTheProductList() {
+		Product product = new Product("1", "Laptop", 1300, 1);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.getProductListModel().addElement(product);
+		});
+		window.list("productList").selectItem(0);
+		window.panel("contentPane").click();
+		window.list("productList").requireNoSelection();
+		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+	}
+	
+	@Test @GUITest
+	public void testClickInTheContentPaneShouldDeselectElementInTheCartList() {
+		Product product = new Product("1", "Laptop", 1300, 1);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.getCartListModel().addElement(product);
+		});
+		window.list("cartList").selectItem(0);
+		window.panel("contentPane").click();
+		window.list("cartList").requireNoSelection();
+	}
+	
+	@Test @GUITest
+	public void testAddToCartButtonShouldDelegateToEShopControllerNewCartProduct() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Kindle", 200);
+		GuiActionRunner.execute(
+				() -> {
+					DefaultListModel<Product> productListModel = eShopSwingView.getProductListModel();
+					productListModel.addElement(product1);
+					productListModel.addElement(product2);
+				});
+		window.list("productList").selectItem(1);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		verify(eShopController).newCartProduct(product2);
 	}
 }
 

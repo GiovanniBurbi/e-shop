@@ -48,4 +48,11 @@ Feature: eShop View
   	  | "7" | "Playstation 5" | 500.0 |
   	And The search text box is empty
   	
+  	Scenario: Add Product to Cart
+  	Given The user select a product from the product list
+  	When The user clicks the "Add To Cart" button 2 times
+  	Then The cart list contains an element with the following values
+      | id | name | price | quantity |
+      | "1" | "Laptop" | 1300.0 | 2 |
+  	
   	

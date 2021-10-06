@@ -18,6 +18,7 @@ import com.apt.project.eshop.bdd.EShopAppBDD;
 import com.apt.project.eshop.model.Product;
 
 import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -93,5 +94,21 @@ public class EShopSwingViewSteps {
 	@Then("The search text box is empty")
 	public void the_search_text_box_is_empty() {
 		window.textBox("searchTextBox").requireText("");
+	}
+	
+	@Given("The user select a product from the product list")
+	public void the_user_select_a_product_from_the_product_list() {
+		window.list("productList").selectItem(0);
+	}
+
+	@When("The user clicks the {string} button {int} times")
+	public void the_user_clicks_the_button_times(String buttonText, Integer nClicks) {
+		window.button(JButtonMatcher.withText(buttonText)).click();
+		window.button(JButtonMatcher.withText(buttonText)).click();
+	}
+
+	@Then("The cart list contains an element with the following values")
+	public void the_cart_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
+		throw new io.cucumber.java.PendingException();	
 	}
 }
