@@ -32,4 +32,8 @@ public class EShopController {
 	public void resetSearch() {
 		eShopView.clearSearch(productRepository.findAll());
 	}
+
+	public void newCartProduct(Product productToAdd) {
+		// da implementare
+	}
 }

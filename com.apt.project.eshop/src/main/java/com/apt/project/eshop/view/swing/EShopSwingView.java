@@ -29,6 +29,8 @@ import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -117,6 +119,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 		getBtnClear().setEnabled(false);
 		
 		JButton btnAddToCart = new JButton("Add To Cart");
+		btnAddToCart.addActionListener(
+			e -> eShopController.newCartProduct(productList.getSelectedValue())
+		);
 		btnAddToCart.setEnabled(false);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();

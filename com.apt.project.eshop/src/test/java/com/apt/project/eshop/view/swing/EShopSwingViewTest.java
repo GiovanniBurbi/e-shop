@@ -268,5 +268,20 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.panel("contentPane").click();
 		window.list("cartList").requireNoSelection();
 	}
+	
+	@Test @GUITest
+	public void testAddToCartButtonShouldDelegateToEShopControllerNewCartProduct() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Kindle", 200);
+		GuiActionRunner.execute(
+				() -> {
+					DefaultListModel<Product> productListModel = eShopSwingView.getProductListModel();
+					productListModel.addElement(product1);
+					productListModel.addElement(product2);
+				});
+		window.list("productList").selectItem(1);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		verify(eShopController).newCartProduct(product2);
+	}
 }
 
