@@ -1,6 +1,7 @@
 package com.apt.project.eshop.view.swing;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -16,13 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
-import javax.swing.ListSelectionModel;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -35,6 +39,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private transient EShopController eShopController;
 	private JLabel lblErrorLabel;
 	private JButton btnClear;
+	private JList<Product> cartList;
+	private DefaultListModel<Product> cartListModel;
 
 
 	public DefaultListModel<Product> getProductListModel() {
@@ -158,13 +164,21 @@ public class EShopSwingView extends JFrame implements EShopView{
 					.addContainerGap())
 		);
 		
-		JList cartList = new JList();
+		cartListModel = new DefaultListModel<>();
+		cartList = new JList<>(cartListModel);
+		cartList.setCellRenderer(new CartTextRenderer());
 		cartList.setName("cartList");
 		cartList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane_1.setViewportView(cartList);
 
 		productListModel = new DefaultListModel<>();
 		productList = new JList<>(getProductListModel());
+		productList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				btnAddToCart.setEnabled(productList.getSelectedIndex() != -1);
+			}
+		});
+		productList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
 		contentPane.setLayout(gl_contentPane);
@@ -199,5 +213,22 @@ public class EShopSwingView extends JFrame implements EShopView{
 		resetErrorLabel();
 		productListModel.clear();
 		showAllProducts(products);
+	}
+
+	@Override
+	public void addToCartView(Product product1) {
+		cartListModel.addElement(product1);
+	}
+	
+	class CartTextRenderer extends JLabel implements ListCellRenderer<Product>{
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		 public Component getListCellRendererComponent(JList<? extends Product> list, Product product, int index, boolean isSelected, boolean cellHasFocus) {
+			String nameProduct = product.toStringExtended();
+			setText(nameProduct);
+			return this;
+		}      
 	}
 }

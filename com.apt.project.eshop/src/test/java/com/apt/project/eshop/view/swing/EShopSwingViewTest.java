@@ -205,5 +205,28 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Clear")).click();
 		verify(eShopController).resetSearch();
 	}
+	
+	@Test @GUITest
+	public void testAddToCartButtonShouldBeEnabledOnlyWhenAProductInTheProductListIsSelected() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getProductListModel().addElement(new Product("1", "Laptop", 1300));
+		});
+		window.list("productList").selectItem(0);
+		window.button(JButtonMatcher.withText("Add To Cart")).requireEnabled();
+		window.list("productList").clearSelection();
+		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+	}
+	
+	@Test @GUITest
+	public void testAddToCartViewShouldShowAProductInTheCartList() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(
+			() -> {
+				eShopSwingView.addToCartView(product1);
+			});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product1.toStringExtended());
+	}
 }
 
