@@ -135,4 +135,30 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
 	}
+	
+	@Test @GUITest
+	public void testAddToCartButtonShouldShowTheProductSelectedInTheCart() {
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+		});
+		window.list("productList").selectItem(0);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		assertThat(window.list("cartList").contents()).containsExactly(new Product("1", "Laptop", 1300).toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testAddToCartButtonWhenTheProductSelectedIsAlreadyInTheCartShouldOnlyIncreaseTheFieldQuantityOfThatProductInTheCart() {
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
+			eShopController.newCartProduct(new Product("2", "Iphone", 1000));
+		});
+		window.list("productList").selectItem(0);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		assertThat(window.list("cartList").contents())
+			.containsExactly(
+					new Product("1", "Laptop", 1300, 2).toStringExtended(),
+					new Product("2", "Iphone", 1000).toStringExtended()
+		);
+	}
 }
