@@ -114,6 +114,15 @@ public class ProductMongoRepositoryIT {
 	}
 	
 	@Test
+	public void testAddToCartWhenTheUserAddTwoTimesTheSameProduct() {
+		Product product = new Product("1", "eBook", 300);
+		cartCollection.insertOne(product);
+		Product secondProduct = new Product("1", "eBook", 300);
+		productRepository.addToCart(secondProduct);
+		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300, 2));
+	}
+	
+	@Test
 	public void testAllCart() {
 	
 	}

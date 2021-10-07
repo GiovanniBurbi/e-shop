@@ -18,6 +18,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 
 public class ProductMongoRepository implements ProductRepository {
 
@@ -54,7 +55,11 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void addToCart(Product product) {
-		cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
+		Product existingCartProduct = cartCollection.find(Filters.eq("name", product.getName())).first();
+		if (existingCartProduct != null)
+			cartCollection.updateOne(Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
+		else 
+			cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
 	}
 
 	@Override
