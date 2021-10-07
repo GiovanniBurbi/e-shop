@@ -1,6 +1,7 @@
 package com.apt.project.eshop.controller;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
@@ -81,6 +82,16 @@ public class EShopControllerIT {
 	public void testResetSearch() {
 		eShopController.resetSearch();
 		verify(eShopView).clearSearch(catalog);
+	}
+	
+	@Test
+	public void testNewCartProduct() {
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		productRepository.addToCart(product2);
+		eShopController.newCartProduct(product);
+		assertThat(productRepository.allCart()).containsExactly(product2, product);
+		verify(eShopView).addToCartView(asList(product2, product));
 	}
 }
 
