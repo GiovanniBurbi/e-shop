@@ -34,6 +34,7 @@ public class EShopController {
 	}
 
 	public void newCartProduct(Product productToAdd) {
-		// da implementare
+		productRepository.addToCart(productToAdd);
+		eShopView.addToCartView(productRepository.allCart());
 	}
 }

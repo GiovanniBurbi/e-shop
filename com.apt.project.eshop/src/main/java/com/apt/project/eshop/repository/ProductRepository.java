@@ -11,4 +11,8 @@ public interface ProductRepository {
 	public List<Product> findByName(String nameSearch);
 
 	public void loadCatalog(List<Product> products);
+
+	public void addToCart(Product product);
+
+	public List<Product> allCart();
 }
