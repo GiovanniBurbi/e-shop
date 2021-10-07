@@ -23,11 +23,13 @@ public class ProductMongoRepository implements ProductRepository {
 
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
+	private MongoCollection<Product> cartCollection;
 
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection("cart", Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	@Override
@@ -52,8 +54,7 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void addToCart(Product product) {
-		// da implementare
-		
+		cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
 	}
 
 	@Override

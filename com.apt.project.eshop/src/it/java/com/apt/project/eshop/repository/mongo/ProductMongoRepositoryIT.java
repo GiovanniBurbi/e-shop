@@ -31,6 +31,7 @@ public class ProductMongoRepositoryIT {
 	private MongoClient client;
 	private ProductMongoRepository productRepository;
 	private MongoCollection<Product> productCollection;
+	private MongoCollection<Product> cartCollection;
 	
 	@Before
 	public void setup() {
@@ -41,6 +42,7 @@ public class ProductMongoRepositoryIT {
 		database.drop();
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		productCollection = database.getCollection(PRODUCTS_COLLECTION_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection("cart", Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	@After
 	public void tearDown() {
@@ -103,4 +105,17 @@ public class ProductMongoRepositoryIT {
 			new Product("3", "Lavatrice", 400)
 		);
 	}
+	
+	@Test
+	public void testAddToCart() {
+		Product product = new Product("1", "eBook", 300);
+		productRepository.addToCart(product);
+		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300));
+	}
+	
+	@Test
+	public void testAllCart() {
+	
+	}
+	
 }
