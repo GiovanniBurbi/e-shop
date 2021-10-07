@@ -123,8 +123,17 @@ public class ProductMongoRepositoryIT {
 	}
 	
 	@Test
-	public void testAllCart() {
+	public void testAllCartWhenCartCollectionIsEmpty() {
+		assertThat(productRepository.allCart()).isEmpty();
+	}
 	
+	@Test
+	public void testAllCartWhenDatabaseIsNotEmpty() {
+		Product product1 = new Product("1", "Laptop", 1300, 4);
+		Product product2 = new Product("2", "eBook", 300, 3);
+		cartCollection.insertOne(product1);
+		cartCollection.insertOne(product2);
+		assertThat(productRepository.allCart()).containsExactly(product1, product2);
 	}
 	
 }
