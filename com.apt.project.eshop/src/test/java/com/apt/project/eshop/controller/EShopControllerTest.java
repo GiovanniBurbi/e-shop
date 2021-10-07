@@ -77,4 +77,12 @@ public class EShopControllerTest {
 		eShopController.resetSearch();
 		then(eShopView).should().clearSearch(products);
 	}
+	
+	@Test
+	public void testNewCartProduct() {
+		Product product = new Product("1", "Laptop", 1300);
+		eShopController.newCartProduct(product);
+		then(productRepository).should().addToCart(product);
+		then(eShopView).should().addToCartView(asList(product));
+	}
 }

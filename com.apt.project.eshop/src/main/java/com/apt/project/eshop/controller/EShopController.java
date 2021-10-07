@@ -1,5 +1,7 @@
 package com.apt.project.eshop.controller;
 
+import static java.util.Arrays.asList;
+
 import java.util.List;
 
 import com.apt.project.eshop.model.Product;
@@ -34,6 +36,7 @@ public class EShopController {
 	}
 
 	public void newCartProduct(Product productToAdd) {
-		// da implementare
+		productRepository.addToCart(productToAdd);
+		eShopView.addToCartView(asList(productToAdd));
 	}
 }

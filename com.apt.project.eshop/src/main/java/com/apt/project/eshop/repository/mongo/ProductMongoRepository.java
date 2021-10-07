@@ -1,5 +1,6 @@
 package com.apt.project.eshop.repository.mongo;
 
+import static java.util.Arrays.asList;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -47,5 +48,17 @@ public class ProductMongoRepository implements ProductRepository {
 					.find(Filters.regex("name",Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE))).spliterator(), false)
 					.collect(Collectors.toList()
 		);
+	}
+
+	@Override
+	public void addToCart(Product product) {
+		// da implementare
+		
+	}
+
+	@Override
+	public List<Product> AllCart() {
+		// da implementare
+		return asList(new Product("1", "Laptop", 1300));
 	}
 }
