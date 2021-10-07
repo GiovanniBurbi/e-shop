@@ -96,8 +96,8 @@ public class EShopSwingViewSteps {
 		window.textBox("searchTextBox").requireText("");
 	}
 	
-	@Given("The user select a product from the product list")
-	public void the_user_select_a_product_from_the_product_list() {
+	@Given("The user select another product from the product list")
+	public void the_user_select_another_product_from_the_product_list() {
 		window.list("productList").selectItem(0);
 	}
 
@@ -114,5 +114,11 @@ public class EShopSwingViewSteps {
 		    		.anySatisfy(e -> assertThat(e)
 		    			.contains(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price")), Integer.parseInt(v.get("quantity"))).toStringExtended()))
 		);
+	}
+	
+	@Given("The cart contains a product")
+	public void the_cart_contains_a_product() {
+		window.list("productList").selectItem(4);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
 	}
 }
