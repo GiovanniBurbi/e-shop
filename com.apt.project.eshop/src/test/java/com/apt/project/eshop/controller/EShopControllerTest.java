@@ -81,8 +81,19 @@ public class EShopControllerTest {
 	@Test
 	public void testNewCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
+		given(productRepository.allCart()).willReturn(asList(product));
 		eShopController.newCartProduct(product);
 		then(productRepository).should().addToCart(product);
 		then(eShopView).should().addToCartView(asList(product));
+	}
+	
+	@Test
+	public void testNewCartProductWhenCartHasFewProductsAlready() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		given(productRepository.allCart()).willReturn(asList(product1, product2));
+		eShopController.newCartProduct(product2);
+		then(productRepository).should().addToCart(product2);
+		then(eShopView).should().addToCartView(asList(product1, product2));
 	}
 }

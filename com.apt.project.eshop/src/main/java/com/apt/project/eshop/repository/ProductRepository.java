@@ -14,5 +14,5 @@ public interface ProductRepository {
 
 	public void addToCart(Product product);
 
-	public List<Product> AllCart();
+	public List<Product> allCart();
 }
