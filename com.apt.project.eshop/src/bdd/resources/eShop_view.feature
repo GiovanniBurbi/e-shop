@@ -49,10 +49,12 @@ Feature: eShop View
   	And The search text box is empty
   	
   	Scenario: Add Product to Cart
-  	Given The user select a product from the product list
+  	Given The cart contains a product
+  	And The user select another product from the product list
   	When The user clicks the "Add To Cart" button 2 times
   	Then The cart list contains an element with the following values
       | id | name | price | quantity |
+      | "5" | "SmartTv UHD" | 400.0 | 1 |
       | "1" | "Laptop" | 1300.0 | 2 |
   	
   	
