@@ -31,6 +31,7 @@ public class ProductMongoRepositoryIT {
 	private MongoClient client;
 	private ProductMongoRepository productRepository;
 	private MongoCollection<Product> productCollection;
+	private MongoCollection<Product> cartCollection;
 	
 	@Before
 	public void setup() {
@@ -41,6 +42,7 @@ public class ProductMongoRepositoryIT {
 		database.drop();
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		productCollection = database.getCollection(PRODUCTS_COLLECTION_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection("cart", Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	@After
 	public void tearDown() {
@@ -103,4 +105,35 @@ public class ProductMongoRepositoryIT {
 			new Product("3", "Lavatrice", 400)
 		);
 	}
+	
+	@Test
+	public void testAddToCart() {
+		Product product = new Product("1", "eBook", 300);
+		productRepository.addToCart(product);
+		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300));
+	}
+	
+	@Test
+	public void testAddToCartWhenTheUserAddTwoTimesTheSameProduct() {
+		Product product = new Product("1", "eBook", 300);
+		cartCollection.insertOne(product);
+		Product secondProduct = new Product("1", "eBook", 300);
+		productRepository.addToCart(secondProduct);
+		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300, 2));
+	}
+	
+	@Test
+	public void testAllCartWhenCartCollectionIsEmpty() {
+		assertThat(productRepository.allCart()).isEmpty();
+	}
+	
+	@Test
+	public void testAllCartWhenDatabaseIsNotEmpty() {
+		Product product1 = new Product("1", "Laptop", 1300, 4);
+		Product product2 = new Product("2", "eBook", 300, 3);
+		cartCollection.insertOne(product1);
+		cartCollection.insertOne(product2);
+		assertThat(productRepository.allCart()).containsExactly(product1, product2);
+	}
+	
 }

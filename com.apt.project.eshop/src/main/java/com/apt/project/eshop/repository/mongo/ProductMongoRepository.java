@@ -1,6 +1,5 @@
 package com.apt.project.eshop.repository.mongo;
 
-import static java.util.Collections.emptyList;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -18,16 +17,19 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 
 public class ProductMongoRepository implements ProductRepository {
 
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
+	private MongoCollection<Product> cartCollection;
 
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection("cart", Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	@Override
@@ -52,13 +54,15 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void addToCart(Product product) {
-		// da implementare
-		
+		Product existingCartProduct = cartCollection.find(Filters.eq("name", product.getName())).first();
+		if (existingCartProduct != null)
+			cartCollection.updateOne(Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
+		else 
+			cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
 	}
 
 	@Override
 	public List<Product> allCart() {
-		// da implementare
-		return emptyList();
+		return StreamSupport.stream(cartCollection.find().spliterator(), false).collect(Collectors.toList());
 	}
 }
