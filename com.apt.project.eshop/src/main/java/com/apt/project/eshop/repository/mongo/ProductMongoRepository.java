@@ -1,5 +1,6 @@
 package com.apt.project.eshop.repository.mongo;
 
+import static java.util.Collections.emptyList;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -58,6 +59,6 @@ public class ProductMongoRepository implements ProductRepository {
 	@Override
 	public List<Product> allCart() {
 		// da implementare
-		return null;
+		return emptyList();
 	}
 }
