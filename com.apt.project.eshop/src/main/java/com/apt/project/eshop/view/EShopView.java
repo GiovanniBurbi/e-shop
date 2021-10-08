@@ -16,4 +16,6 @@ public interface EShopView {
 
 	void addToCartView(List<Product> products);
 
+	void removeFromCartView(Product product);
+
 }

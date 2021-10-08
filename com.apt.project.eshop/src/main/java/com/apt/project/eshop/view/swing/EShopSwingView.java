@@ -41,6 +41,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JButton btnClear;
 	private JList<Product> cartList;
 	private DefaultListModel<Product> cartListModel;
+	private JButton btnRemoveFromCart;
 
 
 	public DefaultListModel<Product> getCartListModel() {
@@ -123,6 +124,12 @@ public class EShopSwingView extends JFrame implements EShopView{
 		JScrollPane scrollPane_1 = new JScrollPane();
 		
 		JLabel lblCart = new JLabel("Cart");
+		
+		btnRemoveFromCart = new JButton("Remove From Cart");
+		btnRemoveFromCart.addActionListener(
+			e -> eShopController.removeCartProduct(cartList.getSelectedValue())
+		);
+		btnRemoveFromCart.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -141,8 +148,14 @@ public class EShopSwingView extends JFrame implements EShopView{
 									.addComponent(btnSearch)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)))
-							.addGap(67)
-							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(67)
+									.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE))
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnRemoveFromCart)
+									.addGap(87))))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(155)
 							.addComponent(btnAddToCart)))
@@ -170,17 +183,23 @@ public class EShopSwingView extends JFrame implements EShopView{
 								.addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnClear))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-							.addComponent(btnAddToCart)
-							.addGap(18)
-							.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
-						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE))
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnRemoveFromCart)))
+					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+					.addComponent(btnAddToCart)
+					.addGap(18)
+					.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
 		
 		cartListModel = new DefaultListModel<>();
 		cartList = new JList<>(getCartListModel());
+		cartList.addListSelectionListener(
+			e -> btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1)
+		);
 		cartList.setCellRenderer(new CartTextRenderer());
 		cartList.setName("cartList");
 		cartList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -232,6 +251,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void addToCartView(List<Product> products) {
 		getCartListModel().clear();
 		products.stream().forEach(getCartListModel()::addElement);
+	}
+	
+	@Override
+	public void removeFromCartView(Product product) {
+		cartListModel.removeElement(product);
 	}
 	
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product>{

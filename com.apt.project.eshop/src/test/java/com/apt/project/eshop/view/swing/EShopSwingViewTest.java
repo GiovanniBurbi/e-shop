@@ -61,6 +61,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
 		window.label(JLabelMatcher.withText("Cart"));
 		window.list("cartList");
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
 	
 	@Test @GUITest
@@ -267,6 +268,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("cartList").selectItem(0);
 		window.panel("contentPane").click();
 		window.list("cartList").requireNoSelection();
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
 	
 	@Test @GUITest
@@ -282,6 +284,48 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList").selectItem(1);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		verify(eShopController).newCartProduct(product2);
+	}
+	
+	@Test @GUITest
+	public void testRemoveFromCartButtonShouldBeEnabledOnlyWhenAProductInTheCartListIsSelected() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+		});
+		window.list("cartList").selectItem(0);
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireEnabled();
+		window.list("cartList").clearSelection();
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
+	}
+	
+	@Test @GUITest
+	public void testRemoveFromCartViewShouldRemoveTheSelectedProductFromTheCartList() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		GuiActionRunner.execute(
+			() -> {
+					DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
+					cartListModel.addElement(product1);
+					cartListModel.addElement(product2);
+					eShopSwingView.removeFromCartView(product1);
+		});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product2.toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testRemoveFromCartButtonShouldDelegateToShopControllerRemoveCartProduct() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Kindle", 200);
+		GuiActionRunner.execute(
+			() -> {
+					DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
+					cartListModel.addElement(product1);
+					cartListModel.addElement(product2);
+		});
+		window.list("cartList").selectItem(1);
+		window.button(JButtonMatcher.withText("Remove From Cart")).click();
+		verify(eShopController).removeCartProduct(product2);
 	}
 }
 
