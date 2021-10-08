@@ -27,10 +27,6 @@ import javax.swing.border.EmptyBorder;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -201,11 +197,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 		
 		cartListModel = new DefaultListModel<>();
 		cartList = new JList<>(getCartListModel());
-		cartList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1);
-			}
-		});
+		cartList.addListSelectionListener(
+			e -> btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1)
+		);
 		cartList.setCellRenderer(new CartTextRenderer());
 		cartList.setName("cartList");
 		cartList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
