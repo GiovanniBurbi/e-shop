@@ -88,6 +88,8 @@ public class EShopControllerTest {
 		InOrder inOrder = inOrder(productRepository, eShopView);
 		then(productRepository).should(inOrder).addToCart(product);
 		then(eShopView).should(inOrder).addToCartView(asList(product));
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		verifyNoMoreInteractions(ignoreStubs(eShopView));
 	}
 	
 	@Test
@@ -99,5 +101,7 @@ public class EShopControllerTest {
 		InOrder inOrder = inOrder(productRepository, eShopView);
 		then(productRepository).should(inOrder).addToCart(product2);
 		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		verifyNoMoreInteractions(ignoreStubs(eShopView));
 	}
 }
