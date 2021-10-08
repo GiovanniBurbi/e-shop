@@ -29,6 +29,8 @@ import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -128,6 +130,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 		JLabel lblCart = new JLabel("Cart");
 		
 		btnRemoveFromCart = new JButton("Remove From Cart");
+		btnRemoveFromCart.addActionListener(
+			e -> eShopController.removeCartProduct(cartList.getSelectedValue())
+		);
 		btnRemoveFromCart.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
