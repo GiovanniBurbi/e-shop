@@ -39,6 +39,7 @@ public class EShopController {
 	}
 
 	public void removeCartProduct(Product product) {
-		// da implementare
+		productRepository.removeFromCart(product);
+		eShopView.removeFromCartView(product);
 	}
 }

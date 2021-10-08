@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -89,7 +90,7 @@ public class EShopControllerTest {
 		then(productRepository).should(inOrder).addToCart(product);
 		then(eShopView).should(inOrder).addToCartView(asList(product));
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
-		verifyNoMoreInteractions(ignoreStubs(eShopView));
+		verifyNoMoreInteractions(eShopView);
 	}
 	
 	@Test
@@ -102,6 +103,18 @@ public class EShopControllerTest {
 		then(productRepository).should(inOrder).addToCart(product2);
 		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
-		verifyNoMoreInteractions(ignoreStubs(eShopView));
+		verifyNoMoreInteractions(eShopView);
+	}
+	
+	@Test
+	public void testRemoveCartProduct() {
+		Product product = new Product("1", "Laptop", 1300);
+		doNothing().when(productRepository).removeFromCart(product);
+		eShopController.removeCartProduct(product);
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).removeFromCart(product);
+		then(eShopView).should(inOrder).removeFromCartView(product);
+		verifyNoMoreInteractions(productRepository);
+		verifyNoMoreInteractions(eShopView);
 	}
 }
