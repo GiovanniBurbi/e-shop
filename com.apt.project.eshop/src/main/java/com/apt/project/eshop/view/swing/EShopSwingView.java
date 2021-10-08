@@ -254,6 +254,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 		products.stream().forEach(getCartListModel()::addElement);
 	}
 	
+	@Override
+	public void removeFromCartView(Product product) {
+		cartListModel.removeElement(product);
+	}
+	
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product>{
 
 		private static final long serialVersionUID = 1L;

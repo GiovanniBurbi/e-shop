@@ -296,5 +296,20 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("cartList").clearSelection();
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
+	
+	@Test @GUITest
+	public void testRemoveFromCartViewShouldRemoveTheSelectedProductFromTheCartList() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		GuiActionRunner.execute(
+			() -> {
+				DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
+				cartListModel.addElement(product1);
+				cartListModel.addElement(product2);
+				eShopSwingView.removeFromCartView(product1);
+			});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product2.toStringExtended());
+	}
 }
 
