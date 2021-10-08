@@ -68,6 +68,6 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void removeFromCart(Product product) {
-		// da implementare
+		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
 	}
 }
