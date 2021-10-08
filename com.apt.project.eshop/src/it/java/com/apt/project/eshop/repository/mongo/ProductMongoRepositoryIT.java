@@ -136,4 +136,14 @@ public class ProductMongoRepositoryIT {
 		assertThat(productRepository.allCart()).containsExactly(product1, product2);
 	}
 	
+	@Test
+	public void testRemoveFromCart() {
+		Product product = new Product("1", "Laptop", 1300, 4);
+		Product product2 = new Product("2", "eBook", 300, 3);
+		cartCollection.insertOne(product);
+		cartCollection.insertOne(product2);
+		productRepository.removeFromCart(product);
+		assertThat(cartCollection.find()).containsExactly(product2);
+	}
+	
 }

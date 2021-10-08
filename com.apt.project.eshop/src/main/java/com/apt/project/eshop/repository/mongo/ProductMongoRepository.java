@@ -65,4 +65,9 @@ public class ProductMongoRepository implements ProductRepository {
 	public List<Product> allCart() {
 		return StreamSupport.stream(cartCollection.find().spliterator(), false).collect(Collectors.toList());
 	}
+
+	@Override
+	public void removeFromCart(Product product) {
+		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
+	}
 }
