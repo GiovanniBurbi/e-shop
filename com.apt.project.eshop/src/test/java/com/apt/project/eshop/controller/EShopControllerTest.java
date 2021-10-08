@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -83,8 +85,9 @@ public class EShopControllerTest {
 		Product product = new Product("1", "Laptop", 1300);
 		given(productRepository.allCart()).willReturn(asList(product));
 		eShopController.newCartProduct(product);
-		then(productRepository).should().addToCart(product);
-		then(eShopView).should().addToCartView(asList(product));
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).addToCart(product);
+		then(eShopView).should(inOrder).addToCartView(asList(product));
 	}
 	
 	@Test
@@ -93,7 +96,8 @@ public class EShopControllerTest {
 		Product product2 = new Product("2", "Iphone", 1000);
 		given(productRepository.allCart()).willReturn(asList(product1, product2));
 		eShopController.newCartProduct(product2);
-		then(productRepository).should().addToCart(product2);
-		then(eShopView).should().addToCartView(asList(product1, product2));
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).addToCart(product2);
+		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
 	}
 }

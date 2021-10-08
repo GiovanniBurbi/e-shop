@@ -141,8 +141,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 									.addComponent(btnSearch)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)))
-							.addGap(40)
-							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE))
+							.addGap(67)
+							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(155)
 							.addComponent(btnAddToCart)))
@@ -150,9 +150,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(183)
 					.addComponent(lblProducts)
-					.addPreferredGap(ComponentPlacement.RELATED, 369, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 379, Short.MAX_VALUE)
 					.addComponent(lblCart)
-					.addGap(177))
+					.addGap(167))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -163,7 +163,6 @@ public class EShopSwingView extends JFrame implements EShopView{
 						.addComponent(lblCart))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(searchTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -175,7 +174,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
 							.addComponent(btnAddToCart)
 							.addGap(18)
-							.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		
