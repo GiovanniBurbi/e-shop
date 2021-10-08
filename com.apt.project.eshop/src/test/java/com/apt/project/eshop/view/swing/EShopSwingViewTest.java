@@ -304,11 +304,11 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		Product product2 = new Product("2", "Iphone", 1000);
 		GuiActionRunner.execute(
 			() -> {
-				DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
-				cartListModel.addElement(product1);
-				cartListModel.addElement(product2);
-				eShopSwingView.removeFromCartView(product1);
-			});
+					DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
+					cartListModel.addElement(product1);
+					cartListModel.addElement(product2);
+					eShopSwingView.removeFromCartView(product1);
+		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product2.toStringExtended());
 	}
@@ -318,11 +318,11 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Kindle", 200);
 		GuiActionRunner.execute(
-				() -> {
+			() -> {
 					DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
 					cartListModel.addElement(product1);
 					cartListModel.addElement(product2);
-				});
+		});
 		window.list("cartList").selectItem(1);
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
 		verify(eShopController).removeCartProduct(product2);
