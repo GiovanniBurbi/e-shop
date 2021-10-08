@@ -61,6 +61,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
 		window.label(JLabelMatcher.withText("Cart"));
 		window.list("cartList");
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
 	
 	@Test @GUITest
@@ -282,6 +283,18 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList").selectItem(1);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		verify(eShopController).newCartProduct(product2);
+	}
+	
+	@Test @GUITest
+	public void testRemoveFromCartButtonShouldBeEnabledOnlyWhenAProductInTheCartListIsSelected() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+		});
+		window.list("cartList").selectItem(0);
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireEnabled();
+		window.list("cartList").clearSelection();
+		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
 }
 
