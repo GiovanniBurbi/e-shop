@@ -198,7 +198,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 		cartListModel = new DefaultListModel<>();
 		cartList = new JList<>(getCartListModel());
 		cartList.addListSelectionListener(
-			e -> btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1)
+			e -> {
+				btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1);
+				productList.clearSelection();
+			}
 		);
 		cartList.setCellRenderer(new CartTextRenderer());
 		cartList.setName("cartList");
@@ -208,7 +211,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 		productListModel = new DefaultListModel<>();
 		productList = new JList<>(getProductListModel());
 		productList.addListSelectionListener(
-			e -> btnAddToCart.setEnabled(productList.getSelectedIndex() != -1)
+			e -> {
+				btnAddToCart.setEnabled(productList.getSelectedIndex() != -1);
+				cartList.clearSelection();
+			}
 		);
 		productList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		productList.setName("productList");
@@ -257,15 +263,26 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void removeFromCartView(Product product) {
 		cartListModel.removeElement(product);
 	}
-	
+		
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product>{
 
 		private static final long serialVersionUID = 1L;
 
+		public CartTextRenderer() {
+	         setOpaque(true);
+	     }
+		
 		@Override
 		 public Component getListCellRendererComponent(JList<? extends Product> list, Product product, int index, boolean isSelected, boolean cellHasFocus) {
 			String nameProduct = product.toStringExtended();
 			setText(nameProduct);
+			if (isSelected) {
+				setForeground(list.getSelectionForeground());
+			    setBackground(list.getSelectionBackground());
+			} else {
+			    setForeground(list.getForeground());
+			    setBackground(list.getBackground());
+			}		
 			return this;
 		}      
 	}

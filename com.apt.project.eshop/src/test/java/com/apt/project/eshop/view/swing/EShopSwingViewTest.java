@@ -327,5 +327,33 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
 		verify(eShopController).removeCartProduct(product2);
 	}
+	
+	@Test @GUITest
+	public void testTheUIWhenTheUserSelectSomethingFromTheProductListAndThenSomethingInTheCartListShoudDeselectTheElementFromTheProductList() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getProductListModel().addElement(product1);
+					eShopSwingView.getCartListModel().addElement(product2);
+		});
+		window.list("productList").selectItem(0);
+		window.list("cartList").selectItem(0);
+		window.list("productList").requireNoSelection();
+	}
+	
+	@Test @GUITest
+	public void testTheUIWhenTheUserSelectSomethingFromTheCartListAndThenSomethingInTheProductListShoudDeselectTheElementFromTheCartList() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getProductListModel().addElement(product1);
+					eShopSwingView.getCartListModel().addElement(product2);
+		});
+		window.list("cartList").selectItem(0);
+		window.list("productList").selectItem(0);
+		window.list("cartList").requireNoSelection();
+	}
 }
 
