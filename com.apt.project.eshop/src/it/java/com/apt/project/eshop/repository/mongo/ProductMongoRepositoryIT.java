@@ -128,7 +128,7 @@ public class ProductMongoRepositoryIT {
 	}
 	
 	@Test
-	public void testAllCartWhenDatabaseIsNotEmpty() {
+	public void testAllCartWhenCartCollectionIsNotEmpty() {
 		Product product1 = new Product("1", "Laptop", 1300, 4);
 		Product product2 = new Product("2", "eBook", 300, 3);
 		cartCollection.insertOne(product1);
@@ -144,6 +144,5 @@ public class ProductMongoRepositoryIT {
 		cartCollection.insertOne(product2);
 		productRepository.removeFromCart(product);
 		assertThat(cartCollection.find()).containsExactly(product2);
-	}
-	
+	}	
 }

@@ -93,5 +93,16 @@ public class EShopControllerIT {
 		assertThat(productRepository.allCart()).containsExactly(product2, product);
 		verify(eShopView).addToCartView(asList(product2, product));
 	}
+	
+	@Test
+	public void testRemoveCartProduct() {
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		productRepository.addToCart(product);
+		productRepository.addToCart(product2);
+		eShopController.removeCartProduct(product);
+		assertThat(productRepository.allCart()).containsExactly(product2);
+		verify(eShopView).removeFromCartView(product);
+	}
 }
 
