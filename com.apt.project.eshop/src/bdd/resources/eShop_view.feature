@@ -48,7 +48,7 @@ Feature: eShop View
   	  | "7" | "Playstation 5" | 500.0 |
   	And The search text box is empty
   	
-  	Scenario: Add Product to Cart
+  Scenario: Add Product to Cart
   	Given The cart contains a product
   	And The user select another product from the product list
   	When The user clicks the "Add To Cart" button 2 times
@@ -56,5 +56,11 @@ Feature: eShop View
       | id | name | price | quantity |
       | "5" | "SmartTv UHD" | 400.0 | 1 |
       | "1" | "Laptop" | 1300.0 | 2 |
+      
+	Scenario: Remove Product from Cart
+		Given The cart contains a product
+		When The user select that product in the cart
+		And The user clicks the "Remove From Cart" button
+		Then The cart list is empty
   	
   	

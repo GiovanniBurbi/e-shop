@@ -121,4 +121,14 @@ public class EShopSwingViewSteps {
 		window.list("productList").selectItem(4);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 	}
+	
+	@When("The user select that product in the cart")
+	public void the_user_select_that_product_in_the_cart() {
+		window.list("cartList").selectItem(0);
+	}
+
+	@Then("The cart list is empty")
+	public void the_cart_list_is_empty() {
+		assertThat(window.list("cartList").contents()).isEmpty();
+	}
 }
