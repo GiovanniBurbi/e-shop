@@ -161,4 +161,16 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 					new Product("2", "Iphone", 1000).toStringExtended()
 		);
 	}
+	
+	@Test @GUITest
+	public void testRemoveFromCartButtonShouldRemoveTheProductSelectedInTheCart() {
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
+			eShopController.newCartProduct(new Product("2", "Iphone", 1000));			
+		});
+		window.list("cartList").selectItem(0);
+		window.button(JButtonMatcher.withText("Remove From Cart")).click();
+		assertThat(window.list("cartList").contents()).containsExactly(new Product("2", "Iphone", 1000).toStringExtended());
+	}
 }
