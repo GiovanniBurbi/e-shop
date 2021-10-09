@@ -200,7 +200,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 		cartList.addListSelectionListener(
 			e -> {
 				btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1);
-				productList.clearSelection();
+				if (e.getValueIsAdjusting()) {
+					productList.clearSelection();
+				}
 			}
 		);
 		cartList.setCellRenderer(new CartTextRenderer());
@@ -213,8 +215,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 		productList.addListSelectionListener(
 			e -> {
 				btnAddToCart.setEnabled(productList.getSelectedIndex() != -1);
-				cartList.clearSelection();
-			}
+				if (e.getValueIsAdjusting()) {
+			        cartList.clearSelection();
+				}
+			}	
 		);
 		productList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		productList.setName("productList");

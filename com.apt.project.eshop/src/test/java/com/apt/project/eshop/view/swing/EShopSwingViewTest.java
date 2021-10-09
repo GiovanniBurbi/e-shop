@@ -340,6 +340,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList").selectItem(0);
 		window.list("cartList").selectItem(0);
 		window.list("productList").requireNoSelection();
+		window.list("cartList").requireSelection(0);
 	}
 	
 	@Test @GUITest
@@ -354,6 +355,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("cartList").selectItem(0);
 		window.list("productList").selectItem(0);
 		window.list("cartList").requireNoSelection();
+		window.list("productList").requireSelection(0);
 	}
 }
 
