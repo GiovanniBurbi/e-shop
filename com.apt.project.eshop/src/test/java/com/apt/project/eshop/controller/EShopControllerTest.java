@@ -82,31 +82,6 @@ public class EShopControllerTest {
 	}
 	
 	@Test
-	public void testNewCartProduct() {
-		Product product = new Product("1", "Laptop", 1300);
-		given(productRepository.allCart()).willReturn(asList(product));
-		eShopController.newCartProduct(product);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).addToCart(product);
-		then(eShopView).should(inOrder).addToCartView(asList(product));
-		verifyNoMoreInteractions(ignoreStubs(productRepository));
-		verifyNoMoreInteractions(eShopView);
-	}
-	
-	@Test
-	public void testNewCartProductWhenCartHasFewProductsAlready() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
-		given(productRepository.allCart()).willReturn(asList(product1, product2));
-		eShopController.newCartProduct(product2);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).addToCart(product2);
-		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
-		verifyNoMoreInteractions(ignoreStubs(productRepository));
-		verifyNoMoreInteractions(eShopView);
-	}
-	
-	@Test
 	public void testRemoveCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
 		doNothing().when(productRepository).removeFromCart(product);
@@ -116,5 +91,31 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).removeFromCartView(product);
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);
+	}
+	
+	@Test
+	public void testNewCartProductShouldUpdateTotalCostOfTheCartInTheView() {
+		Product product = new Product("1", "Laptop", 1300);
+		given(productRepository.allCart()).willReturn(asList(product));
+		eShopController.newCartProduct(product);
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).addToCart(product);
+		then(eShopView).should(inOrder).addToCartView(asList(product));
+		then(eShopView).should(inOrder).updateTotal(product.getPrice());
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		verifyNoMoreInteractions(ignoreStubs(eShopView));
+	}
+	
+	@Test
+	public void testNewCartProductWhenCartHasFewProductsAlreadyShouldUpdateTotalCostOfTheCartInTheView() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		given(productRepository.allCart()).willReturn(asList(product1, product2));
+		eShopController.newCartProduct(product2);
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).addToCart(product2);
+		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
+		then(eShopView).should(inOrder).updateTotal(product2.getPrice());
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
 	}
 }

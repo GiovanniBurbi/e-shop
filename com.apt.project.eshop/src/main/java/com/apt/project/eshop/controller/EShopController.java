@@ -36,6 +36,7 @@ public class EShopController {
 	public void newCartProduct(Product productToAdd) {
 		productRepository.addToCart(productToAdd);
 		eShopView.addToCartView(productRepository.allCart());
+		eShopView.updateTotal(productToAdd.getPrice());
 	}
 
 	public void removeCartProduct(Product product) {

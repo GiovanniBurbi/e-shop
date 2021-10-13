@@ -43,11 +43,11 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JList<Product> cartList;
 	private DefaultListModel<Product> cartListModel;
 	private JButton btnRemoveFromCart;
-	private JLabel totalCostlabel;
+	private JLabel totalCostLabel;
 
 
 	public JLabel getTotalCostlabel() {
-		return totalCostlabel;
+		return totalCostLabel;
 	}
 
 	public DefaultListModel<Product> getCartListModel() {
@@ -139,7 +139,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		
 		JLabel lblTotal = new JLabel("Total: ");
 		
-		totalCostlabel = new JLabel("0$");
+		totalCostLabel = new JLabel("0$");
 		getTotalCostlabel().setName("totalCostLabel");
 		getTotalCostlabel().setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -310,7 +310,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	public void updateTotal(double price) {
 		String actualTotalString = getTotalCostlabel().getText();
 		double actualTotal = Double.parseDouble(actualTotalString.substring(0, actualTotalString.lastIndexOf("$")));
-		totalCostlabel.setText(String.valueOf(actualTotal + price) + "$");
+		totalCostLabel.setText(String.valueOf(actualTotal + price) + "$");
 		
 	}
 }
