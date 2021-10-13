@@ -2,7 +2,8 @@ package com.apt.project.eshop.controller;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.inOrder;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.testcontainers.containers.GenericContainer;
@@ -66,13 +68,13 @@ public class EShopControllerIT {
 	@Test
 	public void testAllProducts() {
 		eShopController.allProducts();
-		verify(eShopView).showAllProducts(catalog);
+		then(eShopView).should().showAllProducts(catalog);
 	}
 	
 	@Test
 	public void testSearchProducts() {
 		eShopController.searchProducts("la");
-		verify(eShopView).showSearchedProducts(asList(
+		then(eShopView).should().showSearchedProducts(asList(
 				new Product("1", "Laptop", 1300),
 				new Product("4", "Lavatrice", 300)
 		));
@@ -81,7 +83,7 @@ public class EShopControllerIT {
 	@Test
 	public void testResetSearch() {
 		eShopController.resetSearch();
-		verify(eShopView).clearSearch(catalog);
+		then(eShopView).should().clearSearch(catalog);
 	}
 	
 	@Test
@@ -91,7 +93,9 @@ public class EShopControllerIT {
 		productRepository.addToCart(product2);
 		eShopController.newCartProduct(product);
 		assertThat(productRepository.allCart()).containsExactly(product2, product);
-		verify(eShopView).addToCartView(asList(product2, product));
+		InOrder inOrder = inOrder(eShopView);
+		then(eShopView).should(inOrder).addToCartView(asList(product2, product));
+		then(eShopView).should(inOrder).updateTotal(product.getPrice());
 	}
 	
 	@Test
@@ -102,7 +106,7 @@ public class EShopControllerIT {
 		productRepository.addToCart(product2);
 		eShopController.removeCartProduct(product);
 		assertThat(productRepository.allCart()).containsExactly(product2);
-		verify(eShopView).removeFromCartView(product);
+		then(eShopView).should().removeFromCartView(product);
 	}
 }
 
