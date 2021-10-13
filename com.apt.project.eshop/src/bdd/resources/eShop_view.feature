@@ -56,6 +56,7 @@ Feature: eShop View
       | id | name | price | quantity |
       | "5" | "SmartTv UHD" | 400.0 | 1 |
       | "1" | "Laptop" | 1300.0 | 2 |
+    And The view shows the updated total of "3000.0$"
       
 	Scenario: Remove Product from Cart
 		Given The cart contains a product

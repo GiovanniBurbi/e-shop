@@ -131,4 +131,9 @@ public class EShopSwingViewSteps {
 	public void the_cart_list_is_empty() {
 		assertThat(window.list("cartList").contents()).isEmpty();
 	}
+	
+	@Then("The view shows the updated total of {string}")
+	public void the_view_shows_the_updated_total_of(String cartTotalCost) {
+		window.label("totalCostLabel").requireText(cartTotalCost);
+	}
 }
