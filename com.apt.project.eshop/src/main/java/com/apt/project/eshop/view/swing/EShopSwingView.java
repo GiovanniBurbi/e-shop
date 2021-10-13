@@ -308,6 +308,9 @@ public class EShopSwingView extends JFrame implements EShopView{
 	
 	@Override
 	public void updateTotal(double price) {
-		totalCostlabel.setText(String.valueOf(price) + "$");
+		String actualTotalString = getTotalCostlabel().getText();
+		double actualTotal = Double.parseDouble(actualTotalString.substring(0, actualTotalString.lastIndexOf("$")));
+		totalCostlabel.setText(String.valueOf(actualTotal + price) + "$");
+		
 	}
 }
