@@ -46,6 +46,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JLabel totalCostlabel;
 
 
+	public JLabel getTotalCostlabel() {
+		return totalCostlabel;
+	}
+
 	public DefaultListModel<Product> getCartListModel() {
 		return cartListModel;
 	}
@@ -136,8 +140,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 		JLabel lblTotal = new JLabel("Total: ");
 		
 		totalCostlabel = new JLabel("0$");
-		totalCostlabel.setName("totalCostLabel");
-		totalCostlabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+		getTotalCostlabel().setName("totalCostLabel");
+		getTotalCostlabel().setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -166,7 +170,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGap(35)
 							.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(totalCostlabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(getTotalCostlabel(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(183)
@@ -198,7 +202,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnRemoveFromCart)
 								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-								.addComponent(totalCostlabel))))
+								.addComponent(getTotalCostlabel()))))
 					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
 					.addComponent(btnAddToCart)
 					.addGap(18)
@@ -300,5 +304,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 			}		
 			return this;
 		}      
+	}
+	
+	@Override
+	public void updateTotal(double price) {
+		totalCostlabel.setText(String.valueOf(price) + "$");
 	}
 }

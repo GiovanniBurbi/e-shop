@@ -360,6 +360,14 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList").requireSelection(0);
 	}
 	
-	
+	@Test @GUITest
+	public void testUpdateTotalShowTheTotalCostInTheLabel() {
+		Product product = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.updateTotal(product.getPrice());
+		});
+		window.label("totalCostLabel").requireText("1300.0$");		
+	}
 }
 
