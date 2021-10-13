@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
+import java.awt.Font;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -42,6 +43,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JList<Product> cartList;
 	private DefaultListModel<Product> cartListModel;
 	private JButton btnRemoveFromCart;
+	private JLabel totalCostlabel;
 
 
 	public DefaultListModel<Product> getCartListModel() {
@@ -132,6 +134,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 		btnRemoveFromCart.setEnabled(false);
 		
 		JLabel lblTotal = new JLabel("Total: ");
+		
+		totalCostlabel = new JLabel("0$");
+		totalCostlabel.setName("totalCostLabel");
+		totalCostlabel.setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -158,12 +164,14 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addGap(12)
 							.addComponent(btnRemoveFromCart)
 							.addGap(35)
-							.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(23, Short.MAX_VALUE))
+							.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(totalCostlabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(183)
 					.addComponent(lblProducts)
-					.addPreferredGap(ComponentPlacement.RELATED, 380, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 381, Short.MAX_VALUE)
 					.addComponent(lblCart)
 					.addGap(167))
 		);
@@ -189,7 +197,8 @@ public class EShopSwingView extends JFrame implements EShopView{
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnRemoveFromCart)
-								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))))
+								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+								.addComponent(totalCostlabel))))
 					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
 					.addComponent(btnAddToCart)
 					.addGap(18)
