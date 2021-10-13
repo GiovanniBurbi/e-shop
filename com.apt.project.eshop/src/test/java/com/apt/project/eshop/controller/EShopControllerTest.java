@@ -120,4 +120,18 @@ public class EShopControllerTest {
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);
 	}
+	
+	@Test
+	public void testRemoveCartProductWhenCartHasMoreThanOneItemOfTheSameProductShouldUpdateCartCostForAllItemsOfTheSameProduct() { 
+		Product product = new Product("1", "Laptop", 1300, 2);
+		doNothing().when(productRepository).removeFromCart(product);
+		eShopController.removeCartProduct(product);
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).removeFromCart(product);
+		then(eShopView).should(inOrder).removeFromCartView(product);
+		double amountToRemove = (product.getPrice()) * product.getQuantity();
+		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
+		verifyNoMoreInteractions(productRepository);
+		verifyNoMoreInteractions(eShopView);
+	}
 }
