@@ -42,7 +42,7 @@ public class EShopController {
 	public void removeCartProduct(Product product) {
 		productRepository.removeFromCart(product);
 		eShopView.removeFromCartView(product);
-		double amountToRemove = (product.getPrice()) * product.getQuantity();
+		double amountToRemove = product.getPrice() * product.getQuantity();
 		eShopView.updateTotal(-(amountToRemove));
 	}
 }

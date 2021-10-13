@@ -129,7 +129,7 @@ public class EShopControllerTest {
 		InOrder inOrder = inOrder(productRepository, eShopView);
 		then(productRepository).should(inOrder).removeFromCart(product);
 		then(eShopView).should(inOrder).removeFromCartView(product);
-		double amountToRemove = (product.getPrice()) * product.getQuantity();
+		double amountToRemove = product.getPrice() * product.getQuantity();
 		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);

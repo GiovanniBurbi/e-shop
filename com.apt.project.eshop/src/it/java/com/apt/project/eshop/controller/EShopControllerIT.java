@@ -108,7 +108,8 @@ public class EShopControllerIT {
 		assertThat(productRepository.allCart()).containsExactly(product2);
 		InOrder inOrder = inOrder(eShopView);
 		then(eShopView).should(inOrder).removeFromCartView(product);
-		then(eShopView).should(inOrder).updateTotal(-(product.getPrice()));
+		double amountToRemove = product.getPrice() * product.getQuantity();
+		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
 	}
 }
 
