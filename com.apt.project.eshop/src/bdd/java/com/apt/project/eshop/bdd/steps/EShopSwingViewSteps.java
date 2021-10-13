@@ -103,8 +103,10 @@ public class EShopSwingViewSteps {
 
 	@When("The user clicks the {string} button {int} times")
 	public void the_user_clicks_the_button_times(String buttonText, Integer nClicks) {
-		window.button(JButtonMatcher.withText(buttonText)).click();
-		window.button(JButtonMatcher.withText(buttonText)).click();
+		while(nClicks > 0) {
+			window.button(JButtonMatcher.withText(buttonText)).click();
+			nClicks -= 1;
+		}
 	}
 
 	@Then("The cart list contains an element with the following values")
@@ -135,5 +137,14 @@ public class EShopSwingViewSteps {
 	@Then("The view shows the updated total of {string}")
 	public void the_view_shows_the_updated_total_of(String cartTotalCost) {
 		window.label("totalCostLabel").requireText(cartTotalCost);
+	}
+	
+	@Given("The cart contains a {int} item of a product")
+	public void the_cart_contains_a_item_of_a_product(Integer quantity) {
+		window.list("productList").selectItem(4);
+		while (quantity > 0) {
+			window.button(JButtonMatcher.withText("Add To Cart")).click();
+			quantity -= 1;
+		}
 	}
 }
