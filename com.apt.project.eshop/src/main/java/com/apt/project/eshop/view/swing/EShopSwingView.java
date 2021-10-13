@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
+import java.awt.Font;
 
 public class EShopSwingView extends JFrame implements EShopView{
 
@@ -42,7 +43,12 @@ public class EShopSwingView extends JFrame implements EShopView{
 	private JList<Product> cartList;
 	private DefaultListModel<Product> cartListModel;
 	private JButton btnRemoveFromCart;
+	private JLabel totalCostLabel;
 
+
+	public JLabel getTotalCostlabel() {
+		return totalCostLabel;
+	}
 
 	public DefaultListModel<Product> getCartListModel() {
 		return cartListModel;
@@ -130,40 +136,46 @@ public class EShopSwingView extends JFrame implements EShopView{
 			e -> eShopController.removeCartProduct(cartList.getSelectedValue())
 		);
 		btnRemoveFromCart.setEnabled(false);
+		
+		JLabel lblTotal = new JLabel("Total: ");
+		
+		totalCostLabel = new JLabel("0$");
+		getTotalCostlabel().setName("totalCostLabel");
+		getTotalCostlabel().setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(37)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-										.addComponent(searchTextBox)
-										.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(126)
-									.addComponent(btnSearch)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)))
+							.addGap(37)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(67)
-									.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE))
-								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(btnRemoveFromCart)
-									.addGap(87))))
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+								.addComponent(searchTextBox)
+								.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(126)
+							.addComponent(btnSearch)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(155)
 							.addComponent(btnAddToCart)))
-					.addContainerGap(23, Short.MAX_VALUE))
+					.addGap(67)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(12)
+							.addComponent(btnRemoveFromCart)
+							.addGap(35)
+							.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(getTotalCostlabel(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(183)
 					.addComponent(lblProducts)
-					.addPreferredGap(ComponentPlacement.RELATED, 379, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 381, Short.MAX_VALUE)
 					.addComponent(lblCart)
 					.addGap(167))
 		);
@@ -187,7 +199,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnRemoveFromCart)))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnRemoveFromCart)
+								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+								.addComponent(getTotalCostlabel()))))
 					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
 					.addComponent(btnAddToCart)
 					.addGap(18)
@@ -289,5 +304,13 @@ public class EShopSwingView extends JFrame implements EShopView{
 			}		
 			return this;
 		}      
+	}
+	
+	@Override
+	public void updateTotal(double price) {
+		String actualTotalString = getTotalCostlabel().getText();
+		double actualTotal = Double.parseDouble(actualTotalString.substring(0, actualTotalString.lastIndexOf("$")));
+		totalCostLabel.setText(String.valueOf(actualTotal + price) + "$");
+		
 	}
 }

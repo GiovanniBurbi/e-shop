@@ -137,13 +137,14 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testAddToCartButtonShouldShowTheProductSelectedInTheCart() {
+	public void testAddToCartButtonShouldShowTheProductSelectedInTheCartAndTheTotalCostOfTheCart() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
 		});
 		window.list("productList").selectItem(0);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		assertThat(window.list("cartList").contents()).containsExactly(new Product("1", "Laptop", 1300).toStringExtended());
+		window.label("totalCostLabel").requireText("1300.0$");
 	}
 	
 	@Test @GUITest
@@ -160,6 +161,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 					new Product("1", "Laptop", 1300, 2).toStringExtended(),
 					new Product("2", "Iphone", 1000).toStringExtended()
 		);
+		window.label("totalCostLabel").requireText("3600.0$");
 	}
 	
 	@Test @GUITest

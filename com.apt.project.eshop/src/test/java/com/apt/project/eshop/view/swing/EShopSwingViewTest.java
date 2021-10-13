@@ -62,6 +62,8 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label(JLabelMatcher.withText("Cart"));
 		window.list("cartList");
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
+		window.label(JLabelMatcher.withText("Total: "));
+		window.label("totalCostLabel").requireText("0$");
 	}
 	
 	@Test @GUITest
@@ -356,6 +358,27 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("productList").selectItem(0);
 		window.list("cartList").requireNoSelection();
 		window.list("productList").requireSelection(0);
+	}
+	
+	@Test @GUITest
+	public void testUpdateTotalShowTheTotalCostInTheLabel() {
+		Product product = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.updateTotal(product.getPrice());
+		});
+		window.label("totalCostLabel").requireText("1300.0$");		
+	}
+	
+	@Test @GUITest
+	public void testUpdateTotalWhenThereWasAlreadyAProductInTheCartShowTheTotalCostOfTheCartInTheLabel() {
+		Product product = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getTotalCostlabel().setText("100$");
+					eShopSwingView.updateTotal(product.getPrice());
+		});
+		window.label("totalCostLabel").requireText("1400.0$");		
 	}
 }
 
