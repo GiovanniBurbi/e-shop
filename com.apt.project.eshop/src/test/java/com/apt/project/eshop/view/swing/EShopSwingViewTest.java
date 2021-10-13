@@ -63,7 +63,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("cartList");
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 		window.label(JLabelMatcher.withText("Total: "));
-		window.label("totalCostLabel").requireText("0$");
+		window.label("totalCostLabel").requireText("0.0$");
 	}
 	
 	@Test @GUITest

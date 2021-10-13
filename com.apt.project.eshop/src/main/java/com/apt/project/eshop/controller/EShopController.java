@@ -42,5 +42,6 @@ public class EShopController {
 	public void removeCartProduct(Product product) {
 		productRepository.removeFromCart(product);
 		eShopView.removeFromCartView(product);
+		eShopView.updateTotal(-(product.getPrice()));
 	}
 }

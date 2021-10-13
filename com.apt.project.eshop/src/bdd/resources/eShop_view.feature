@@ -63,6 +63,6 @@ Feature: eShop View
 		When The user select that product in the cart
 		And The user clicks the "Remove From Cart" button
 		Then The cart list is empty
-		And The view shows the updated total of "0$"
+		And The view shows the updated total of "0.0$"
   	
   	
