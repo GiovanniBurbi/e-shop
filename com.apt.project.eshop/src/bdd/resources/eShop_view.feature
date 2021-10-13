@@ -59,9 +59,10 @@ Feature: eShop View
     And The view shows the updated total of "3000.0$"
       
 	Scenario: Remove Product from Cart
-		Given The cart contains a product
+		Given The cart contains a 2 item of a product
 		When The user select that product in the cart
 		And The user clicks the "Remove From Cart" button
 		Then The cart list is empty
+		And The view shows the updated total of "0.0$"
   	
   	

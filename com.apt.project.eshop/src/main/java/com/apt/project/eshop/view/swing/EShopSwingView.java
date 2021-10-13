@@ -139,7 +139,7 @@ public class EShopSwingView extends JFrame implements EShopView{
 		
 		JLabel lblTotal = new JLabel("Total: ");
 		
-		totalCostLabel = new JLabel("0$");
+		totalCostLabel = new JLabel("0.0$");
 		getTotalCostlabel().setName("totalCostLabel");
 		getTotalCostlabel().setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);

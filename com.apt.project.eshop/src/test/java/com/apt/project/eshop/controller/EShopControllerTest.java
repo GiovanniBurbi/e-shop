@@ -82,18 +82,6 @@ public class EShopControllerTest {
 	}
 	
 	@Test
-	public void testRemoveCartProduct() {
-		Product product = new Product("1", "Laptop", 1300);
-		doNothing().when(productRepository).removeFromCart(product);
-		eShopController.removeCartProduct(product);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).removeFromCart(product);
-		then(eShopView).should(inOrder).removeFromCartView(product);
-		verifyNoMoreInteractions(productRepository);
-		verifyNoMoreInteractions(eShopView);
-	}
-	
-	@Test
 	public void testNewCartProductShouldUpdateTotalCostOfTheCartInTheView() {
 		Product product = new Product("1", "Laptop", 1300);
 		given(productRepository.allCart()).willReturn(asList(product));
@@ -103,7 +91,7 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).addToCartView(asList(product));
 		then(eShopView).should(inOrder).updateTotal(product.getPrice());
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
-		verifyNoMoreInteractions(ignoreStubs(eShopView));
+		verifyNoMoreInteractions(eShopView);
 	}
 	
 	@Test
@@ -117,5 +105,33 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
 		then(eShopView).should(inOrder).updateTotal(product2.getPrice());
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		verifyNoMoreInteractions(eShopView);
+	}
+	
+	@Test
+	public void testRemoveCartProduct() {
+		Product product = new Product("1", "Laptop", 1300);
+		doNothing().when(productRepository).removeFromCart(product);
+		eShopController.removeCartProduct(product);
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).removeFromCart(product);
+		then(eShopView).should(inOrder).removeFromCartView(product);
+		then(eShopView).should(inOrder).updateTotal(-(product.getPrice()));
+		verifyNoMoreInteractions(productRepository);
+		verifyNoMoreInteractions(eShopView);
+	}
+	
+	@Test
+	public void testRemoveCartProductWhenCartHasMoreThanOneItemOfTheSameProductShouldUpdateCartCostForAllItemsOfTheSameProduct() { 
+		Product product = new Product("1", "Laptop", 1300, 2);
+		doNothing().when(productRepository).removeFromCart(product);
+		eShopController.removeCartProduct(product);
+		InOrder inOrder = inOrder(productRepository, eShopView);
+		then(productRepository).should(inOrder).removeFromCart(product);
+		then(eShopView).should(inOrder).removeFromCartView(product);
+		double amountToRemove = product.getPrice() * product.getQuantity();
+		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
+		verifyNoMoreInteractions(productRepository);
+		verifyNoMoreInteractions(eShopView);
 	}
 }

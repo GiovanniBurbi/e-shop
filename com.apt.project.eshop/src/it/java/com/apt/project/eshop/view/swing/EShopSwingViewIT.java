@@ -174,5 +174,6 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.list("cartList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
 		assertThat(window.list("cartList").contents()).containsExactly(new Product("2", "Iphone", 1000).toStringExtended());
+		window.label("totalCostLabel").requireText("1000.0$");
 	}
 }
