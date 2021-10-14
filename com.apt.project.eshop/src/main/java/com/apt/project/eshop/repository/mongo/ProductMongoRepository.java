@@ -70,4 +70,10 @@ public class ProductMongoRepository implements ProductRepository {
 	public void removeFromCart(Product product) {
 		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
 	}
+
+	@Override
+	public void removeFromStorage(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
 }
