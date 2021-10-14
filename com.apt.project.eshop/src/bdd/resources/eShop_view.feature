@@ -64,5 +64,13 @@ Feature: eShop View
 		And The user clicks the "Remove From Cart" button
 		Then The cart list is empty
 		And The view shows the updated total of "0.0$"
+		
+	Scenario: Checkout successfully
+		Given The cart contains some products
+		When The user clicks the "Checkout" button
+		Then The cart list is empty
+		And The view shows the updated total of "0.0$"
+		And The view shows a message about the successful checkout
+		And The database storage of the purchased products is updated
   	
   	
