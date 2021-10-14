@@ -142,6 +142,10 @@ public class EShopSwingView extends JFrame implements EShopView{
 		totalCostLabel = new JLabel("0.0$");
 		getTotalCostlabel().setName("totalCostLabel");
 		getTotalCostlabel().setFont(new Font("Dialog", Font.PLAIN, 12));
+		
+		JButton btnCheckout = new JButton("Checkout");
+		btnCheckout.setName("");
+		btnCheckout.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -161,21 +165,27 @@ public class EShopSwingView extends JFrame implements EShopView{
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(155)
 							.addComponent(btnAddToCart)))
-					.addGap(67)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(12)
-							.addComponent(btnRemoveFromCart)
-							.addGap(35)
-							.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(getTotalCostlabel(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+							.addGap(67)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 341, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(12)
+									.addComponent(btnRemoveFromCart)
+									.addGap(35)
+									.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(totalCostLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
+							.addContainerGap())
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
+							.addComponent(btnCheckout, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE)
+							.addGap(47))))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(183)
 					.addComponent(lblProducts)
-					.addPreferredGap(ComponentPlacement.RELATED, 381, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 393, Short.MAX_VALUE)
 					.addComponent(lblCart)
 					.addGap(167))
 		);
@@ -195,18 +205,21 @@ public class EShopSwingView extends JFrame implements EShopView{
 								.addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnClear))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE))
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+							.addComponent(btnAddToCart)
+							.addGap(18)
+							.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnRemoveFromCart)
 								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-								.addComponent(getTotalCostlabel()))))
-					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-					.addComponent(btnAddToCart)
-					.addGap(18)
-					.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+								.addComponent(totalCostLabel))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnCheckout)
+							.addGap(99)))
 					.addContainerGap())
 		);
 		
