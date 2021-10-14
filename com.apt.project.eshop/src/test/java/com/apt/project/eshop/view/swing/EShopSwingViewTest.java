@@ -405,5 +405,16 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Checkout")).click();
 		verify(eShopController).checkoutCart();
 	}
+	
+	@Test @GUITest
+	public void testClearCartShouldRemoveAllElementsFromTheCartList() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+					eShopSwingView.clearCart();
+		});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).isEmpty();
+	}
 }
 
