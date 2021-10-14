@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
-import com.apt.project.eshop.repository.TransactionManager;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
 
@@ -52,5 +51,7 @@ public class EShopController {
 
 	public void checkoutCart() {
 		shopManager.checkout();
+		eShopView.clearCart();
+		eShopView.showSuccessLabel();
 	}
 }

@@ -143,4 +143,11 @@ public class EShopControllerTest {
 		eShopController.checkoutCart();
 		then(shopManager).should().checkout();
 	}
+	
+	@Test
+	public void testCheckoutCartShouldClearCartAndShowSuccessfullCheckout() {
+		eShopController.checkoutCart();
+		then(eShopView).should().clearCart();
+		then(eShopView).should().showSuccessLabel();
+	}
 }

@@ -20,4 +20,8 @@ public interface EShopView {
 
 	void updateTotal(double price);
 
+	void clearCart();
+
+	void showSuccessLabel();
+
 }

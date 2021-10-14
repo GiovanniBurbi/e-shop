@@ -330,4 +330,15 @@ public class EShopSwingView extends JFrame implements EShopView {
 		}
 	}
 
+	@Override
+	public void clearCart() {
+		//TODO implementa e testa: cartListModel.clear();
+	}
+
+	@Override
+	public void showSuccessLabel() {
+		// TODO implementa e testa: 
+		
+	}
+
 }
