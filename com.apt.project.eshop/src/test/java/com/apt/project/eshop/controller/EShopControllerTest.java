@@ -145,9 +145,12 @@ public class EShopControllerTest {
 	}
 	
 	@Test
-	public void testCheckoutCartShouldClearCartAndShowSuccessfullCheckout() {
+	public void testCheckoutCartShouldClearCartAndShowSuccessfullCheckoutAndResetTheTotalCost() {
 		eShopController.checkoutCart();
-		then(eShopView).should().clearCart();
-		then(eShopView).should().showSuccessLabel();
+		InOrder inOrder = inOrder(eShopView);
+		then(eShopView).should(inOrder).showSuccessLabel();
+		then(eShopView).should(inOrder).clearCart();
+		then(eShopView).should(inOrder).resetTotalCost();
+		
 	}
 }

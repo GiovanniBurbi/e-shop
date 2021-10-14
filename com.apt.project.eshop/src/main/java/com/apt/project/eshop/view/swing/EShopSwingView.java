@@ -1,10 +1,5 @@
 package com.apt.project.eshop.view.swing;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static java.util.Collections.emptyList;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -12,8 +7,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -28,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
@@ -36,7 +32,6 @@ import javax.swing.event.ListDataListener;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
-import javax.swing.SwingConstants;
 
 public class EShopSwingView extends JFrame implements EShopView {
 
@@ -318,7 +313,37 @@ public class EShopSwingView extends JFrame implements EShopView {
 		String actualTotalString = getTotalCostlabel().getText();
 		double actualTotal = Double.parseDouble(actualTotalString.substring(0, actualTotalString.lastIndexOf("$")));
 		totalCostLabel.setText(String.valueOf(actualTotal + price) + "$");
+	}
+	
+	@Override
+	public void clearCart() {
+		cartListModel.clear();
+	}
 
+	@Override
+	public void showSuccessLabel() {
+		String totalCost = getTotalCostlabel().getText();
+		DefaultListModel<Product> tmpCartList = getCartListModel();
+		List<Product> products = new ArrayList<>();
+		for(int i = 0; i < tmpCartList.getSize(); i++)
+			products.add(tmpCartList.get(i));
+		String productsPurchased = "";
+		for (Product product : products) {
+			productsPurchased += (
+				"-- " + product.getName() + ", quantity:" + product.getQuantity() + "<br/>"
+			);
+		}
+		getLblCheckoutLabel().setText(
+			"<html>Thank you for the purchase!!<br/>"
+			+ "<br/>You have spent " + totalCost 
+			+ " for the following products:<br/>"
+			+ productsPurchased + "</html>"
+		);
+	}
+	
+	@Override
+	public void resetTotalCost() {
+		getTotalCostlabel().setText("0.0$");
 	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {
@@ -359,31 +384,5 @@ public class EShopSwingView extends JFrame implements EShopView {
 			if (cartListModel.isEmpty())
 				getBtnCheckout().setEnabled(false);
 		}
-	}
-
-	@Override
-	public void clearCart() {
-		cartListModel.clear();
-	}
-
-	@Override
-	public void showSuccessLabel() {
-		String totalCost = getTotalCostlabel().getText();
-		DefaultListModel<Product> tmpCartList = getCartListModel();
-		List<Product> products = new ArrayList<>();
-		for(int i = 0; i < tmpCartList.getSize(); i++)
-			products.add(tmpCartList.get(i));
-		String productsPurchased = "";
-		for (Product product : products) {
-			productsPurchased += (
-				"-- " + product.getName() + ", quantity:" + product.getQuantity() + "<br/>"
-			);
-		}
-		getLblCheckoutLabel().setText(
-			"<html>Thank you for the purchase!!<br/>"
-			+ "<br/>You have spent " + totalCost 
-			+ " for the following products:<br/>"
-			+ productsPurchased + "</html>"
-		);
 	}
 }

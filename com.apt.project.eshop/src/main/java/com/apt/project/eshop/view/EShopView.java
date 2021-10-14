@@ -24,4 +24,6 @@ public interface EShopView {
 
 	void showSuccessLabel();
 
+	void resetTotalCost();
+
 }
