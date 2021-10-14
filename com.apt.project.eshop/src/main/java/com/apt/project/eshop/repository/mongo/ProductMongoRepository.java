@@ -10,6 +10,7 @@ import java.util.stream.StreamSupport;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
@@ -73,7 +74,9 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public void removeFromStorage(Product product) {
-		// TODO Auto-generated method stub
-		
+		Bson filterNameProduct = Filters.eq("name", product.getName());
+		int quantityToReduce = - product.getQuantity();
+		Bson update = Updates.inc("quantity", quantityToReduce);
+		productCollection.findOneAndUpdate(filterNameProduct,update);
 	}
 }

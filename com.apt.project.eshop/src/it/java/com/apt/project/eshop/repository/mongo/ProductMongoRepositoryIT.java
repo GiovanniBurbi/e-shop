@@ -7,6 +7,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -18,6 +19,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 public class ProductMongoRepositoryIT {
 	
@@ -144,5 +146,17 @@ public class ProductMongoRepositoryIT {
 		cartCollection.insertOne(product2);
 		productRepository.removeFromCart(product);
 		assertThat(cartCollection.find()).containsExactly(product2);
+	}
+	
+	@Test
+	public void testRemoveFromStorage() {
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		productCollection.insertOne(product);
+		productCollection.insertOne(product2);
+		productRepository.removeFromStorage(product);
+		assertThat(productCollection.find()).containsExactly(product, product2);
+		Bson filterNameProduct = Filters.eq("name", product.getName());
+		assertThat(productCollection.find(filterNameProduct).first().getQuantity()).isZero();
 	}	
 }
