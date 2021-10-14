@@ -16,6 +16,7 @@ import com.mongodb.MongoClient;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 
 public class DatabaseSteps {
 
@@ -46,5 +47,11 @@ public class DatabaseSteps {
 				.withCodecRegistry(pojoCodecRegistry)
 				.insertOne(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))))
 		);
-	}	
+	}
+	
+	@Then("The database storage of the purchased products is updated")
+	public void the_database_storage_of_the_purchased_products_is_updated() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
 }

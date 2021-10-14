@@ -148,4 +148,15 @@ public class EShopSwingViewSteps {
 		}
 	}
 
+	@Given("The cart contains some products")
+	public void the_cart_contains_some_products() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
+	@Then("The view shows a message about the successful checkout")
+	public void the_view_shows_a_message_about_the_successful_checkout() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
 }
