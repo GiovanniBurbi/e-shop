@@ -110,7 +110,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test
-	public void testSearchButtonShouldDelegateToShopControllerSearchedProducts() {
+	public void testSearchButtonShouldDelegateToEShopControllerSearchedProducts() {
 		window.textBox("searchTextBox").enterText("Laptop");
 		window.button(JButtonMatcher.withText("Search")).click();
 		verify(eShopController).searchProducts("Laptop");
@@ -201,7 +201,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testClearButtonShouldDelegateToShopControllerResetSearch() {
+	public void testClearButtonShouldDelegateToEShopControllerResetSearch() {
 		GuiActionRunner.execute(
 			() -> {
 					eShopSwingView.getBtnClear().setEnabled(true);
@@ -317,7 +317,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testRemoveFromCartButtonShouldDelegateToShopControllerRemoveCartProduct() {
+	public void testRemoveFromCartButtonShouldDelegateToEShopControllerRemoveCartProduct() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Kindle", 200);
 		GuiActionRunner.execute(
@@ -394,6 +394,16 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 					eShopSwingView.getCartListModel().removeAllElements();
 		});
 		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
+	}
+	
+	@Test
+	public void testCheckoutButtonShouldDelegateToEShopControllerCheckoutCart() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnCheckout().setEnabled(true);
+		});
+		window.button(JButtonMatcher.withText("Checkout")).click();
+		verify(eShopController).checkoutCart();
 	}
 }
 

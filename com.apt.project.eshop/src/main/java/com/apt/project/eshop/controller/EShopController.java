@@ -45,4 +45,9 @@ public class EShopController {
 		double amountToRemove = product.getPrice() * product.getQuantity();
 		eShopView.updateTotal(-(amountToRemove));
 	}
+
+	public void checkoutCart() {
+		// TODO Auto-generated method stub
+		
+	}
 }

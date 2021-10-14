@@ -46,8 +46,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 	private DefaultListModel<Product> cartListModel;
 	private JButton btnRemoveFromCart;
 	private JLabel totalCostLabel;
-
 	private JButton btnCheckout;
+
+	public JButton getBtnCheckout() {
+		return btnCheckout;
+	}
 
 	public JLabel getTotalCostlabel() {
 		return totalCostLabel;
@@ -139,8 +142,9 @@ public class EShopSwingView extends JFrame implements EShopView {
 		getTotalCostlabel().setFont(new Font("Dialog", Font.PLAIN, 12));
 
 		btnCheckout = new JButton("Checkout");
-		btnCheckout.setName("");
-		btnCheckout.setEnabled(false);
+		btnCheckout.addActionListener(e -> eShopController.checkoutCart());
+		getBtnCheckout().setName("");
+		getBtnCheckout().setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
 				.createSequentialGroup()
@@ -167,7 +171,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 												GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)))
 						.addContainerGap()).addGroup(
 								gl_contentPane.createSequentialGroup()
-										.addComponent(btnCheckout, GroupLayout.PREFERRED_SIZE, 134,
+										.addComponent(getBtnCheckout(), GroupLayout.PREFERRED_SIZE, 134,
 												GroupLayout.PREFERRED_SIZE)
 										.addGap(47))))
 				.addGroup(gl_contentPane.createSequentialGroup().addGap(183).addComponent(lblProducts)
@@ -205,7 +209,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 														.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32,
 																Short.MAX_VALUE)
 														.addComponent(totalCostLabel))
-												.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnCheckout)
+												.addPreferredGap(ComponentPlacement.RELATED).addComponent(getBtnCheckout())
 												.addGap(99)))
 								.addContainerGap()));
 
@@ -316,13 +320,13 @@ public class EShopSwingView extends JFrame implements EShopView {
 		}
 
 		public void intervalAdded(ListDataEvent e) {
-			if(!(btnCheckout.isEnabled()))
-				btnCheckout.setEnabled(true);
+			if(!(getBtnCheckout().isEnabled()))
+				getBtnCheckout().setEnabled(true);
 		}
 
 		public void intervalRemoved(ListDataEvent e) {
 			if (cartListModel.isEmpty())
-				btnCheckout.setEnabled(false);
+				getBtnCheckout().setEnabled(false);
 		}
 	}
 
