@@ -210,7 +210,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 								.addContainerGap()));
 
 		cartListModel = new DefaultListModel<>();
-		cartListModel.addListDataListener(new cartListDataListener());
+		cartListModel.addListDataListener(new CartListDataListener());
 		cartList = new JList<>(getCartListModel());
 		cartList.addListSelectionListener(e -> {
 			btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1);
@@ -310,7 +310,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		}
 	}
 
-	class cartListDataListener implements ListDataListener {
+	class CartListDataListener implements ListDataListener {
 		public void contentsChanged(ListDataEvent e) {	
 			// no needed for now
 		}
