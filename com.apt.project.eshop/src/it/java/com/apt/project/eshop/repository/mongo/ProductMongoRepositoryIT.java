@@ -149,7 +149,7 @@ public class ProductMongoRepositoryIT {
 	}
 	
 	@Test
-	public void testRemoveFromStorage() {
+	public void testRemoveFromStorageWhenThereIsEnoughStorage() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "eBook", 300);
 		productCollection.insertOne(product);

@@ -12,12 +12,14 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.testcontainers.containers.GenericContainer;
 
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
+import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.EShopView;
 import com.mongodb.MongoClient;
@@ -42,6 +44,8 @@ public class EShopControllerIT {
 	
 	private AutoCloseable closeable;
 	private List<Product> catalog;
+	@Mock
+	private ShopManager shopManager;
 
 	@Before
 	public void setup() {
@@ -56,7 +60,7 @@ public class EShopControllerIT {
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
-		eShopController = new EShopController(productRepository, eShopView);
+		eShopController = new EShopController(productRepository, eShopView, shopManager);
 	}
 
 	@After

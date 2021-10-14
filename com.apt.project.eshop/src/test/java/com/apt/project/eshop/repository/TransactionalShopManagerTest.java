@@ -20,7 +20,7 @@ import com.apt.project.eshop.model.Product;
 
 public class TransactionalShopManagerTest {
 	
-	private TransactionalShopManager shopManager;
+	private ShopManager shopManager;
 	
 	@Mock
 	private TransactionManager transactionManager;
@@ -37,7 +37,7 @@ public class TransactionalShopManagerTest {
 		given(transactionManager.doInTransaction(any()))
 			.willAnswer(
 				answer((TransactionCode<?> code) -> code.apply(productRepository)));
-		shopManager = new TransactionalShopManager(transactionManager);
+		shopManager = new ShopManager(transactionManager);
 	}
 
 	@After

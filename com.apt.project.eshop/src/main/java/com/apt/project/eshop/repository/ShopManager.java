@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.apt.project.eshop.model.Product;
 
-public class TransactionalShopManager {
+public class ShopManager {
 
 	private TransactionManager transactionManager;
 
-	public TransactionalShopManager(TransactionManager transactionManager) {
+	public ShopManager(TransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
 	

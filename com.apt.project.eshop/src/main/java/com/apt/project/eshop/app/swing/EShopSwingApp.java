@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
@@ -51,7 +52,9 @@ public class EShopSwingApp implements Callable<Void> {
 				MongoClient client = new MongoClient(new ServerAddress(mongoHost, mongoPort));
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
 				EShopSwingView eShopView = new EShopSwingView();
-				EShopController eShopController = new EShopController(productRepository, eShopView);
+				ShopManager shopManager = new ShopManager(null);
+				// TODO create an implementation for the trnasactionManager interface and pass it to the costructor of ShopManager
+				EShopController eShopController = new EShopController(productRepository, eShopView, shopManager);
 				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);
 				eShopController.allProducts();
