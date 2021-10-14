@@ -139,12 +139,13 @@ public class EShopSwingViewSteps {
 		window.label("totalCostLabel").requireText(cartTotalCost);
 	}
 	
-	@Given("The cart contains a {int} item of a product")
-	public void the_cart_contains_a_item_of_a_product(Integer quantity) {
+	@Given("The cart contains {int} item of a product")
+	public void the_cart_contains_item_of_a_product(Integer quantity) {
 		window.list("productList").selectItem(4);
 		while (quantity > 0) {
 			window.button(JButtonMatcher.withText("Add To Cart")).click();
 			quantity -= 1;
 		}
 	}
+
 }
