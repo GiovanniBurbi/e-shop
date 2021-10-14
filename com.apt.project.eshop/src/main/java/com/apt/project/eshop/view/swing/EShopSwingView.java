@@ -50,6 +50,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 	private JLabel totalCostLabel;
 	private JButton btnCheckout;
 	private JLabel lblCheckoutLabel;
+	private JButton btnAddToCart;
+
+	public JButton getBtnSearch() {
+		return btnSearch;
+	}
 
 	public JLabel getLblCheckoutLabel() {
 		return lblCheckoutLabel;
@@ -110,7 +115,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		searchTextBox.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				btnSearch.setEnabled(!searchTextBox.getText().trim().isEmpty());
+				getBtnSearch().setEnabled(!searchTextBox.getText().trim().isEmpty());
 				if (!getLblErrorLabel().getText().isEmpty())
 					resetErrorLabel();
 			}
@@ -119,20 +124,32 @@ public class EShopSwingView extends JFrame implements EShopView {
 		searchTextBox.setColumns(10);
 
 		btnSearch = new JButton("Search");
-		btnSearch.addActionListener(e -> eShopController.searchProducts(searchTextBox.getText()));
-		btnSearch.setEnabled(false);
+		getBtnSearch().addActionListener(e -> {
+			eShopController.searchProducts(searchTextBox.getText());
+			if (getLblCheckoutLabel().getText() != "")
+				resetCheckoutResultLabel();
+		});
+		getBtnSearch().setEnabled(false);
 
 		lblErrorLabel = new JLabel("");
 		getLblErrorLabel().setName("errorMessageLabel");
 		getLblErrorLabel().setForeground(Color.RED);
 
 		btnClear = new JButton("Clear");
-		btnClear.addActionListener(e -> eShopController.resetSearch());
+		btnClear.addActionListener(e -> {
+			eShopController.resetSearch();
+			if (getLblCheckoutLabel().getText() != "")
+				resetCheckoutResultLabel();
+		});
 		getBtnClear().setEnabled(false);
 
-		JButton btnAddToCart = new JButton("Add To Cart");
-		btnAddToCart.addActionListener(e -> eShopController.newCartProduct(productList.getSelectedValue()));
-		btnAddToCart.setEnabled(false);
+		btnAddToCart = new JButton("Add To Cart");
+		getBtnAddToCart().addActionListener(e -> {
+			eShopController.newCartProduct(productList.getSelectedValue());
+			if (getLblCheckoutLabel().getText() != "")
+				resetCheckoutResultLabel();
+		});
+		getBtnAddToCart().setEnabled(false);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 
@@ -170,7 +187,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(182)
-							.addComponent(btnSearch)
+							.addComponent(getBtnSearch())
 							.addGap(39)
 							.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -183,7 +200,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 									.addPreferredGap(ComponentPlacement.RELATED))))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(229)
-							.addComponent(btnAddToCart)))
+							.addComponent(getBtnAddToCart())))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -217,12 +234,12 @@ public class EShopSwingView extends JFrame implements EShopView {
 							.addComponent(searchTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+								.addComponent(getBtnSearch(), GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnClear))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 298, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnAddToCart)
+							.addComponent(getBtnAddToCart())
 							.addGap(66)
 							.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -256,7 +273,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		productListModel = new DefaultListModel<>();
 		productList = new JList<>(getProductListModel());
 		productList.addListSelectionListener(e -> {
-			btnAddToCart.setEnabled(productList.getSelectedIndex() != -1);
+			getBtnAddToCart().setEnabled(productList.getSelectedIndex() != -1);
 			if (e.getValueIsAdjusting()) {
 				cartList.clearSelection();
 			}
@@ -265,6 +282,10 @@ public class EShopSwingView extends JFrame implements EShopView {
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	private void resetCheckoutResultLabel() {
+		getLblCheckoutLabel().setText("");		
 	}
 
 	@Override
@@ -344,6 +365,10 @@ public class EShopSwingView extends JFrame implements EShopView {
 	@Override
 	public void resetTotalCost() {
 		getTotalCostlabel().setText("0.0$");
+	}
+
+	public JButton getBtnAddToCart() {
+		return btnAddToCart;
 	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {

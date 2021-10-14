@@ -250,7 +250,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testClickInTheContentPaneShouldDeselectElementInTheProductList() {
+	public void testClickInTheContentPaneShouldDeselectElementInTheProductListAndClearTheCheckoutResultLabel() {
 		Product product = new Product("1", "Laptop", 1300, 1);
 		GuiActionRunner.execute(
 			() -> {
@@ -260,6 +260,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.panel("contentPane").click();
 		window.list("productList").requireNoSelection();
 		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+		window.label("checkoutResultLabel").requireText("");
 	}
 	
 	@Test @GUITest
@@ -437,5 +438,40 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		);
 	}
 	
+	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksAddToCartButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnAddToCart().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksSearchButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnSearch().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Search")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksClearButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnClear().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Clear")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
 }
 

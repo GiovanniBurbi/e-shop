@@ -1,11 +1,14 @@
 package com.apt.project.eshop.app.swing;
 
+import static java.util.Arrays.asList;
+
 import java.awt.EventQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.TransactionalShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
@@ -52,6 +55,21 @@ public class EShopSwingApp implements Callable<Void> {
 			try {
 				MongoClient client = new MongoClient(new ServerAddress(mongoHost, mongoPort));
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
+				if(true)
+					productRepository.loadCatalog(asList(
+							new Product("1", "Laptop", 1300.0),
+							new Product("2", "Laptop MSI", 1200),
+							new Product("3", "Iphone", 1000),
+							new Product("4", "MacBook", 1400),
+							new Product("5", "Aspirapolvere", 150),
+							new Product("6", "Phon", 50),
+							new Product("7", "Lavatrice", 1000),
+							new Product("8", "Cuffie", 200),
+							new Product("9", "Frigorifero", 850),
+							new Product("10", "Freezer", 250),
+							new Product("11", "Televisione", 550),
+							new Product("12", "SmartTV UHD", 3000)
+							));
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, collectionName);
 				ShopManager shopManager = new ShopManager(transactionManager);
