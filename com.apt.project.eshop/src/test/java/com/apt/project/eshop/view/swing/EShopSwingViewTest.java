@@ -381,5 +381,19 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		});
 		window.label("totalCostLabel").requireText("1400.0$");		
 	}
+	
+	@Test @GUITest
+	public void testCheckoutButtonShouldBeEnabledOnlyWhenAtLeastOneProductIsInsideTheCartList() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+		});
+		window.button(JButtonMatcher.withText("Checkout")).requireEnabled();
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().removeAllElements();
+		});
+		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
+	}
 }
 
