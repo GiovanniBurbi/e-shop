@@ -65,6 +65,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label(JLabelMatcher.withText("Total: "));
 		window.label("totalCostLabel").requireText("0.0$");
 		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
+		window.label("checkoutResultLabel").requireText("");
 	}
 	
 	@Test @GUITest
@@ -416,5 +417,25 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).isEmpty();
 	}
+	
+	@Test @GUITest
+	public void testshowSuccessLabelShouldShowAMessageForTheSuccessfulCheckout() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 2));
+					eShopSwingView.getTotalCostlabel().setText("1900$");
+					eShopSwingView.showSuccessLabel();
+			}
+		);
+		window.label("checkoutResultLabel")
+			.requireText(
+				"<html>Thank you for the purchase!!<br/>"
+				+ "<br/>You have spent 1900$ for the following products:<br/>"
+				+ "-- Laptop, quantity:1<br/>"
+				+ "-- eBook, quantity:2<br/></html>"		
+		);
+	}
+	
 }
 
