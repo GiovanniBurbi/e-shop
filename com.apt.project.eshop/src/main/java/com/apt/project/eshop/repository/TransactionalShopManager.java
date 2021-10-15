@@ -9,6 +9,7 @@ import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 
+// Transactional Mongo Shop Manager
 public class TransactionalShopManager implements TransactionManager {
 
 	MongoClient client;

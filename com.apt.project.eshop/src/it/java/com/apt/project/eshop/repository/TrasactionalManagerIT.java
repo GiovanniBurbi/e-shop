@@ -63,6 +63,7 @@ public class TrasactionalManagerIT {
 		productRepository.addToCart(product2);
 		productRepository.addToCart(product2);
 		shopManager.checkout();
+		assertThat(productRepository.allCart()).isEmpty();
 		Product product1RepositoryQuery = productRepository.findByName("Laptop").get(0);
 		assertThat(product1RepositoryQuery.getQuantity()).isEqualTo(1);
 		Product product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
