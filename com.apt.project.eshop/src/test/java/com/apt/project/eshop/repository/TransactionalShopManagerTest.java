@@ -1,13 +1,11 @@
 package com.apt.project.eshop.repository;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 import org.junit.After;
 import org.junit.Before;

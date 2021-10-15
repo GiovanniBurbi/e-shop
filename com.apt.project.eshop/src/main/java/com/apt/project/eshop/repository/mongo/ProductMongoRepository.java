@@ -22,6 +22,7 @@ import com.mongodb.client.model.Updates;
 
 public class ProductMongoRepository implements ProductRepository {
 
+	private static final String CART_NAME = "cart";
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
 	private MongoCollection<Product> cartCollection;
@@ -30,7 +31,7 @@ public class ProductMongoRepository implements ProductRepository {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-		cartCollection = database.getCollection("cart", Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection(CART_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	@Override
