@@ -37,7 +37,7 @@ public class TransactionalShopManager implements TransactionManager {
 		// close the transaction
         session.close();
         Logger.getLogger(getClass().getName())
-		.log(Level.INFO, "####################################\n");
+		.log(Level.INFO, "Successful transaction\n");
 
 		return null;
 	}
