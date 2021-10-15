@@ -134,6 +134,8 @@
             <excludes>
               <exclude>**/model/*.*</exclude>
               <exclude>**/EShopSwingApp.*</exclude>
+              <!-- exclude inner class in EShopSwingView -->
+              <exclude>**/EShopSwingView$CartListDataListener.*</exclude>
             </excludes>
           </configuration>
           <executions>

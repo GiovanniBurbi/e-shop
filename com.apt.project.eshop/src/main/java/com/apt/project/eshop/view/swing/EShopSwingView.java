@@ -7,10 +7,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -400,14 +396,8 @@ public class EShopSwingView extends JFrame implements EShopView {
 		}
 	}
 	
-	// Annotation needed to exclude from jacoco analysis a method of a class that
-	// implements a java swing interface not needed for the application 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public @interface ExcludeFromJacocoGeneratedReport {}
-
 	class CartListDataListener implements ListDataListener {
-		@ExcludeFromJacocoGeneratedReport
+		
 		public void contentsChanged(ListDataEvent e) {	
 			// no needed for now
 		}
