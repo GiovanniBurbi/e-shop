@@ -425,14 +425,14 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 			() -> {
 					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
 					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 2));
-					eShopSwingView.getTotalCostlabel().setText("1900$");
+					eShopSwingView.getTotalCostlabel().setText("1900.0$");
 					eShopSwingView.showSuccessLabel();
 			}
 		);
 		window.label("checkoutResultLabel")
 			.requireText(
 				"<html>Thank you for the purchase!!<br/>"
-				+ "<br/>You have spent 1900$ for the following products:<br/>"
+				+ "<br/>You have spent 1900.0$ for the following products:<br/>"
 				+ "-- Laptop, quantity:1<br/>"
 				+ "-- eBook, quantity:2<br/></html>"		
 		);

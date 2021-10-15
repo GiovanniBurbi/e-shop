@@ -1,5 +1,6 @@
 package com.apt.project.eshop.bdd.steps;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -45,13 +46,23 @@ public class DatabaseSteps {
 			v -> mongoClient.getDatabase(DB_NAME)
 				.getCollection(COLLECTION_NAME, Product.class)
 				.withCodecRegistry(pojoCodecRegistry)
-				.insertOne(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))))
+				.insertOne(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price")), Integer.parseInt(v.get("quantity"))))
 		);
 	}
 	
 	@Then("The database storage of the purchased products is updated")
 	public void the_database_storage_of_the_purchased_products_is_updated() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	   assertThat(mongoClient.getDatabase(DB_NAME)
+			   .getCollection(COLLECTION_NAME, Product.class)
+			   .withCodecRegistry(pojoCodecRegistry)
+			   .find()).containsExactly(
+						new Product("1", "Laptop", 1300, 1),
+						new Product("2", "Iphone", 1000, 0),
+						new Product("3", "Laptop MSI", 1250.0, 1),
+						new Product("4", "Macbook", 1400.0, 1),
+						new Product("5", "SmartTv UHD", 400.0, 1),
+						new Product("6", "Dyson phon", 350, 1),
+						new Product("7", "Playstation 5", 500, 1)
+		);
 	}
 }
