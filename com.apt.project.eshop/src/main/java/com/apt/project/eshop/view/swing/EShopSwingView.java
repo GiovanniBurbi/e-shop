@@ -126,7 +126,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		btnSearch = new JButton("Search");
 		getBtnSearch().addActionListener(e -> {
 			eShopController.searchProducts(searchTextBox.getText());
-			if (getLblCheckoutLabel().getText() != "")
+			if (!getLblCheckoutLabel().getText().isEmpty())
 				resetCheckoutResultLabel();
 		});
 		getBtnSearch().setEnabled(false);
@@ -138,7 +138,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(e -> {
 			eShopController.resetSearch();
-			if (getLblCheckoutLabel().getText() != "")
+			if (!getLblCheckoutLabel().getText().isEmpty())
 				resetCheckoutResultLabel();
 		});
 		getBtnClear().setEnabled(false);
@@ -146,7 +146,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		btnAddToCart = new JButton("Add To Cart");
 		getBtnAddToCart().addActionListener(e -> {
 			eShopController.newCartProduct(productList.getSelectedValue());
-			if (getLblCheckoutLabel().getText() != "")
+			if (!getLblCheckoutLabel().getText().isEmpty())
 				resetCheckoutResultLabel();
 		});
 		getBtnAddToCart().setEnabled(false);
@@ -348,12 +348,13 @@ public class EShopSwingView extends JFrame implements EShopView {
 		List<Product> products = new ArrayList<>();
 		for(int i = 0; i < tmpCartList.getSize(); i++)
 			products.add(tmpCartList.get(i));
-		String productsPurchased = "";
+		StringBuilder productsPurchasedBuilder = new StringBuilder();
 		for (Product product : products) {
-			productsPurchased += (
+			productsPurchasedBuilder.append(
 				"-- " + product.getName() + ", quantity:" + product.getQuantity() + "<br/>"
 			);
 		}
+		String productsPurchased = productsPurchasedBuilder.toString();
 		getLblCheckoutLabel().setText(
 			"<html>Thank you for the purchase!!<br/>"
 			+ "<br/>You have spent " + totalCost 

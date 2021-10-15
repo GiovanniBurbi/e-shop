@@ -16,34 +16,29 @@ public class TransactionalShopManager implements TransactionManager {
 	private String databaseName;
 	private String collectionName;
 	
-	public TransactionalShopManager(MongoClient client, String databaseName, String CollectionName) {
+	public TransactionalShopManager(MongoClient client, String databaseName, String collectionName) {
 		this.client = client;
 		this.databaseName = databaseName;
-		this.collectionName = CollectionName;
+		this.collectionName = collectionName;
 		}
 	
 	@Override
 	public <T> T doInTransaction(TransactionCode<T> code) {
 		ClientSession session = client.startSession();
 		// create a transaction
-		try {
-			session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
-			// create a repository instance in the transaction
-			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, collectionName);
-			// call a lambda passing the repository instance
-			code.apply(productRepository);
+		session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
+		// create a repository instance in the transaction
+		ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, collectionName);
+		// call a lambda passing the repository instance
+		code.apply(productRepository);
 			
-			session.commitTransaction();
-		} catch (Exception e) {
-			Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception", e);
-			// if something goes wrong the roll-back
-			session.abortTransaction();
-			System.out.println("####### ROLLBACK TRANSACTION #######");
-		} finally {
-			// close the transaction
-	        session.close();
-	        System.out.println("####################################\n");
-	    }
+		session.commitTransaction();
+
+		// close the transaction
+        session.close();
+        Logger.getLogger(getClass().getName())
+		.log(Level.INFO, "####################################\n");
+
 		return null;
 	}
 
