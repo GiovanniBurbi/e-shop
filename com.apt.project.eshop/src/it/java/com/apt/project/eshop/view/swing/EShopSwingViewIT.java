@@ -185,4 +185,22 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(window.list("cartList").contents()).containsExactly(new Product("2", "Iphone", 1000).toStringExtended());
 		window.label("totalCostLabel").requireText("1000.0$");
 	}
+	
+	@Test @GUITest
+	public void testCheckoutButtonWhenCheckoutSuccessfullShouldClearCartAndResetTotalCostLabelAndShowSuccessCheckoutLabel() {
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
+			eShopController.newCartProduct(new Product("2", "Iphone", 1000));	
+		});
+		window.button(JButtonMatcher.withText("Checkout")).click();
+		assertThat(window.list("cartList").contents()).isEmpty();
+		window.label("totalCostLabel").requireText("0.0$");
+		window.label("checkoutResultLabel").requireText(
+			"<html>Thank you for the purchase!!<br/>"
+			+ "<br/>You have spent 2300.0$ for the following products:<br/>"
+			+ "-- Laptop, quantity:1<br/>"
+			+ "-- Iphone, quantity:1<br/></html>"
+		);
+	}
 }
