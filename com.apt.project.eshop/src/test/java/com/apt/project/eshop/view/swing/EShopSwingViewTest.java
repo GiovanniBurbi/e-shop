@@ -65,6 +65,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label(JLabelMatcher.withText("Total: "));
 		window.label("totalCostLabel").requireText("0.0$");
 		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
+		window.label("checkoutResultLabel").requireText("");
 	}
 	
 	@Test @GUITest
@@ -110,7 +111,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test
-	public void testSearchButtonShouldDelegateToShopControllerSearchedProducts() {
+	public void testSearchButtonShouldDelegateToEShopControllerSearchedProducts() {
 		window.textBox("searchTextBox").enterText("Laptop");
 		window.button(JButtonMatcher.withText("Search")).click();
 		verify(eShopController).searchProducts("Laptop");
@@ -201,7 +202,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testClearButtonShouldDelegateToShopControllerResetSearch() {
+	public void testClearButtonShouldDelegateToEShopControllerResetSearch() {
 		GuiActionRunner.execute(
 			() -> {
 					eShopSwingView.getBtnClear().setEnabled(true);
@@ -249,7 +250,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testClickInTheContentPaneShouldDeselectElementInTheProductList() {
+	public void testClickInTheContentPaneShouldDeselectElementInTheProductListAndClearTheCheckoutResultLabel() {
 		Product product = new Product("1", "Laptop", 1300, 1);
 		GuiActionRunner.execute(
 			() -> {
@@ -259,6 +260,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.panel("contentPane").click();
 		window.list("productList").requireNoSelection();
 		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
+		window.label("checkoutResultLabel").requireText("");
 	}
 	
 	@Test @GUITest
@@ -317,7 +319,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testRemoveFromCartButtonShouldDelegateToShopControllerRemoveCartProduct() {
+	public void testRemoveFromCartButtonShouldDelegateToEShopControllerRemoveCartProduct() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Kindle", 200);
 		GuiActionRunner.execute(
@@ -394,6 +396,82 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 					eShopSwingView.getCartListModel().removeAllElements();
 		});
 		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
+	}
+	
+	@Test
+	public void testCheckoutButtonShouldDelegateToEShopControllerCheckoutCart() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnCheckout().setEnabled(true);
+		});
+		window.button(JButtonMatcher.withText("Checkout")).click();
+		verify(eShopController).checkoutCart();
+	}
+	
+	@Test @GUITest
+	public void testClearCartShouldRemoveAllElementsFromTheCartList() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+					eShopSwingView.clearCart();
+		});
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).isEmpty();
+	}
+	
+	@Test @GUITest
+	public void testshowSuccessLabelShouldShowAMessageForTheSuccessfulCheckout() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 2));
+					eShopSwingView.getTotalCostlabel().setText("1900.0$");
+					eShopSwingView.showSuccessLabel();
+			}
+		);
+		window.label("checkoutResultLabel")
+			.requireText(
+				"<html>Thank you for the purchase!!<br/>"
+				+ "<br/>You have spent 1900.0$ for the following products:<br/>"
+				+ "-- Laptop, quantity:1<br/>"
+				+ "-- eBook, quantity:2<br/></html>"		
+		);
+	}
+	
+	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksAddToCartButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnAddToCart().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksSearchButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnSearch().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Search")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksClearButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnClear().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Clear")).click();
+		window.label("checkoutResultLabel").requireText("");
 	}
 }
 

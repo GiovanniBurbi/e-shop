@@ -10,6 +10,7 @@ import java.util.stream.StreamSupport;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
@@ -21,6 +22,7 @@ import com.mongodb.client.model.Updates;
 
 public class ProductMongoRepository implements ProductRepository {
 
+	private static final String CART_NAME = "cart";
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
 	private MongoCollection<Product> cartCollection;
@@ -29,7 +31,7 @@ public class ProductMongoRepository implements ProductRepository {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-		cartCollection = database.getCollection("cart", Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection(CART_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	@Override
@@ -69,5 +71,13 @@ public class ProductMongoRepository implements ProductRepository {
 	@Override
 	public void removeFromCart(Product product) {
 		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
+	}
+
+	@Override
+	public void removeFromStorage(Product product) {
+		Bson filterNameProduct = Filters.eq("name", product.getName());
+		int quantityToReduce = - product.getQuantity();
+		Bson update = Updates.inc("quantity", quantityToReduce);
+		productCollection.findOneAndUpdate(filterNameProduct,update);
 	}
 }

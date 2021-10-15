@@ -150,13 +150,20 @@ public class EShopSwingViewSteps {
 
 	@Given("The cart contains some products")
 	public void the_cart_contains_some_products() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		window.list("productList").selectItem(0);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.list("productList").selectItem(1);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
 	}
 
 	@Then("The view shows a message about the successful checkout")
 	public void the_view_shows_a_message_about_the_successful_checkout() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		window.label("checkoutResultLabel").requireText(
+			"<html>Thank you for the purchase!!<br/>"
+			+ "<br/>You have spent 3300.0$ for the following products:<br/>"
+			+ "-- Laptop, quantity:1<br/>"
+			+ "-- Iphone, quantity:2<br/></html>"
+		);
 	}
 }

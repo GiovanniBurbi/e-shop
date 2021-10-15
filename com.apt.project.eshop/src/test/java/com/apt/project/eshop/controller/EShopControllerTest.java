@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
+import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
 
 
@@ -33,6 +34,8 @@ public class EShopControllerTest {
 	@InjectMocks
 	private EShopController eShopController;
 	private AutoCloseable closeable;
+	@Mock
+	private ShopManager shopManager;
 
 	@Before
 	public void setup() {
@@ -133,5 +136,21 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);
+	}
+	
+	@Test
+	public void testCheckoutCartShouldDelegateToShopManager() {
+		eShopController.checkoutCart();
+		then(shopManager).should().checkout();
+	}
+	
+	@Test
+	public void testCheckoutCartShouldClearCartAndShowSuccessfullCheckoutAndResetTheTotalCost() {
+		eShopController.checkoutCart();
+		InOrder inOrder = inOrder(eShopView);
+		then(eShopView).should(inOrder).showSuccessLabel();
+		then(eShopView).should(inOrder).clearCart();
+		then(eShopView).should(inOrder).resetTotalCost();
+		
 	}
 }

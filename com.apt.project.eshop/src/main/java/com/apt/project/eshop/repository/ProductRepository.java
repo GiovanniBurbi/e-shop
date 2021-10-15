@@ -17,4 +17,6 @@ public interface ProductRepository {
 	public List<Product> allCart();
 
 	public void removeFromCart(Product product);
+
+	public void removeFromStorage(Product product);
 }
