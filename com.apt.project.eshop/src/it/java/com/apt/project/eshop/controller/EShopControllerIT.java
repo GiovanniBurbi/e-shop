@@ -37,7 +37,9 @@ public class EShopControllerIT {
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
-	public static final GenericContainer mongo = new GenericContainer("mongo:4.4.3").withExposedPorts(27017);
+    public static GenericContainer mongo = new GenericContainer("mongo:4.4.3")
+            .withExposedPorts(27017)
+            .withCommand("--replSet rs0");
 	
 	private MongoClient client;
 	
@@ -55,6 +57,17 @@ public class EShopControllerIT {
 
 	@Before
 	public void setup() {
+		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		// configure replica set in MongoDB with TestContainers
+		try {
+			mongo.execInContainer("/bin/bash", "-c",
+					"mongo --eval 'printjson(rs.initiate())' " + "--quiet");
+			mongo.execInContainer("/bin/bash", "-c",
+					"until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1;"
+							+ "do sleep 1;done");
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to initiate rs.", e);
+		}
 		closeable = MockitoAnnotations.openMocks(this);
 		catalog = asList(
 				new Product("1", "Laptop", 1300),
@@ -66,7 +79,6 @@ public class EShopControllerIT {
 		.willAnswer(
 			answer((TransactionCode<?> code) -> code.apply(productRepository)));
 		shopManager = new ShopManager(transactionManager);
-		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
