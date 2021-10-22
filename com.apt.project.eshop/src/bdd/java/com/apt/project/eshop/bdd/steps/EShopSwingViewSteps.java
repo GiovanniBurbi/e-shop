@@ -166,4 +166,23 @@ public class EShopSwingViewSteps {
 			+ "-- Iphone, quantity:2<br/></html>"
 		);
 	}
+	
+	@Given("The cart contains some products of which one has quaantity greater than the stock")
+	public void the_cart_contains_some_products_of_which_one_has_quaantity_greater_than_the_stock() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
+	@Then("The cart contents are not changed")
+	public void the_cart_contents_are_not_changed() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
+	@Then("The view shows a message about the outcome of the checkout")
+	public void the_view_shows_a_message_about_the_outcome_of_the_checkout() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
 }
