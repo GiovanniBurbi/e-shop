@@ -22,8 +22,7 @@ public class ShopManager {
 						//TODO sistema meglio
 						productRepository.removeFromStorage(product);
 					} catch (RepositoryException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						// TODO aggiungi logica
 					}
 				}
 				return null;
