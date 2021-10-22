@@ -19,10 +19,24 @@ import picocli.CommandLine.Option;
 
 
 /**
- *  Start MongoDB with Docker with
+ *  Start MongoDB with replica set using Docker with
  *
  * <pre>
- * docker run -p 27017:27017 --rm mongo:4.4.3
+ * 
+ * sudo docker run --name mongoRs -p 27017:27017 --rm mongo:4.4.3 --replSet rs0
+ * 
+ * 
+ * +++ Open a new terminal and run +++
+ * 
+ * sudo docker exec -it mongo1 mongo
+ * 
+ * +++ finally +++
+ * rs.initiate()
+ * 
+ * +++ To verify all is working you can run +++
+ * rs.conf()
+ * rs.status()
+ * 
  * </pre>
  * 
  * Launch the application.

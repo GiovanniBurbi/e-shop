@@ -288,10 +288,13 @@
         <configuration>
           <images>
             <image>
-              <name>mongo:4.4.3</name>
+              <external>
+                <type>compose</type>
+                <basedir>${project.basedir}</basedir>
+              </external>
               <run>
-                <ports>
-                  <port>mongo.mapped.port:27017</port>
+				<ports>
+          	      <port>mongo.mapped.port:27017</port>
                 </ports>
               </run>
             </image>
