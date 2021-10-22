@@ -65,4 +65,10 @@ public class DatabaseSteps {
 						new Product("7", "Playstation 5", 500, 1)
 		);
 	}
+	
+	@Then("The database storage of the products has not changed")
+	public void the_database_storage_of_the_products_has_not_changed() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
 }
