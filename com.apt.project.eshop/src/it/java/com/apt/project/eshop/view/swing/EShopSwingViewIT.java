@@ -11,6 +11,7 @@ import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,9 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
-	public static final GenericContainer mongo = new GenericContainer("mongo:4.4.3").withExposedPorts(27017);
+    public static GenericContainer mongo = new GenericContainer("mongo:4.4.3")
+            .withExposedPorts(27017)
+            .withCommand("--replSet rs0");
 	
 	private MongoClient client;
 	private ProductMongoRepository productRepository;
@@ -45,7 +48,20 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private ShopManager shopManager;
 	
 	private AutoCloseable closeable;
-
+	
+	@BeforeClass
+	public static void MongoConfiguration() {
+		// configure replica set in MongoDB with TestContainers
+		try {
+			mongo.execInContainer("/bin/bash", "-c",
+					"mongo --eval 'printjson(rs.initiate())' " + "--quiet");
+			mongo.execInContainer("/bin/bash", "-c",
+					"until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1;"
+							+ "do sleep 1;done");
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to initiate rs.", e);
+		}
+	}
 
 	@Override
 	protected void onSetUp() throws Exception {

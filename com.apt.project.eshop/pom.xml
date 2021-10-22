@@ -51,7 +51,8 @@
     
     <sonar.coverage.exclusions>
       **/model/*.*,
-      **/EShopSwingApp.*
+      **/EShopSwingApp.*,
+      **/RepositoryException.*
     </sonar.coverage.exclusions>
     
     <sonar.junit.reportPaths>
@@ -136,6 +137,7 @@
               <exclude>**/EShopSwingApp.*</exclude>
               <!-- exclude inner class in EShopSwingView -->
               <exclude>**/EShopSwingView$CartListDataListener.*</exclude>
+              <exclude>**/RepositoryException.*</exclude>
             </excludes>
           </configuration>
           <executions>
@@ -159,6 +161,7 @@
               <param>com.apt.project.eshop.model.*</param>
 			  <param>com.apt.project.eshop.view.swing.*</param>
 			  <param>com.apt.project.eshop.repository.TransactionalShopManager</param>
+              <param>com.apt.project.eshop.repository.RepositoryException</param>
             </excludedClasses>
             <excludedTestClasses>
               <param>com.apt.project.eshop.view.swing.*</param>

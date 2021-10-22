@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
@@ -15,6 +16,7 @@ import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.ClientSession;
 
 public class TrasactionalManagerIT {
 
@@ -23,8 +25,9 @@ public class TrasactionalManagerIT {
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
-	public static final GenericContainer mongo = new GenericContainer("mongo:4.4.3").withExposedPorts(27017);
-
+    public static GenericContainer mongo = new GenericContainer("mongo:4.4.3")
+            .withExposedPorts(27017)
+            .withCommand("--replSet rs0");
 	private MongoClient client;
 
 	private ShopManager shopManager;
@@ -33,17 +36,31 @@ public class TrasactionalManagerIT {
 
 	private ProductRepository productRepository;
 	private List<Product> catalog;
+	
+	@BeforeClass
+	public static void mongoConfiguration() {
+		// configure replica set in MongoDB with TestContainers
+		try {
+			mongo.execInContainer("/bin/bash", "-c", "mongo --eval 'printjson(rs.initiate())' " + "--quiet");
+			mongo.execInContainer("/bin/bash", "-c",
+					"until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1;"
+							+ "do sleep 1;done");
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to initiate rs.", e);
+		}
+	}
 
 	@Before
 	public void setup() {
+		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		ClientSession session = client.startSession();
 		catalog = asList(
 				new Product("1", "Laptop", 1300, 2),
 				new Product("2", "Iphone", 1000, 2),
 				new Product("3", "Cuffie", 300, 2),
 				new Product("4", "Lavatrice", 300, 2)
 		);
-		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
-		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);

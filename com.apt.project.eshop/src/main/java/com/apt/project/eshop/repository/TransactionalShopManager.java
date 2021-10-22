@@ -28,7 +28,7 @@ public class TransactionalShopManager implements TransactionManager {
 		// create a transaction
 		session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
 		// create a repository instance in the transaction
-		ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, collectionName);
+		ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, collectionName, session);
 		// call a lambda passing the repository instance
 		code.apply(productRepository);
 			

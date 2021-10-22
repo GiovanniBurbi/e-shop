@@ -18,7 +18,12 @@ public class ShopManager {
 				List<Product> products = productRepository.allCart();
 				for (Product product : products) {
 					productRepository.removeFromCart(product);
-					productRepository.removeFromStorage(product);
+					try {
+						//TODO sistema meglio
+						productRepository.removeFromStorage(product);
+					} catch (RepositoryException e) {
+						// TODO aggiungi logica
+					}
 				}
 				return null;
 			}		
