@@ -1,6 +1,7 @@
 package com.apt.project.eshop.repository;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -50,9 +51,17 @@ public class TransactionalShopManagerTest {
 		given(productRepository.allCart()).willReturn(asList(product1, product2));
 		shopManager.checkout();
 		then(productRepository).should().removeFromCart(product1);
-		then(productRepository).should().removeFromStorage(product1);
+		try {
+			then(productRepository).should().removeFromStorage(product1);
+		} catch (RepositoryException e) {
+			fail("Should not throw an exception in this test case!");
+		}
 		then(productRepository).should().removeFromCart(product2);
-		then(productRepository).should().removeFromStorage(product2);
+		try {
+			then(productRepository).should().removeFromStorage(product2);
+		} catch (RepositoryException e) {
+			fail("Should not throw an exception in this test case!");
+		}
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 

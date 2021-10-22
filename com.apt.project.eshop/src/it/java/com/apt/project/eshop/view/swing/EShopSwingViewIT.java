@@ -11,6 +11,7 @@ import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +48,9 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private ShopManager shopManager;
 	
 	private AutoCloseable closeable;
-
-	@Override
-	protected void onSetUp() throws Exception {
-		closeable = MockitoAnnotations.openMocks(this);
-		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+	
+	@BeforeClass
+	public static void MongoConfiguration() {
 		// configure replica set in MongoDB with TestContainers
 		try {
 			mongo.execInContainer("/bin/bash", "-c",
@@ -62,6 +61,12 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		} catch (Exception e) {
 			throw new IllegalStateException("Failed to initiate rs.", e);
 		}
+	}
+
+	@Override
+	protected void onSetUp() throws Exception {
+		closeable = MockitoAnnotations.openMocks(this);
+		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		catalog = asList(
 				new Product("1", "Laptop", 1300),
 				new Product("2", "Iphone", 1000),

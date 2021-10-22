@@ -14,7 +14,9 @@ import org.bson.conversions.Bson;
 
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ProductRepository;
+import com.apt.project.eshop.repository.RepositoryException;
 import com.mongodb.MongoClient;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -26,8 +28,17 @@ public class ProductMongoRepository implements ProductRepository {
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
 	private MongoCollection<Product> cartCollection;
+	private ClientSession session;
 
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName) {
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		database = client.getDatabase(databaseName);
+		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection(CART_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
+	}
+	
+	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName, ClientSession session) {
+		this.session = session;
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
@@ -74,10 +85,14 @@ public class ProductMongoRepository implements ProductRepository {
 	}
 
 	@Override
-	public void removeFromStorage(Product product) {
+	public void removeFromStorage(Product product) throws RepositoryException {
 		Bson filterNameProduct = Filters.eq("name", product.getName());
-		int quantityToReduce = - product.getQuantity();
-		Bson update = Updates.inc("quantity", quantityToReduce);
-		productCollection.findOneAndUpdate(filterNameProduct,update);
+		int quantityToReduce = product.getQuantity();
+		Product productInStorage = productCollection.find(filterNameProduct).first();
+		int quantityInStorage = productInStorage.getQuantity();
+		if (quantityInStorage < quantityToReduce)
+			throw new RepositoryException("Insufficient stock", productInStorage);
+		Bson update = Updates.inc("quantity", - quantityToReduce);
+		productCollection.findOneAndUpdate(session, filterNameProduct,update);
 	}
 }
