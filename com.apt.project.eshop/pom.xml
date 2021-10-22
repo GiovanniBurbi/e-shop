@@ -52,6 +52,7 @@
     <sonar.coverage.exclusions>
       **/model/*.*,
       **/EShopSwingApp.*
+      **/RepositoryException.*
     </sonar.coverage.exclusions>
     
     <sonar.junit.reportPaths>
