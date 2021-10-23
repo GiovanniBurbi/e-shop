@@ -58,4 +58,8 @@ public class EShopController {
 		eShopView.clearCart();
 		eShopView.resetTotalCost();
 	}
+	
+	public void checkoutFailure(Product productWanted) {
+		eShopView.showFailureLabel(productWanted);
+	}
 }
