@@ -8,7 +8,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -32,6 +36,7 @@ import javax.swing.event.ListDataListener;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
+import com.mongodb.client.model.Filters;
 
 public class EShopSwingView extends JFrame implements EShopView {
 
@@ -344,16 +349,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 	@Override
 	public void showSuccessLabel() {
 		String totalCost = getTotalCostlabel().getText();
-		DefaultListModel<Product> tmpCartList = getCartListModel();
-		List<Product> products = new ArrayList<>();
-		for(int i = 0; i < tmpCartList.getSize(); i++)
-			products.add(tmpCartList.get(i));
+		List<Product> products = Collections.list(getCartListModel().elements());
 		StringBuilder productsPurchasedBuilder = new StringBuilder();
-		for (Product product : products) {
-			productsPurchasedBuilder.append(
-				"-- " + product.getName() + ", quantity:" + product.getQuantity() + "<br/>"
-			);
-		}
+		products.forEach(p -> productsPurchasedBuilder.append(
+				"-- " + p.getName() + ", quantity:" + p.getQuantity() + "<br/>"
+		 ));
 		String productsPurchased = productsPurchasedBuilder.toString();
 		getLblCheckoutLabel().setText(
 			"<html>Thank you for the purchase!!<br/>"
