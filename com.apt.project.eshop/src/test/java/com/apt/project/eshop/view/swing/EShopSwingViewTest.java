@@ -483,7 +483,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 			() -> {
 					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
 					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 5));
-					eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 5), 2);
+					eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 2));
 			}
 		);
 		window.label("checkoutResultLabel")
