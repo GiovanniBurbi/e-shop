@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
@@ -25,20 +26,29 @@ public class TransactionalShopManager implements TransactionManager {
 	@Override
 	public <T> T doInTransaction(TransactionCode<T> code) {
 		ClientSession session = client.startSession();
-		// create a transaction
-		session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
-		// create a repository instance in the transaction
-		ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, collectionName, session);
-		// call a lambda passing the repository instance
-		code.apply(productRepository);
+		try {
+			// create a transaction
+			session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
+			// create a repository instance in the transaction
+			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, collectionName, session);
+			// call a lambda passing the repository instance
+			code.apply(productRepository);
+				
+			session.commitTransaction();
+			Logger.getLogger(getClass().getName())
+				.log(Level.INFO, "Successful transaction\n");
 			
-		session.commitTransaction();
-
-		// close the transaction
-        session.close();
-        Logger.getLogger(getClass().getName())
-		.log(Level.INFO, "Successful transaction\n");
-
+		} catch (MongoException e) {
+			session.abortTransaction();
+			Logger.getLogger(getClass().getName())
+				.log(Level.INFO, "ROLLBACK TRANSACTION\n");
+			
+		} finally {
+			// close the transaction
+	        session.close();
+	        Logger.getLogger(getClass().getName())
+			.log(Level.INFO, "Transaction ended\n");
+	    }
 		return null;
 	}
 
