@@ -7,12 +7,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -36,7 +32,6 @@ import javax.swing.event.ListDataListener;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
-import com.mongodb.client.model.Filters;
 
 public class EShopSwingView extends JFrame implements EShopView {
 
@@ -56,7 +51,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 	private JButton btnCheckout;
 	private JLabel lblCheckoutLabel;
 	private JButton btnAddToCart;
-
+	
+	public JButton getBtnAddToCart() {
+		return btnAddToCart;
+	}
+	
 	public JButton getBtnSearch() {
 		return btnSearch;
 	}
@@ -348,6 +347,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 
 	@Override
 	public void showSuccessLabel() {
+		getLblCheckoutLabel().setForeground(Color.BLACK);
 		String totalCost = getTotalCostlabel().getText();
 		List<Product> products = Collections.list(getCartListModel().elements());
 		StringBuilder productsPurchasedBuilder = new StringBuilder();
@@ -368,8 +368,15 @@ public class EShopSwingView extends JFrame implements EShopView {
 		getTotalCostlabel().setText("0.0$");
 	}
 
-	public JButton getBtnAddToCart() {
-		return btnAddToCart;
+	@Override
+	public void showFailureLabel(Product productWanted, int stock) {
+		getLblCheckoutLabel().setForeground(Color.RED);
+		getLblCheckoutLabel().setText(
+			"<html>Error!<br/>"
+			+ "<br/>Not enough stock for the following products:<br/>"
+			+ "-- " + productWanted.getName() + ", required:" + productWanted.getQuantity() +", stock:" + stock +"<br/>"
+			+ "<br/>Remove some products and try again</html>"
+		);	
 	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {
