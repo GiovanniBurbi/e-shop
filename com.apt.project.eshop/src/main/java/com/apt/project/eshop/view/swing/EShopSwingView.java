@@ -52,6 +52,10 @@ public class EShopSwingView extends JFrame implements EShopView {
 	private JLabel lblCheckoutLabel;
 	private JButton btnAddToCart;
 	
+	public JButton getBtnRemoveFromCart() {
+		return btnRemoveFromCart;
+	}
+
 	public JButton getBtnAddToCart() {
 		return btnAddToCart;
 	}
@@ -160,8 +164,12 @@ public class EShopSwingView extends JFrame implements EShopView {
 		JLabel lblCart = new JLabel("Cart");
 
 		btnRemoveFromCart = new JButton("Remove From Cart");
-		btnRemoveFromCart.addActionListener(e -> eShopController.removeCartProduct(cartList.getSelectedValue()));
-		btnRemoveFromCart.setEnabled(false);
+		getBtnRemoveFromCart().addActionListener(e -> {
+		eShopController.removeCartProduct(cartList.getSelectedValue());
+		if (!getLblCheckoutLabel().getText().isEmpty())
+			resetCheckoutResultLabel();
+		});
+		getBtnRemoveFromCart().setEnabled(false);
 
 		JLabel lblTotal = new JLabel("Total: ");
 
@@ -215,7 +223,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addComponent(lblCheckoutLabel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
 								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-									.addComponent(btnRemoveFromCart)
+									.addComponent(getBtnRemoveFromCart())
 									.addGap(56)
 									.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
 									.addGap(18)
@@ -252,7 +260,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(totalCostLabel)
 								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-								.addComponent(btnRemoveFromCart))
+								.addComponent(getBtnRemoveFromCart()))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnCheckout)
 							.addGap(30)
@@ -264,7 +272,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		cartListModel.addListDataListener(new CartListDataListener());
 		cartList = new JList<>(getCartListModel());
 		cartList.addListSelectionListener(e -> {
-			btnRemoveFromCart.setEnabled(cartList.getSelectedIndex() != -1);
+			getBtnRemoveFromCart().setEnabled(cartList.getSelectedIndex() != -1);
 			if (e.getValueIsAdjusting()) {
 				productList.clearSelection();
 			}

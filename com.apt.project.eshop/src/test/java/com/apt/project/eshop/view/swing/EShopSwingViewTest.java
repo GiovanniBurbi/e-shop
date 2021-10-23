@@ -454,6 +454,18 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksRemoveFromCartButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnRemoveFromCart().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Remove From Cart")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
 	public void testClearCheckoutResultWhenTheUserClicksSearchButton() {
 		GuiActionRunner.execute(
 			() -> {
