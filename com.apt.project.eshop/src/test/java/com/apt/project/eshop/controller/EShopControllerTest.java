@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.List;
@@ -145,12 +146,19 @@ public class EShopControllerTest {
 	}
 	
 	@Test
-	public void testCheckoutCartShouldClearCartAndShowSuccessfullCheckoutAndResetTheTotalCost() {
-		eShopController.checkoutCart();
+	public void testCheckoutSuccessShouldClearCartAndShowSuccessfullCheckoutAndResetTheTotalCost() {
+		eShopController.checkoutSuccess();
 		InOrder inOrder = inOrder(eShopView);
 		then(eShopView).should(inOrder).showSuccessLabel();
 		then(eShopView).should(inOrder).clearCart();
 		then(eShopView).should(inOrder).resetTotalCost();
-		
+	}
+	
+	@Test
+	public void testCheckoutFailureShouldShowCheckoutFailureLabel() {
+		Product product = new Product("1", "Laptop", 1300.0, 1);
+		eShopController.checkoutFailure(product);
+		then(eShopView).should().showFailureLabel(product);
+		verifyNoMoreInteractions(eShopView);
 	}
 }

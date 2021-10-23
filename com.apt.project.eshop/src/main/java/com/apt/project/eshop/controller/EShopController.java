@@ -51,8 +51,15 @@ public class EShopController {
 
 	public void checkoutCart() {
 		shopManager.checkout();
+	}
+	
+	public void checkoutSuccess() {
 		eShopView.showSuccessLabel();
 		eShopView.clearCart();
 		eShopView.resetTotalCost();
+	}
+	
+	public void checkoutFailure(Product productWanted) {
+		eShopView.showFailureLabel(productWanted);
 	}
 }

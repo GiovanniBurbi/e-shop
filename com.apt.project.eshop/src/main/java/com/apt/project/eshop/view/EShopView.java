@@ -26,6 +26,6 @@ public interface EShopView {
 
 	void resetTotalCost();
 
-	void showFailureLabel(Product productWanted, int stock);
+	void showFailureLabel(Product productWanted);
 
 }

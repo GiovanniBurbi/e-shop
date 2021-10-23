@@ -89,6 +89,7 @@ public class EShopControllerIT {
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
 		eShopController = new EShopController(productRepository, eShopView, shopManager);
+		shopManager.setShopController(eShopController);
 	}
 
 	@After

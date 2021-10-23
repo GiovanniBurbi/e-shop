@@ -454,6 +454,18 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
+	public void testClearCheckoutResultWhenTheUserClicksRemoveFromCartButton() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getBtnRemoveFromCart().setEnabled(true);
+					eShopSwingView.getLblCheckoutLabel().setText("some text");
+			}
+		);
+		window.button(JButtonMatcher.withText("Remove From Cart")).click();
+		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
 	public void testClearCheckoutResultWhenTheUserClicksSearchButton() {
 		GuiActionRunner.execute(
 			() -> {
@@ -483,14 +495,14 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 			() -> {
 					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
 					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 5));
-					eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 5), 2);
+					eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 2));
 			}
 		);
 		window.label("checkoutResultLabel")
 			.requireText(
 				"<html>Error!<br/>"
 				+ "<br/>Not enough stock for the following products:<br/>"
-				+ "-- eBook, required:5, stock:2<br/>"
+				+ "-- eBook, remaining stock:2<br/>"
 				+ "<br/>Remove some products and try again</html>"		
 		);
 		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.RED);
