@@ -82,6 +82,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 			eShopSwingView.setEShopController(eShopController);
 			return eShopSwingView;
 		});
+		shopManager.setShopController(eShopController);
 		window = new FrameFixture(robot(), eShopSwingView);
 		window.show(); // shows the frame to test
 		
