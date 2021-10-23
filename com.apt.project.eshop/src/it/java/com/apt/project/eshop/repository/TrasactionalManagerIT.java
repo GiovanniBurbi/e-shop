@@ -86,5 +86,24 @@ public class TrasactionalManagerIT {
 		Product product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
 		assertThat(product2RepositoryQuery.getQuantity()).isZero();
 	}
-
+		
+	@Test
+	public void testCheckoutWhenAProductIsOutOfStockShouldNotSellAnyProductsInTheCart() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		Product product3 = new Product("3", "Cuffie", 300);
+		productRepository.addToCart(product1);
+		productRepository.addToCart(product2);
+		productRepository.addToCart(product2);
+		productRepository.addToCart(product2);
+		productRepository.addToCart(product3);
+		shopManager.checkout();
+		assertThat(productRepository.allCart()).containsExactly(new Product("1", "Laptop", 1300, 1), new Product("2", "Iphone", 1000, 3),  new Product("3", "Cuffie", 300, 1));
+		Product product1RepositoryQuery = productRepository.findByName("Laptop").get(0);
+		assertThat(product1RepositoryQuery.getQuantity()).isEqualTo(2);
+		Product product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
+		assertThat(product2RepositoryQuery.getQuantity()).isEqualTo(2);
+		Product product3RepositoryQuery = productRepository.findByName("Cuffie").get(0);
+		assertThat(product3RepositoryQuery.getQuantity()).isEqualTo(2);
+	}
 }
