@@ -79,54 +79,31 @@ public class TransactionalShopManagerTest {
 	}
 	
 	@Test
-	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowMongoException() throws RepositoryException {
+	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowMongoExceptionAndDelegateToControllerSuccessCheckout() throws RepositoryException {
 		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
 		Product product2 = new Product("2", "eBook", 300, 1);
 		given(productRepository.allCart()).willReturn(asList(productNotAvailable, product2));
 		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
-		InOrder inOrder = inOrder(productRepository);
 		assertThatThrownBy(() -> shopManager.checkout())
 			.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
-		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
-		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		then(shopController).should().checkoutFailure(productNotAvailable);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 	
 	@Test
-	public void testCheckoutWhenThereIsNotEnoughStockOfAProductShouldThrowMongoExceptionAndNotRemoveAnyProductFromTheCart() throws RepositoryException {
+	public void testCheckoutWhenThereIsNotEnoughStockOfAProductShouldNotRemoveAnyProductFromTheCartAndDelegateToControllerCheckoutFailure() throws RepositoryException {
 		Product product1 = new Product("3", "Iphone", 1000.0, 1);
 		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
 		Product product2 = new Product("2", "eBook", 300, 1);
 		given(productRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2));
 		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
-		InOrder inOrder = inOrder(productRepository);
+		InOrder inOrder = inOrder(productRepository, shopController);
 		assertThatThrownBy(() -> shopManager.checkout())
 		.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
 		then(productRepository).should(inOrder).removeFromStorage(product1);
 		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
+		then(shopController).should(inOrder).checkoutFailure(productNotAvailable);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		then(transactionManager).should(times(1)).doInTransaction(any());
-	}
-	
-	@Test
-	public void testTwoCheckoutWhenInTheFirstThereIsNotEnoughStockOfAProductWhileTheSecondOneIsSuccessfullShouldThrowMongoExceptionAndNotRemoveAnyProductFromTheCartInTheFirstCheckoutWhileTheSecondShouldRemoveAllProductsFromTheCart() throws RepositoryException {
-		Product product1 = new Product("3", "Iphone", 1000.0, 1);
-		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
-		Product product2 = new Product("2", "eBook", 300, 1);
-		given(productRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2)).willReturn(asList(product1, product2));
-		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
-		InOrder inOrder = inOrder(productRepository);
-		assertThatThrownBy(() -> shopManager.checkout())
-		.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
-		then(productRepository).should(inOrder).removeFromStorage(product1);
-		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
-		then(transactionManager).should(times(1)).doInTransaction(any());
-		shopManager.checkout();
-		then(productRepository).should(inOrder).removeFromStorage(product1);
-		then(productRepository).should(inOrder).removeFromStorage(product2);
-		then(productRepository).should(inOrder).removeFromCart(product1);
-		then(productRepository).should(inOrder).removeFromCart(product2);
-		verifyNoMoreInteractions(ignoreStubs(productRepository));
-		then(transactionManager).should(times(2)).doInTransaction(any());
 	}
 }

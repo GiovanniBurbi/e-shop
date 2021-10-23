@@ -24,6 +24,7 @@ public class ShopManager {
 					productRepository.removeFromStorage(product);
 				}
 			} catch (RepositoryException e) {
+				shopController.checkoutFailure(e.getProduct());
 				throw new MongoException("Insufficient stock");
 			}
 			products.stream().forEach(productRepository::removeFromCart);
