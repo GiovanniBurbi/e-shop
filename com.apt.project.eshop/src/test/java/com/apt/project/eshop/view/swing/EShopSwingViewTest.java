@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
+import java.awt.Color;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
@@ -123,6 +124,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(
 			() -> eShopSwingView.showErrorProductNotFound(product)
 		);
+		window.label("errorMessageLabel").foreground().requireEqualTo(Color.RED);
 		window.label("errorMessageLabel")
 			.requireText("Nessun risultato trovato per: \"" + product + "\"");
 	}
@@ -420,7 +422,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testshowSuccessLabelShouldShowAMessageForTheSuccessfulCheckout() {
+	public void testShowSuccessLabelShouldShowAMessageForTheSuccessfulCheckout() {
 		GuiActionRunner.execute(
 			() -> {
 					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
@@ -436,6 +438,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 				+ "-- Laptop, quantity:1<br/>"
 				+ "-- eBook, quantity:2<br/></html>"		
 		);
+		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.BLACK);
 	}
 	
 	@Test @GUITest
@@ -472,6 +475,25 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		);
 		window.button(JButtonMatcher.withText("Clear")).click();
 		window.label("checkoutResultLabel").requireText("");
+	}
+	
+	@Test @GUITest
+	public void testshowFailureLabelShouldShowAMessageForTheCheckoutFailure() {
+		GuiActionRunner.execute(
+			() -> {
+					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 5));
+					eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 5), 2);
+			}
+		);
+		window.label("checkoutResultLabel")
+			.requireText(
+				"<html>Error!<br/>"
+				+ "<br/>Not enough stock for the following products:<br/>"
+				+ "-- eBook, required:5, stock:2<br/>"
+				+ "<br/>Remove some products and try again</html>"		
+		);
+		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.RED);
 	}
 }
 

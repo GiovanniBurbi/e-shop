@@ -7,7 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -51,7 +51,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 	private JButton btnCheckout;
 	private JLabel lblCheckoutLabel;
 	private JButton btnAddToCart;
-
+	
+	public JButton getBtnAddToCart() {
+		return btnAddToCart;
+	}
+	
 	public JButton getBtnSearch() {
 		return btnSearch;
 	}
@@ -343,17 +347,13 @@ public class EShopSwingView extends JFrame implements EShopView {
 
 	@Override
 	public void showSuccessLabel() {
+		getLblCheckoutLabel().setForeground(Color.BLACK);
 		String totalCost = getTotalCostlabel().getText();
-		DefaultListModel<Product> tmpCartList = getCartListModel();
-		List<Product> products = new ArrayList<>();
-		for(int i = 0; i < tmpCartList.getSize(); i++)
-			products.add(tmpCartList.get(i));
+		List<Product> products = Collections.list(getCartListModel().elements());
 		StringBuilder productsPurchasedBuilder = new StringBuilder();
-		for (Product product : products) {
-			productsPurchasedBuilder.append(
-				"-- " + product.getName() + ", quantity:" + product.getQuantity() + "<br/>"
-			);
-		}
+		products.forEach(p -> productsPurchasedBuilder.append(
+				"-- " + p.getName() + ", quantity:" + p.getQuantity() + "<br/>"
+		 ));
 		String productsPurchased = productsPurchasedBuilder.toString();
 		getLblCheckoutLabel().setText(
 			"<html>Thank you for the purchase!!<br/>"
@@ -368,8 +368,15 @@ public class EShopSwingView extends JFrame implements EShopView {
 		getTotalCostlabel().setText("0.0$");
 	}
 
-	public JButton getBtnAddToCart() {
-		return btnAddToCart;
+	@Override
+	public void showFailureLabel(Product productWanted, int stock) {
+		getLblCheckoutLabel().setForeground(Color.RED);
+		getLblCheckoutLabel().setText(
+			"<html>Error!<br/>"
+			+ "<br/>Not enough stock for the following products:<br/>"
+			+ "-- " + productWanted.getName() + ", required:" + productWanted.getQuantity() +", stock:" + stock +"<br/>"
+			+ "<br/>Remove some products and try again</html>"
+		);	
 	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {
