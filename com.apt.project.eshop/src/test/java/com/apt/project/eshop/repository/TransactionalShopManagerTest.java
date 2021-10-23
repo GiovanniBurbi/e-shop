@@ -20,6 +20,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.mongodb.MongoException;
 
@@ -32,6 +33,8 @@ public class TransactionalShopManagerTest {
 	private TransactionManager transactionManager;
 	@Mock
 	private ProductRepository productRepository;
+	@Mock
+	private EShopController shopController;
 	
 	private AutoCloseable closeable;
 	
@@ -44,6 +47,7 @@ public class TransactionalShopManagerTest {
 			.willAnswer(
 				answer((TransactionCode<?> code) -> code.apply(productRepository)));
 		shopManager = new ShopManager(transactionManager);
+		shopManager.setShopController(shopController);
 	}
 
 	@After
@@ -57,7 +61,7 @@ public class TransactionalShopManagerTest {
 		Product product2 = new Product("1", "eBook", 300);
 		given(productRepository.allCart()).willReturn(asList(product1, product2));
 		shopManager.checkout();
-		InOrder inOrder = inOrder(productRepository);
+		InOrder inOrder = inOrder(productRepository, shopController);
 		try {
 			then(productRepository).should(inOrder).removeFromStorage(product1);
 		} catch (RepositoryException e) {
@@ -70,6 +74,7 @@ public class TransactionalShopManagerTest {
 		}
 		then(productRepository).should(inOrder).removeFromCart(product1);
 		then(productRepository).should(inOrder).removeFromCart(product2);
+		then(shopController).should(inOrder).checkoutSuccess();
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 	
