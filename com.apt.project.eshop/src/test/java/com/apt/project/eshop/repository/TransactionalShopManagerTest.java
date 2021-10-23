@@ -63,12 +63,12 @@ public class TransactionalShopManagerTest {
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
-		then(productRepository).should(inOrder).removeFromCart(product1);
 		try {
 			then(productRepository).should(inOrder).removeFromStorage(product2);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
+		then(productRepository).should(inOrder).removeFromCart(product1);
 		then(productRepository).should(inOrder).removeFromCart(product2);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
@@ -85,5 +85,43 @@ public class TransactionalShopManagerTest {
 		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		then(transactionManager).should(times(1)).doInTransaction(any());
+	}
+	
+	@Test
+	public void testCheckoutWhenThereIsNotEnoughStockOfAProductShouldThrowMongoExceptionAndNotRemoveAnyProductFromTheCart() throws RepositoryException {
+		Product product1 = new Product("3", "Iphone", 1000.0, 1);
+		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
+		Product product2 = new Product("2", "eBook", 300, 1);
+		given(productRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2));
+		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
+		InOrder inOrder = inOrder(productRepository);
+		assertThatThrownBy(() -> shopManager.checkout())
+		.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
+		then(productRepository).should(inOrder).removeFromStorage(product1);
+		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		then(transactionManager).should(times(1)).doInTransaction(any());
+	}
+	
+	@Test
+	public void testTwoCheckoutWhenInTheFirstThereIsNotEnoughStockOfAProductWhileTheSecondOneIsSuccessfullShouldThrowMongoExceptionAndNotRemoveAnyProductFromTheCartInTheFirstCheckoutWhileTheSecondShouldRemoveAllProductsFromTheCart() throws RepositoryException {
+		Product product1 = new Product("3", "Iphone", 1000.0, 1);
+		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
+		Product product2 = new Product("2", "eBook", 300, 1);
+		given(productRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2)).willReturn(asList(product1, product2));
+		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
+		InOrder inOrder = inOrder(productRepository);
+		assertThatThrownBy(() -> shopManager.checkout())
+		.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
+		then(productRepository).should(inOrder).removeFromStorage(product1);
+		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
+		then(transactionManager).should(times(1)).doInTransaction(any());
+		shopManager.checkout();
+		then(productRepository).should(inOrder).removeFromStorage(product1);
+		then(productRepository).should(inOrder).removeFromStorage(product2);
+		then(productRepository).should(inOrder).removeFromCart(product1);
+		then(productRepository).should(inOrder).removeFromCart(product2);
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		then(transactionManager).should(times(2)).doInTransaction(any());
 	}
 }
