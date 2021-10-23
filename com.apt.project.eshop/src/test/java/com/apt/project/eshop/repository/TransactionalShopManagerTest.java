@@ -1,13 +1,17 @@
 package com.apt.project.eshop.repository;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.model.Product;
+import com.mongodb.MongoException;
 
 
 public class TransactionalShopManagerTest {
@@ -67,5 +72,18 @@ public class TransactionalShopManagerTest {
 		then(productRepository).should(inOrder).removeFromCart(product2);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
-
+	
+	@Test
+	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowMongoException() throws RepositoryException {
+		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
+		Product product2 = new Product("2", "eBook", 300, 1);
+		given(productRepository.allCart()).willReturn(asList(productNotAvailable, product2));
+		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
+		InOrder inOrder = inOrder(productRepository);
+		assertThatThrownBy(() -> shopManager.checkout())
+			.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
+		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
+		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		then(transactionManager).should(times(1)).doInTransaction(any());
+	}
 }

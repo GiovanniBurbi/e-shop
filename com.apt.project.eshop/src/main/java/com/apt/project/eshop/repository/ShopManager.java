@@ -3,6 +3,7 @@ package com.apt.project.eshop.repository;
 import java.util.List;
 
 import com.apt.project.eshop.model.Product;
+import com.mongodb.MongoException;
 
 public class ShopManager {
 
@@ -16,12 +17,13 @@ public class ShopManager {
 		transactionManager.doInTransaction(
 			productRepository -> {
 				List<Product> products = productRepository.allCart();
-				for (Product product : products) {
-					try {
+				try {
+					for (Product product : products) {
 						productRepository.removeFromStorage(product);
-					} catch (RepositoryException e) {
-					}
-					productRepository.removeFromCart(product);
+						productRepository.removeFromCart(product);
+					} 
+				} catch (RepositoryException e) {
+					throw new MongoException("Insufficient stock");
 				}
 				return null;
 			}		
