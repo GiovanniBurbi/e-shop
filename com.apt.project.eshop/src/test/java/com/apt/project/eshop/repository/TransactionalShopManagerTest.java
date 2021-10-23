@@ -6,11 +6,13 @@ import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -50,18 +52,19 @@ public class TransactionalShopManagerTest {
 		Product product2 = new Product("1", "eBook", 300);
 		given(productRepository.allCart()).willReturn(asList(product1, product2));
 		shopManager.checkout();
-		then(productRepository).should().removeFromCart(product1);
+		InOrder inOrder = inOrder(productRepository);
 		try {
-			then(productRepository).should().removeFromStorage(product1);
+			then(productRepository).should(inOrder).removeFromStorage(product1);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
-		then(productRepository).should().removeFromCart(product2);
+		then(productRepository).should(inOrder).removeFromCart(product1);
 		try {
-			then(productRepository).should().removeFromStorage(product2);
+			then(productRepository).should(inOrder).removeFromStorage(product2);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
+		then(productRepository).should(inOrder).removeFromCart(product2);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 
