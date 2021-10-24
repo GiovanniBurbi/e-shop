@@ -2,10 +2,6 @@ package com.apt.project.eshop.view.swing;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.AdditionalAnswers.answer;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 
@@ -19,20 +15,17 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.GenericContainer;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.RepositoryException;
 import com.apt.project.eshop.repository.ShopManager;
-import com.apt.project.eshop.repository.TransactionCode;
 import com.apt.project.eshop.repository.TransactionManager;
+import com.apt.project.eshop.repository.TransactionalShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
-import com.mongodb.client.ClientSession;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
@@ -53,9 +46,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private FrameFixture window;
 	private List<Product> catalog;
 	private ShopManager shopManager;
-	@Mock
 	private TransactionManager transactionManager;
-	private AutoCloseable closeable;
 	
 	@BeforeClass
 	public static void MongoConfiguration() {
@@ -73,23 +64,17 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@Override
 	protected void onSetUp() throws Exception {
-		closeable = MockitoAnnotations.openMocks(this);
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
-		ClientSession session = client.startSession();
 		catalog = asList(
 				new Product("1", "Laptop", 1300),
 				new Product("2", "Iphone", 1000),
 				new Product("3", "Cuffie", 300),
 				new Product("4", "Lavatrice", 300)
 		);
-		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		// make sure to start with the initial configuration
 		productRepository.loadCatalog(catalog);
-		// make sure the lambda passed to the TransactionManager
-		// is executed, using the mock repository
-		given(transactionManager.doInTransaction(any()))
-			.willAnswer(
-				answer((TransactionCode<?> code) -> code.apply(productRepository)));
+		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
@@ -106,7 +91,6 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() throws Exception {
 		client.close();
-		closeable.close();
 	}
 
 	@Test @GUITest
@@ -237,7 +221,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testCheckoutButtonWhenCheckoutFailureShouldOnlyShowFailureCheckoutLabel() {
+	public void testCheckoutButtonWhenCheckoutFailureShouldOnlyShowFailureCheckoutLabel() throws RepositoryException {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
 		GuiActionRunner.execute(() -> {
