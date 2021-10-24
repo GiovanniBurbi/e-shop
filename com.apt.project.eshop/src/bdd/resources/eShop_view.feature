@@ -74,9 +74,14 @@ Feature: eShop View
 		And The database storage of the purchased products is updated
   	
   Scenario: Checkout failure
-  	Given The cart contains some products of which one has quaantity greater than the stock
+  	Given The cart contains some products of which one has quantity greater than the stock
     When The user clicks the "Checkout" button
-  	Then The cart contents are not changed
-  	And The view shows the updated total of "3000.0$"
+  	# The cart contents are not changed
+    Then The cart list contains an element with the following values
+      | id | name | price | quantity |
+      | 1 | Laptop | 1300.0 | 1 |
+  	  | 2 | Iphone | 1000.0 | 3 |
+  	  | 3 | Laptop MSI | 1250.0 | 1 |
+  	And The view shows the updated total of "5550.0$"
   	And The view shows a message about the outcome of the checkout
   	And The database storage of the products has not changed

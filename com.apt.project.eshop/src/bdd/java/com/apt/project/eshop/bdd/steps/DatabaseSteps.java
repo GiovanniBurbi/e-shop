@@ -68,7 +68,17 @@ public class DatabaseSteps {
 	
 	@Then("The database storage of the products has not changed")
 	public void the_database_storage_of_the_products_has_not_changed() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		assertThat(mongoClient.getDatabase(DB_NAME)
+				   .getCollection(COLLECTION_NAME, Product.class)
+				   .withCodecRegistry(pojoCodecRegistry)
+				   .find()).containsExactly(
+							new Product("1", "Laptop", 1300, 2),
+							new Product("2", "Iphone", 1000, 2),
+							new Product("3", "Laptop MSI", 1250.0, 1),
+							new Product("4", "Macbook", 1400.0, 1),
+							new Product("5", "SmartTv UHD", 400.0, 1),
+							new Product("6", "Dyson phon", 350, 1),
+							new Product("7", "Playstation 5", 500, 1)
+			);
 	}
 }

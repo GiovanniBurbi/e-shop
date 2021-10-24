@@ -167,22 +167,26 @@ public class EShopSwingViewSteps {
 		);
 	}
 	
-	@Given("The cart contains some products of which one has quaantity greater than the stock")
-	public void the_cart_contains_some_products_of_which_one_has_quaantity_greater_than_the_stock() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
-	}
-
-	@Then("The cart contents are not changed")
-	public void the_cart_contents_are_not_changed() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	@Given("The cart contains some products of which one has quantity greater than the stock")
+	public void the_cart_contains_some_products_of_which_one_has_quantity_greater_than_the_stock() {
+		window.list("productList").selectItem(0);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.list("productList").selectItem(1);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
+		window.list("productList").selectItem(2);
+		window.button(JButtonMatcher.withText("Add To Cart")).click();
 	}
 
 	@Then("The view shows a message about the outcome of the checkout")
 	public void the_view_shows_a_message_about_the_outcome_of_the_checkout() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		window.label("checkoutResultLabel").requireText(
+				"<html>Error!<br/>"
+				+ "<br/>Not enough stock for the following products:<br/>"
+				+ "-- Iphone, remaining stock:2<br/>"
+				+ "<br/>Remove some products and try again</html>"
+		);
 	}
 
 }
