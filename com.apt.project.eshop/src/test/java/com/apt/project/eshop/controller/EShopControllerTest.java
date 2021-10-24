@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.List;
