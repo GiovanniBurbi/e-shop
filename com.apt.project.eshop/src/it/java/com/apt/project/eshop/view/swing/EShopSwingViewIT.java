@@ -2,6 +2,7 @@ package com.apt.project.eshop.view.swing;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -29,6 +30,7 @@ import com.apt.project.eshop.repository.TransactionCode;
 import com.apt.project.eshop.repository.TransactionManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.ClientSession;
 
@@ -231,6 +233,27 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 			+ "<br/>You have spent 2300.0$ for the following products:<br/>"
 			+ "-- Laptop, quantity:1<br/>"
 			+ "-- Iphone, quantity:1<br/></html>"
+		);
+	}
+	
+	@Test @GUITest
+	public void testCheckoutButtonWhenCheckoutFailureShouldOnlyShowFailureCheckoutLabel() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		GuiActionRunner.execute(() -> {
+			eShopController.allProducts();
+			eShopController.newCartProduct(product1);
+			eShopController.newCartProduct(product2);	
+			eShopController.newCartProduct(product2);	
+		});
+		window.button(JButtonMatcher.withText("Checkout")).click();
+		assertThat(window.list("cartList").contents()).containsExactly(new Product("1", "Laptop", 1300).toStringExtended(), new Product("2", "Iphone", 1000, 2).toStringExtended());
+		window.label("totalCostLabel").requireText("3300.0$");
+		window.label("checkoutResultLabel").requireText(
+			"<html>Error!<br/>"
+			+ "<br/>Not enough stock for the following products:<br/>"
+			+ "-- Iphone, remaining stock:1<br/>"
+			+ "<br/>Remove some products and try again</html>"
 		);
 	}
 }
