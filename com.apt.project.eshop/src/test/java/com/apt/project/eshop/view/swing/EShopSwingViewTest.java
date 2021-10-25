@@ -259,7 +259,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 				eShopSwingView.getProductListModel().addElement(product);
 		});
 		window.list("productList").selectItem(0);
-		window.panel("contentPane").click();
+		window.panel("mainPane").click();
 		window.list("productList").requireNoSelection();
 		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
 		window.label("checkoutResultLabel").requireText("");
@@ -273,7 +273,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 				eShopSwingView.getCartListModel().addElement(product);
 		});
 		window.list("cartList").selectItem(0);
-		window.panel("contentPane").click();
+		window.panel("mainPane").click();
 		window.list("cartList").requireNoSelection();
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
