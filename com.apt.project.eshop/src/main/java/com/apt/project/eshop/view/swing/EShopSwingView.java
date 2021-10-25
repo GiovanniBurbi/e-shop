@@ -36,7 +36,7 @@ import com.apt.project.eshop.view.EShopView;
 public class EShopSwingView extends JFrame implements EShopView {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel mainPane;
+	private JPanel contentPane;
 	private JList<Product> productList;
 	private DefaultListModel<Product> productListModel;
 	private JTextField searchTextBox;
@@ -103,17 +103,10 @@ public class EShopSwingView extends JFrame implements EShopView {
 		setTitle("eShop View");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1134, 600);
-		mainPane = new JPanel();
-		mainPane.setName("mainPane");
-		mainPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				productList.clearSelection();
-				cartList.clearSelection();
-			}
-		});
-		mainPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(mainPane);
+		contentPane = new JPanel();
+		contentPane.setName("contentPane");
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
 
 		JLabel lblProducts = new JLabel("Products");
 
@@ -186,66 +179,66 @@ public class EShopSwingView extends JFrame implements EShopView {
 		lblCheckoutLabel.setFont(new Font("Dialog", Font.BOLD, 14));
 		lblCheckoutLabel.setVerticalAlignment(SwingConstants.TOP);
 		getLblCheckoutLabel().setName("checkoutResultLabel");
-		GroupLayout gl_mainPane = new GroupLayout(mainPane);
-		gl_mainPane.setHorizontalGroup(
-			gl_mainPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_mainPane.createSequentialGroup()
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(247)
 					.addComponent(lblProducts)
 					.addPreferredGap(ComponentPlacement.RELATED, 536, Short.MAX_VALUE)
 					.addComponent(lblCart)
 					.addGap(198))
-				.addGroup(gl_mainPane.createSequentialGroup()
-					.addGroup(gl_mainPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_mainPane.createSequentialGroup()
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(182)
 							.addComponent(getBtnSearch())
 							.addGap(39)
 							.addComponent(btnClear, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_mainPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(37)
-							.addGroup(gl_mainPane.createParallelGroup(Alignment.LEADING, false)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(searchTextBox)
 								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 499, GroupLayout.PREFERRED_SIZE)
-								.addGroup(gl_mainPane.createSequentialGroup()
+								.addGroup(gl_contentPane.createSequentialGroup()
 									.addComponent(lblErrorLabel, GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED))))
-						.addGroup(gl_mainPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(229)
 							.addComponent(getBtnAddToCart())))
-					.addGroup(gl_mainPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_mainPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnCheckout, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE)
 							.addGap(54))
-						.addGroup(gl_mainPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
-							.addGroup(gl_mainPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addComponent(lblCheckoutLabel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
-								.addGroup(Alignment.TRAILING, gl_mainPane.createSequentialGroup()
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 									.addComponent(getBtnRemoveFromCart())
 									.addGap(56)
 									.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
 									.addGap(18)
 									.addComponent(totalCostLabel, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE))
-								.addGroup(Alignment.TRAILING, gl_mainPane.createSequentialGroup()
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 425, GroupLayout.PREFERRED_SIZE)))
 							.addContainerGap())))
 		);
-		gl_mainPane.setVerticalGroup(
-			gl_mainPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_mainPane.createSequentialGroup()
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(24)
-					.addGroup(gl_mainPane.createParallelGroup(Alignment.BASELINE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblProducts, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblCart))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_mainPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_mainPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(searchTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_mainPane.createParallelGroup(Alignment.BASELINE)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(getBtnSearch(), GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnClear))
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -254,10 +247,10 @@ public class EShopSwingView extends JFrame implements EShopView {
 							.addComponent(getBtnAddToCart())
 							.addGap(66)
 							.addComponent(lblErrorLabel, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_mainPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_mainPane.createParallelGroup(Alignment.BASELINE)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(totalCostLabel)
 								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
 								.addComponent(getBtnRemoveFromCart()))
@@ -293,7 +286,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		productList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		productList.setName("productList");
 		scrollPane.setViewportView(productList);
-		mainPane.setLayout(gl_mainPane);
+		contentPane.setLayout(gl_contentPane);
 	}
 
 	private void resetCheckoutResultLabel() {
