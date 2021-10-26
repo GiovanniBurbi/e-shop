@@ -16,6 +16,8 @@ services:
     networks:
       - my-network
     restart: on-failure
+    ports:
+      - "27018:27018"
     volumes:
       - ./scripts/setup-replica.sh:/scripts/setup-replica.sh
     entrypoint: ["bash" ,"/scripts/setup-replica.sh"]
