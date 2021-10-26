@@ -11,7 +11,6 @@ import com.apt.project.eshop.repository.TransactionalShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -28,7 +27,7 @@ import picocli.CommandLine.Option;
  * 
  * +++ Open a new terminal and run +++
  * 
- * sudo docker exec -it mongo1 mongo
+ * sudo docker exec -it mongoRs mongo
  * 
  * +++ finally +++
  * rs.initiate()
@@ -44,11 +43,9 @@ import picocli.CommandLine.Option;
 @Command(mixinStandardHelpOptions = true)
 public class EShopSwingApp implements Callable<Void> {
 	
-	@Option(names = { "--mongo-host" }, description = "MongoDB host address")
-	private String mongoHost = "localhost";
+	private static final String MONGO_HOST = "localhost";
 
-	@Option(names = { "--mongo-port" }, description = "MongoDB host port")
-	private int mongoPort = 27017;
+	private static final int MONGO_PORT = 27017;
 
 	@Option(names = { "--db-name" }, description = "Database name")
 	private String databaseName = "eShop";
@@ -64,7 +61,7 @@ public class EShopSwingApp implements Callable<Void> {
 	public Void call() throws Exception {
 		EventQueue.invokeLater(() -> {
 			try {
-				MongoClient client = new MongoClient(new ServerAddress(mongoHost, mongoPort));
+				MongoClient client= new MongoClient(MONGO_HOST, MONGO_PORT);
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, collectionName);

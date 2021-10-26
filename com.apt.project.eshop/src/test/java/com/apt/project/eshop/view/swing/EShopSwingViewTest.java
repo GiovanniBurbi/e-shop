@@ -252,33 +252,6 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testClickInTheContentPaneShouldDeselectElementInTheProductListAndClearTheCheckoutResultLabel() {
-		Product product = new Product("1", "Laptop", 1300, 1);
-		GuiActionRunner.execute(
-			() -> {
-				eShopSwingView.getProductListModel().addElement(product);
-		});
-		window.list("productList").selectItem(0);
-		window.panel("contentPane").click();
-		window.list("productList").requireNoSelection();
-		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
-		window.label("checkoutResultLabel").requireText("");
-	}
-	
-	@Test @GUITest
-	public void testClickInTheContentPaneShouldDeselectElementInTheCartList() {
-		Product product = new Product("1", "Laptop", 1300, 1);
-		GuiActionRunner.execute(
-			() -> {
-				eShopSwingView.getCartListModel().addElement(product);
-		});
-		window.list("cartList").selectItem(0);
-		window.panel("contentPane").click();
-		window.list("cartList").requireNoSelection();
-		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
-	}
-	
-	@Test @GUITest
 	public void testAddToCartButtonShouldDelegateToEShopControllerNewCartProduct() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Kindle", 200);

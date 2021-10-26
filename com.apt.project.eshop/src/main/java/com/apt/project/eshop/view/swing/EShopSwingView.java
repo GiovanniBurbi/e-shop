@@ -5,8 +5,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.List;
 
@@ -102,16 +100,9 @@ public class EShopSwingView extends JFrame implements EShopView {
 	public EShopSwingView() {
 		setTitle("eShop View");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1081, 600);
+		setBounds(100, 100, 1134, 600);
 		contentPane = new JPanel();
 		contentPane.setName("contentPane");
-		contentPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				productList.clearSelection();
-				cartList.clearSelection();
-			}
-		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
