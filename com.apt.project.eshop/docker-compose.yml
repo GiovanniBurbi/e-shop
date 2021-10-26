@@ -4,9 +4,22 @@ services:
     hostname: mongodb
     container_name: mongodb
     image: mongo:4.4.3
+    networks:
+      - my-network
     restart: always
     ports:
       - "27017:27017"
-    volumes:
-      - ./scripts:/docker-entrypoint-initdb.d/
     command: ["--replSet", "rs0", "--bind_ip_all"]
+
+  replica-setup:
+    image: mongo:4.4.3
+    networks:
+      - my-network
+    restart: on-failure
+    volumes:
+      - ./scripts/setup-replica.sh:/scripts/setup-replica.sh
+    entrypoint: ["bash" ,"/scripts/setup-replica.sh"]
+
+networks:
+  my-network:
+    driver: bridge
