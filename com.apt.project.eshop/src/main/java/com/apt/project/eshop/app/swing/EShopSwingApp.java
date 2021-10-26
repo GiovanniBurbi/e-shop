@@ -43,6 +43,10 @@ import picocli.CommandLine.Option;
 @Command(mixinStandardHelpOptions = true)
 public class EShopSwingApp implements Callable<Void> {
 	
+	private static final String MONGO_HOST = "localhost";
+
+	private static final int MONGO_PORT = 27017;
+
 	@Option(names = { "--db-name" }, description = "Database name")
 	private String databaseName = "eShop";
 
@@ -57,8 +61,7 @@ public class EShopSwingApp implements Callable<Void> {
 	public Void call() throws Exception {
 		EventQueue.invokeLater(() -> {
 			try {
-//				MongoClient client = new MongoClient(new MongoClientURI("mongodb://mongodb:27017/?replicaSet=rs0"));
-				MongoClient client= new MongoClient("localhost", 27017);
+				MongoClient client= new MongoClient(MONGO_HOST, MONGO_PORT);
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, collectionName);

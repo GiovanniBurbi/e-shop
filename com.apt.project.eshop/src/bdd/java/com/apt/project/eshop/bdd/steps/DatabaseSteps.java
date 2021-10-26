@@ -12,7 +12,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 
 import com.apt.project.eshop.model.Product;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -20,7 +19,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 public class DatabaseSteps {
-
+	
+	private static final String MONGO_HOST = "localhost";
+	private static final int MONGO_PORT = 27017;
 	static final String DB_NAME = "test-db";
 	static final String COLLECTION_NAME = "test-collection";
 	private MongoClient mongoClient;
@@ -28,8 +29,7 @@ public class DatabaseSteps {
 
 	@Before
 	public void setUp() {
-//		mongoClient = new MongoClient(new MongoClientURI("mongodb://mongodb:27017/?replicaSet=rs0"));
-		mongoClient = new MongoClient("localhost", 27017);
+		mongoClient = new MongoClient(MONGO_HOST, MONGO_PORT);
 		// to start with an empty database
 		mongoClient.getDatabase(DB_NAME).drop();
 		pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
