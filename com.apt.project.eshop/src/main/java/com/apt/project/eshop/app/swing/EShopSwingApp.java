@@ -11,7 +11,6 @@ import com.apt.project.eshop.repository.TransactionalShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -58,7 +57,8 @@ public class EShopSwingApp implements Callable<Void> {
 	public Void call() throws Exception {
 		EventQueue.invokeLater(() -> {
 			try {
-				MongoClient client = new MongoClient(new MongoClientURI("mongodb://mongodb:27017/?replicaSet=rs0"));
+//				MongoClient client = new MongoClient(new MongoClientURI("mongodb://mongodb:27017/?replicaSet=rs0"));
+				MongoClient client= new MongoClient("localhost", 27017);
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, collectionName);

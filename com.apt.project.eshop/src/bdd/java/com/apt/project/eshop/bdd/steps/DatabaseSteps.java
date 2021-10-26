@@ -28,7 +28,8 @@ public class DatabaseSteps {
 
 	@Before
 	public void setUp() {
-		mongoClient = new MongoClient(new MongoClientURI("mongodb://mongodb:27017/?replicaSet=rs0"));
+//		mongoClient = new MongoClient(new MongoClientURI("mongodb://mongodb:27017/?replicaSet=rs0"));
+		mongoClient = new MongoClient("localhost", 27017);
 		// to start with an empty database
 		mongoClient.getDatabase(DB_NAME).drop();
 		pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
