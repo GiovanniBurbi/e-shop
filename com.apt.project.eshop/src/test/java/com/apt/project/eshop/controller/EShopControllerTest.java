@@ -171,9 +171,9 @@ public class EShopControllerTest {
 	
 	@Test
 	public void testShowCartCost() {
-		List<Product> products = asList(new Product("1", "laptop", 1300),  new Product("2", "Iphone", 1000));
+		List<Product> products = asList(new Product("1", "laptop", 1300),  new Product("2", "Iphone", 1000, 2));
 		given(productRepository.allCart()).willReturn(products);
 		eShopController.showCartCost();
-		then(eShopView).should().showTotalCost(2300);
+		then(eShopView).should().showTotalCost(3300);
 	}
 }
