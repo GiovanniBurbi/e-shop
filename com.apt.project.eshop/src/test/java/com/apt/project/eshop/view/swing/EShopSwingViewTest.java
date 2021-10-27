@@ -480,5 +480,13 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		);
 		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.RED);
 	}
+	
+	@Test @GUITest
+	public void testShowAllCartShouldShowsProductsInTheCart() {
+		Product product = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(()-> eShopSwingView.showAllCart(Arrays.asList(product)));
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product.toStringExtended());
+	}
 }
 

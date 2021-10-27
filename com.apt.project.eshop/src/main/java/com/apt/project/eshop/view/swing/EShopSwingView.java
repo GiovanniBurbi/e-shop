@@ -380,7 +380,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 	
 	@Override
 	public void showAllCart(List<Product> cartProducts) {
-		
+		cartProducts.stream().forEach(getCartListModel()::addElement);
 	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {
