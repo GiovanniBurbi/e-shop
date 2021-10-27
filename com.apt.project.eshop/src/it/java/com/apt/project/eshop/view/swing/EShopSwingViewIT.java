@@ -255,4 +255,17 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 				product2.toStringExtended()
 		);
 	}
+	
+	@Test @GUITest
+	public void testShowTotalCost() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		productRepository.addToCart(product1);
+		productRepository.addToCart(product2);
+		productRepository.addToCart(product2);
+		GuiActionRunner.execute(() -> {
+			eShopController.showCartCost();	
+		});
+		window.label("totalCostLabel").requireText("3300.0$");
+	}
 }
