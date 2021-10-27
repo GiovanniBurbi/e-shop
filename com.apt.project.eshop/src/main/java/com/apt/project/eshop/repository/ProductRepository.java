@@ -19,4 +19,6 @@ public interface ProductRepository {
 	public void removeFromCart(Product product);
 
 	public void removeFromStorage(Product product) throws RepositoryException;
+
+	boolean catalogIsEmpty();
 }

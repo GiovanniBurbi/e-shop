@@ -1,11 +1,14 @@
 package com.apt.project.eshop.app.swing;
 
+import static java.util.Arrays.asList;
+
 import java.awt.EventQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.TransactionalShopManager;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
@@ -63,6 +66,17 @@ public class EShopSwingApp implements Callable<Void> {
 			try {
 				MongoClient client= new MongoClient(MONGO_HOST, MONGO_PORT);
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	collectionName);
+				if(productRepository.catalogIsEmpty()) {
+					productRepository.loadCatalog(asList(
+							new Product("1", "Laptop", 1300.0, 3),
+							new Product("2", "Iphone", 1000.0, 3),
+							new Product("3", "Laptop MSI", 1250.0, 3),
+							new Product("4", "Macbook", 1400.0, 3),
+							new Product("5", "SmartTv", 400.0, 3),
+							new Product("6", "Playstation 5", 500.0, 3),
+							new Product("7", "Xbox", 500.0, 3)
+					));
+				}
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, collectionName);
 				ShopManager shopManager = new ShopManager(transactionManager);
@@ -71,6 +85,8 @@ public class EShopSwingApp implements Callable<Void> {
 				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);
 				eShopController.allProducts();
+				eShopController.showCart();
+				eShopController.showCartCost();
 			} catch (Exception e) {
 				Logger.getLogger(getClass().getName())
 				.log(Level.SEVERE, "Exception", e);

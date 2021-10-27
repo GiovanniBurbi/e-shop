@@ -62,4 +62,17 @@ public class EShopController {
 	public void checkoutFailure(Product productWanted) {
 		eShopView.showFailureLabel(productWanted);
 	}
+
+	public void showCart() {
+		eShopView.showAllCart(productRepository.allCart());
+	}
+
+	public void showCartCost() {
+		List<Product> products = productRepository.allCart();
+		double totalCost = 0;
+		for (Product product : products) {
+			totalCost += product.getPrice() * product.getQuantity();
+		}
+		eShopView.showTotalCost(totalCost);
+	}
 }

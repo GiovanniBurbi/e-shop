@@ -474,11 +474,31 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("checkoutResultLabel")
 			.requireText(
 				"<html>Error!<br/>"
-				+ "<br/>Not enough stock for the following products:<br/>"
+				+ "<br/>Not enough stock for the following product:<br/>"
 				+ "-- eBook, remaining stock:2<br/>"
 				+ "<br/>Remove some products and try again</html>"		
 		);
 		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.RED);
+	}
+	
+	@Test @GUITest
+	public void testShowAllCartShouldShowsProductsInTheCart() {
+		Product product = new Product("1", "Laptop", 1300);
+		GuiActionRunner.execute(()-> eShopSwingView.showAllCart(Arrays.asList(product)));
+		String[] listContents = window.list("cartList").contents();
+		assertThat(listContents).containsExactly(product.toStringExtended());
+	}
+	
+	@Test @GUITest
+	public void testShowTotalCostShouldShowsTheCartPriceInTheLabel() {
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000, 2);
+		GuiActionRunner.execute(
+			()-> eShopSwingView.showTotalCost(
+					(product.getPrice()*product.getQuantity()) 
+					+ (product2.getPrice()*product2.getQuantity())
+		));
+		window.label("totalCostLabel").requireText("3300.0$");
 	}
 }
 

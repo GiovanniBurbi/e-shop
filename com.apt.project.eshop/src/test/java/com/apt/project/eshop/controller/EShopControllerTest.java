@@ -160,4 +160,20 @@ public class EShopControllerTest {
 		then(eShopView).should().showFailureLabel(product);
 		verifyNoMoreInteractions(eShopView);
 	}
+	
+	@Test
+	public void testShowCart() {
+		List<Product> products = asList(new Product("1", "laptop", 1300));
+		given(productRepository.allCart()).willReturn(products);
+		eShopController.showCart();
+		then(eShopView).should().showAllCart(products);
+	}
+	
+	@Test
+	public void testShowCartCost() {
+		List<Product> products = asList(new Product("1", "laptop", 1300),  new Product("2", "Iphone", 1000, 2));
+		given(productRepository.allCart()).willReturn(products);
+		eShopController.showCartCost();
+		then(eShopView).should().showTotalCost(3300);
+	}
 }
