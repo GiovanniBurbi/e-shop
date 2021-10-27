@@ -183,5 +183,19 @@ public class EShopControllerIT {
 		eShopController.showCart();
 		then(eShopView).should().showAllCart(asList(product));
 	}
+	
+	@Test
+	public void testShowCartCost() {
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		productRepository.addToCart(product);
+		productRepository.addToCart(product2);
+		productRepository.addToCart(product2);
+		eShopController.showCartCost();
+		then(eShopView).should().showTotalCost(
+				(product.getPrice() * product.getQuantity())
+				+ (product2.getPrice() * product2.getQuantity())
+		);
+	}
 }
 
