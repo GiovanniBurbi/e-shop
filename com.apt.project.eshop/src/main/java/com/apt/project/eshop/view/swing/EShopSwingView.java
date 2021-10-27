@@ -382,6 +382,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 	public void showAllCart(List<Product> cartProducts) {
 		cartProducts.stream().forEach(getCartListModel()::addElement);
 	}
+	
+	@Override
+	public void showTotalCost(double cartPrice) {
+		totalCostLabel.setText(String.valueOf(cartPrice) + "$");
+	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {
 

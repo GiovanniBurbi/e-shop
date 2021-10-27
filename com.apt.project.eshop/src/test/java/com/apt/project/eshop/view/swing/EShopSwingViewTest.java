@@ -488,5 +488,17 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product.toStringExtended());
 	}
+	
+	@Test @GUITest
+	public void testShowTotalCostShouldShowsTheCartPriceInTheLabel() {
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000, 2);
+		GuiActionRunner.execute(
+			()-> eShopSwingView.showTotalCost(
+					(product.getPrice()*product.getQuantity()) 
+					+ (product2.getPrice()*product2.getQuantity())
+		));
+		window.label("totalCostLabel").requireText("3300.0$");
+	}
 }
 

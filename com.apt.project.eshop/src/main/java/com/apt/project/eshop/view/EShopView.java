@@ -30,4 +30,6 @@ public interface EShopView {
 
 	void showAllCart(List<Product> cartProducts);
 
+	void showTotalCost(double cartPrice);
+
 }
