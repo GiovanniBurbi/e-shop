@@ -240,4 +240,19 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 			+ "<br/>Remove some products and try again</html>"
 		);
 	}
+	
+	@Test @GUITest
+	public void testShowAllCart() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
+		productRepository.addToCart(product1);
+		productRepository.addToCart(product2);
+		GuiActionRunner.execute(() -> {
+			eShopController.showCart();	
+		});
+		assertThat(window.list("cartList").contents()).containsExactly(
+				product1.toStringExtended(),
+				product2.toStringExtended()
+		);
+	}
 }

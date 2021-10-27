@@ -175,5 +175,13 @@ public class EShopControllerIT {
 				new Product("4", "Lavatrice", 300, 1)	
 		);
 	}
+	
+	@Test
+	public void testShowCart() {
+		Product product = new Product("1", "Laptop", 1300);
+		productRepository.addToCart(product);
+		eShopController.showCart();
+		then(eShopView).should().showAllCart(asList(product));
+	}
 }
 
