@@ -95,4 +95,9 @@ public class ProductMongoRepository implements ProductRepository {
 		Bson update = Updates.inc("quantity", - quantityToReduce);
 		productCollection.findOneAndUpdate(session, filterNameProduct,update);
 	}
+
+	@Override
+	public boolean catalogIsEmpty() {
+		return (productCollection.find().first() == null);
+	}
 }
