@@ -372,7 +372,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 		getLblCheckoutLabel().setForeground(Color.RED);
 		getLblCheckoutLabel().setText(
 			"<html>Error!<br/>"
-			+ "<br/>Not enough stock for the following products:<br/>"
+			+ "<br/>Not enough stock for the following product:<br/>"
 			+ "-- " + productWanted.getName() + ", remaining stock:" + productWanted.getQuantity() +"<br/>"
 			+ "<br/>Remove some products and try again</html>"
 		);	

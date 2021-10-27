@@ -173,7 +173,7 @@ public class EShopSwingViewSteps {
 	public void the_view_shows_a_message_about_the_outcome_of_the_checkout() {
 		window.label("checkoutResultLabel").requireText(
 				"<html>Error!<br/>" 
-				+ "<br/>Not enough stock for the following products:<br/>"
+				+ "<br/>Not enough stock for the following product:<br/>"
 				+ "-- Iphone, remaining stock:2<br/>" 
 				+ "<br/>Remove some products and try again</html>");
 	}

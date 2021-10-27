@@ -474,7 +474,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("checkoutResultLabel")
 			.requireText(
 				"<html>Error!<br/>"
-				+ "<br/>Not enough stock for the following products:<br/>"
+				+ "<br/>Not enough stock for the following product:<br/>"
 				+ "-- eBook, remaining stock:2<br/>"
 				+ "<br/>Remove some products and try again</html>"		
 		);
