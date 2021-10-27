@@ -192,10 +192,7 @@ public class EShopControllerIT {
 		productRepository.addToCart(product2);
 		productRepository.addToCart(product2);
 		eShopController.showCartCost();
-		then(eShopView).should().showTotalCost(
-				(product.getPrice() * product.getQuantity())
-				+ (product2.getPrice() * product2.getQuantity())
-		);
+		then(eShopView).should().showTotalCost(3300.0);
 	}
 }
 
