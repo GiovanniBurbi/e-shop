@@ -85,6 +85,7 @@ public class EShopSwingApp implements Callable<Void> {
 				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);
 				eShopController.allProducts();
+				eShopController.showCart();
 			} catch (Exception e) {
 				Logger.getLogger(getClass().getName())
 				.log(Level.SEVERE, "Exception", e);

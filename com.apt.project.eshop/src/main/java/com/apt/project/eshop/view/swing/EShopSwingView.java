@@ -377,6 +377,11 @@ public class EShopSwingView extends JFrame implements EShopView {
 			+ "<br/>Remove some products and try again</html>"
 		);	
 	}
+	
+	@Override
+	public void showAllCart(List<Product> cartProducts) {
+		
+	}
 
 	class CartTextRenderer extends JLabel implements ListCellRenderer<Product> {
 

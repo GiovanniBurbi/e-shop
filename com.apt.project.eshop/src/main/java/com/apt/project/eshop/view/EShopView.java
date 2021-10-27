@@ -28,4 +28,6 @@ public interface EShopView {
 
 	void showFailureLabel(Product productWanted);
 
+	void showAllCart(List<Product> cartProducts);
+
 }

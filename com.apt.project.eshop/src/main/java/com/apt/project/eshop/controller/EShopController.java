@@ -62,4 +62,8 @@ public class EShopController {
 	public void checkoutFailure(Product productWanted) {
 		eShopView.showFailureLabel(productWanted);
 	}
+
+	public void showCart() {
+		eShopView.showAllCart(productRepository.allCart());
+	}
 }
