@@ -73,9 +73,9 @@ public class TransactionalShopManagerTest {
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
+		then(shopController).should(inOrder).checkoutSuccess();
 		then(shopController).should(inOrder).removeCartProduct(product1);
 		then(shopController).should(inOrder).removeCartProduct(product2);
-		then(shopController).should(inOrder).checkoutSuccess();
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 	

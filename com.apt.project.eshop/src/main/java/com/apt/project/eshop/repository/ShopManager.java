@@ -27,8 +27,8 @@ public class ShopManager {
 				shopController.checkoutFailure(e.getProduct());
 				throw new MongoException("Insufficient stock");
 			}
-			products.stream().forEach(shopController::removeCartProduct);
 			shopController.checkoutSuccess();
+			products.stream().forEach(shopController::removeCartProduct);
 			return null;
 		});
 	}
