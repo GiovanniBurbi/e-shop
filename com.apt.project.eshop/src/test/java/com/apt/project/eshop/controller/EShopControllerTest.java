@@ -91,12 +91,12 @@ public class EShopControllerTest {
 	public void testNewCartProductShouldUpdateTotalCostOfTheCartInTheView() {
 		Product product = new Product("1", "Laptop", 1300);
 		given(cartRepository.allCart()).willReturn(asList(product));
-		given(cartRepository.getCartTotal()).willReturn(product.getPrice());
+		given(cartRepository.cartTotalCost()).willReturn(product.getPrice());
 		eShopController.newCartProduct(product);
 		InOrder inOrder = inOrder(cartRepository, eShopView);
 		then(cartRepository).should(inOrder).addToCart(product);
 		then(eShopView).should(inOrder).addToCartView(asList(product));
-		then(cartRepository).should(inOrder).getCartTotal();
+		then(cartRepository).should(inOrder).cartTotalCost();
 		then(eShopView).should(inOrder).showTotalCost(product.getPrice());
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		verifyNoMoreInteractions(eShopView);
@@ -108,13 +108,13 @@ public class EShopControllerTest {
 		Product product2 = new Product("2", "Iphone", 1000);
 		given(cartRepository.allCart()).willReturn(asList(product1, product2));
 		double newAmount = product1.getPrice() + (product2.getPrice()*2);
-		given(cartRepository.getCartTotal()).willReturn(newAmount);
+		given(cartRepository.cartTotalCost()).willReturn(newAmount);
 		eShopController.newCartProduct(product2);
 		InOrder inOrder = inOrder(cartRepository, eShopView);
 		then(cartRepository).should(inOrder).addToCart(product2);
 		then(cartRepository).should(inOrder).allCart();
 		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
-		then(cartRepository).should(inOrder).getCartTotal();
+		then(cartRepository).should(inOrder).cartTotalCost();
 		then(eShopView).should(inOrder).showTotalCost(newAmount);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		verifyNoMoreInteractions(eShopView);
@@ -124,12 +124,12 @@ public class EShopControllerTest {
 	public void testRemoveCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
 		doNothing().when(cartRepository).removeFromCart(product);
-		given(cartRepository.getCartTotal()).willReturn(0.0);
+		given(cartRepository.cartTotalCost()).willReturn(0.0);
 		eShopController.removeCartProduct(product);
 		InOrder inOrder = inOrder(cartRepository, eShopView);
 		then(cartRepository).should(inOrder).removeFromCart(product);
 		then(eShopView).should(inOrder).removeFromCartView(product);
-		then(cartRepository).should().getCartTotal();
+		then(cartRepository).should().cartTotalCost();
 		then(eShopView).should(inOrder).showTotalCost(0.0);
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);
@@ -139,7 +139,7 @@ public class EShopControllerTest {
 	public void testRemoveCartProductWhenCartHasMoreThanOneItemOfTheSameProductShouldUpdateCartCostForAllItemsOfTheSameProduct() { 
 		Product product = new Product("1", "Laptop", 1300, 2);
 		doNothing().when(cartRepository).removeFromCart(product);
-		given(cartRepository.getCartTotal()).willReturn(0.0);
+		given(cartRepository.cartTotalCost()).willReturn(0.0);
 		eShopController.removeCartProduct(product);
 		InOrder inOrder = inOrder(cartRepository, eShopView);
 		then(cartRepository).should(inOrder).removeFromCart(product);
@@ -183,7 +183,7 @@ public class EShopControllerTest {
 	@Test
 	public void testShowCartCost() {
 		double totalCart = 2500;
-		given(cartRepository.getCartTotal()).willReturn(totalCart);
+		given(cartRepository.cartTotalCost()).willReturn(totalCart);
 		eShopController.showCartCost();
 		then(eShopView).should().showTotalCost(totalCart);
 	}

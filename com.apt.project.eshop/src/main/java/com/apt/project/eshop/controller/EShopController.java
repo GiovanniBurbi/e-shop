@@ -42,13 +42,13 @@ public class EShopController {
 	public void newCartProduct(Product productToAdd) {
 		cartRepository.addToCart(productToAdd);
 		eShopView.addToCartView(cartRepository.allCart());
-		eShopView.showTotalCost(cartRepository.getCartTotal());
+		eShopView.showTotalCost(cartRepository.cartTotalCost());
 	}
 
 	public void removeCartProduct(Product product) {
 		cartRepository.removeFromCart(product);
 		eShopView.removeFromCartView(product);
-		eShopView.showTotalCost(cartRepository.getCartTotal());
+		eShopView.showTotalCost(cartRepository.cartTotalCost());
 	}
 
 	public void checkoutCart() {
@@ -70,6 +70,6 @@ public class EShopController {
 	}
 
 	public void showCartCost() {
-		eShopView.showTotalCost(cartRepository.getCartTotal());
+		eShopView.showTotalCost(cartRepository.cartTotalCost());
 	}
 }
