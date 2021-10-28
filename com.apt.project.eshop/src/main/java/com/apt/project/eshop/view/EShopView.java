@@ -18,8 +18,6 @@ public interface EShopView {
 
 	void removeFromCartView(Product product);
 
-	void updateTotal(double price);
-
 	void clearCart();
 
 	void showSuccessLabel();
