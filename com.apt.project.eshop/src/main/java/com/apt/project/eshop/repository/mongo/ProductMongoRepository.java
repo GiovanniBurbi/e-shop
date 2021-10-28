@@ -24,7 +24,6 @@ import com.mongodb.client.model.Updates;
 
 public class ProductMongoRepository implements ProductRepository {
 
-	private static final String CART_NAME = "cart";
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
 	private ClientSession session;

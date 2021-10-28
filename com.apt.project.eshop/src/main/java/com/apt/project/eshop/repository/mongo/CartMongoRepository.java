@@ -22,14 +22,9 @@ public class CartMongoRepository implements CartRepository{
 		
 	private MongoCollection<Product> cartCollection;
 
-	List<Product> products;
-	
-	private MongoDatabase database;
-
-
 	public CartMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		database = client.getDatabase(databaseName);
+		MongoDatabase database = client.getDatabase(databaseName);
 		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 
