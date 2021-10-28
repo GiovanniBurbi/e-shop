@@ -18,8 +18,7 @@ public class ShopManager {
 
 	public void checkout() {
 		transactionManager.doInTransaction(productRepository -> {
-			// chiama controller per avere prodotti di cartRepository
-			//			List<Product> products = productRepository.allCart();
+			List<Product> products = shopController.allCartProducts();
 			try {
 				for (Product product : products) {
 					productRepository.removeFromStorage(product);
@@ -28,8 +27,7 @@ public class ShopManager {
 				shopController.checkoutFailure(e.getProduct());
 				throw new MongoException("Insufficient stock");
 			}
-			//chiama controller per togliere dal cart repository
-			//products.stream().forEach(productRepository::removeFromCart);
+			products.stream().forEach(shopController::removeCartProduct);
 			shopController.checkoutSuccess();
 			return null;
 		});

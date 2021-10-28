@@ -2,6 +2,7 @@ package com.apt.project.eshop.controller;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
@@ -186,5 +187,18 @@ public class EShopControllerTest {
 		given(cartRepository.cartTotalCost()).willReturn(totalCart);
 		eShopController.showCartCost();
 		then(eShopView).should().showTotalCost(totalCart);
+	}
+	
+	@Test
+	public void testAllCartProductsDelegateToCartRepository() {
+		eShopController.allCartProducts();
+		then(cartRepository).should().allCart();
+	}
+	
+	@Test
+	public void testAllCartProductsShouldReturnCartProducts(){
+		List<Product> products = asList(new Product("1", "laptop", 1300, 2), new Product("2", "Iphone", 1000, 3));
+		given(cartRepository.allCart()).willReturn(products);
+		assertThat(eShopController.allCartProducts()).contains(new Product("1", "laptop", 1300, 2), new Product("2", "Iphone", 1000, 3));
 	}
 }

@@ -13,7 +13,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.mongodb.MongoClient;
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -27,20 +26,11 @@ public class CartMongoRepository implements CartRepository{
 	
 	private MongoDatabase database;
 
-	private ClientSession session;
 
 	public CartMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-	}
-
-	public CartMongoRepository(MongoClient client, String databaseName, String collectionName,
-			ClientSession session) {
-		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		database = client.getDatabase(databaseName);
-		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-		this.session = session;
 	}
 
 	@Override
@@ -59,7 +49,7 @@ public class CartMongoRepository implements CartRepository{
 
 	@Override
 	public void removeFromCart(Product product) {
-		cartCollection.findOneAndDelete(session, Filters.eq("name", product.getName()));
+		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
 	}
 
 	@Override

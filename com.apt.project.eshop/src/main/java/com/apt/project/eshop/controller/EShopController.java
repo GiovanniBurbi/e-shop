@@ -72,4 +72,8 @@ public class EShopController {
 	public void showCartCost() {
 		eShopView.showTotalCost(cartRepository.cartTotalCost());
 	}
+
+	public List<Product> allCartProducts() {
+		return cartRepository.allCart();
+	}
 }
