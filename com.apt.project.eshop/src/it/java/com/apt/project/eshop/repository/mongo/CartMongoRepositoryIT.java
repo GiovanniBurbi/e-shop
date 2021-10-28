@@ -16,7 +16,6 @@ import org.testcontainers.containers.GenericContainer;
 import com.apt.project.eshop.model.Product;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -32,7 +31,6 @@ public class CartMongoRepositoryIT {
 	private MongoClient client;
 	private CartMongoRepository cartRepository;
 	private MongoCollection<Product> cartCollection;
-	private ClientSession session;
 
 	@BeforeClass
 	public static void mongoConfiguration() {
@@ -50,9 +48,8 @@ public class CartMongoRepositoryIT {
 	@Before
 	public void setup() {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
-		session = client.startSession();
 		MongoDatabase database = client.getDatabase(ESHOP_DB_NAME);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
 		// start with clean database
 		database.drop();
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),

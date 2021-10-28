@@ -43,6 +43,9 @@ import picocli.CommandLine.Option;
  * </pre>
  * 
  * Launch the application.
+ * 
+ * @author Giovanni Burbi
+ * 
  */
 @Command(mixinStandardHelpOptions = true)
 public class EShopSwingApp implements Callable<Void> {
