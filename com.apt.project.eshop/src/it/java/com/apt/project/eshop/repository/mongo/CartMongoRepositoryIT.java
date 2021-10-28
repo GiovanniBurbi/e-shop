@@ -123,4 +123,10 @@ public class CartMongoRepositoryIT {
 		assertThat(cartRepository.getTotal()).isZero();		
 	}
 
+	@Test
+	public void testGetCartTotal() {
+		cartRepository.setTotal(1300);
+		assertThat(cartRepository.getCartTotal()).isEqualTo(1300);
+		
+	}
 }

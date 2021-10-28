@@ -11,5 +11,7 @@ public interface CartRepository {
 	List<Product> allCart();
 
 	void removeFromCart(Product product);
+	
+	double getCartTotal();
 
 }

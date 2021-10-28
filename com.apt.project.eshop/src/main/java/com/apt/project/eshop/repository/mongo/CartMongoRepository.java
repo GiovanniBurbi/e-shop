@@ -59,8 +59,13 @@ public class CartMongoRepository implements CartRepository{
 	public double getTotal() {
 		return total;
 	}
+	@Override
+	public double getCartTotal() {
+		return total;
+	}	
 
 	protected void setTotal(double total) {
 		this.total = total;
-	}	
+	}
+
 }
