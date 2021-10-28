@@ -16,6 +16,7 @@ import org.testcontainers.containers.GenericContainer;
 import com.apt.project.eshop.model.Product;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -31,6 +32,7 @@ public class CartMongoRepositoryIT {
 	private MongoClient client;
 	private CartMongoRepository cartRepository;
 	private MongoCollection<Product> cartCollection;
+	private ClientSession session;
 
 	@BeforeClass
 	public static void mongoConfiguration() {
@@ -48,8 +50,9 @@ public class CartMongoRepositoryIT {
 	@Before
 	public void setup() {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		session = client.startSession();
 		MongoDatabase database = client.getDatabase(ESHOP_DB_NAME);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
 		// start with clean database
 		database.drop();
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
@@ -67,7 +70,6 @@ public class CartMongoRepositoryIT {
 		Product product = new Product("1", "eBook", 300);
 		cartRepository.addToCart(product);
 		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300));
-		assertThat(cartRepository.getTotal()).isEqualTo(300);
 	}
 
 	@Test
@@ -79,17 +81,6 @@ public class CartMongoRepositoryIT {
 		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300, 2));
 	}
 	
-	@Test
-	public void testAddToCartWhenTheUserAddMoreTimesTheSameProductShouldUpdateTheTotal() {
-		Product product = new Product("1", "eBook", 300);
-		Product product2 = new Product("2", "Iphone", 1000);
-		cartRepository.addToCart(product2);
-		cartRepository.addToCart(product);
-		cartRepository.addToCart(product);
-		cartRepository.addToCart(product);
-		assertThat(cartRepository.getTotal()).isEqualTo(1900);
-	}
-
 	@Test
 	public void testAllCartWhenCartCollectionIsEmpty() {
 		assertThat(cartRepository.allCart()).isEmpty();
@@ -115,18 +106,16 @@ public class CartMongoRepositoryIT {
 	}
 	
 	@Test
-	public void testRemoveFromCartShouldDecreaseTotal() {
-		Product product = new Product("1", "Laptop", 1300);
-		cartCollection.insertOne(product);
-		cartRepository.setTotal(1300);
-		cartRepository.removeFromCart(product);
-		assertThat(cartRepository.getTotal()).isZero();		
+	public void testCartTotalCostWhenCartIsEmpty() {
+		assertThat(cartRepository.cartTotalCost()).isEqualTo(0.0);
 	}
-
+	
 	@Test
-	public void testGetCartTotal() {
-		cartRepository.setTotal(1300);
-		assertThat(cartRepository.getCartTotal()).isEqualTo(1300);
-		
+	public void testCartTotalCost() {
+		Product product1 = new Product("1", "Laptop", 1300, 4);
+		Product product2 = new Product("2", "eBook", 300, 3);
+		cartCollection.insertOne(product1);
+		cartCollection.insertOne(product2);
+		assertThat(cartRepository.cartTotalCost()).isEqualTo(6100);	
 	}
 }

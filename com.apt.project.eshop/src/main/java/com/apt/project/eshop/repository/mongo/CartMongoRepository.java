@@ -13,6 +13,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.mongodb.MongoClient;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -24,15 +25,22 @@ public class CartMongoRepository implements CartRepository{
 
 	List<Product> products;
 	
-	private double total;
-
 	private MongoDatabase database;
+
+	private ClientSession session;
 
 	public CartMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-		this.setTotal(0);
+	}
+
+	public CartMongoRepository(MongoClient client, String databaseName, String collectionName,
+			ClientSession session) {
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		database = client.getDatabase(databaseName);
+		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
+		this.session = session;
 	}
 
 	@Override
@@ -42,7 +50,6 @@ public class CartMongoRepository implements CartRepository{
 			cartCollection.updateOne(Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
 		else 
 			cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
-		setTotal(total + product.getPrice());
 	}
 	
 	@Override
@@ -52,20 +59,16 @@ public class CartMongoRepository implements CartRepository{
 
 	@Override
 	public void removeFromCart(Product product) {
-		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
-		setTotal(total - product.getPrice());
+		cartCollection.findOneAndDelete(session, Filters.eq("name", product.getName()));
 	}
 
-	public double getTotal() {
-		return total;
-	}
 	@Override
-	public double getCartTotal() {
+	public double cartTotalCost() {
+		List<Product> cartProducts = StreamSupport.stream(cartCollection.find().spliterator(), false).collect(Collectors.toList());
+		double total = 0;
+		for (Product product : cartProducts) {
+			total += product.getPrice() * product.getQuantity();
+		}
 		return total;
 	}	
-
-	protected void setTotal(double total) {
-		this.total = total;
-	}
-
 }
