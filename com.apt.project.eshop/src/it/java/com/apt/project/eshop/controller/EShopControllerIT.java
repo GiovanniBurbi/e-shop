@@ -19,10 +19,12 @@ import org.mockito.Spy;
 import org.testcontainers.containers.GenericContainer;
 
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.TransactionManager;
 import com.apt.project.eshop.repository.TransactionalShopManager;
+import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.EShopView;
 import com.mongodb.MongoClient;
@@ -32,6 +34,7 @@ public class EShopControllerIT {
 
 	private static final String PRODUCTS_COLLECTION_NAME = "products";
 	private static final String ESHOP_DB_NAME = "eShop";
+	private static final String CART_COLLECTION_NAME = "cart";
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
@@ -46,7 +49,7 @@ public class EShopControllerIT {
 	
 	private EShopController eShopController;
 	private ProductRepository productRepository;
-	
+	private CartRepository cartRepository;
 	private AutoCloseable closeable;
 	private List<Product> catalog;
 	private ShopManager shopManager;
@@ -78,9 +81,10 @@ public class EShopControllerIT {
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
-		eShopController = new EShopController(productRepository, eShopView, shopManager);
+		eShopController = new EShopController(productRepository, cartRepository, eShopView, shopManager);
 		shopManager.setShopController(eShopController);
 	}
 
@@ -115,40 +119,39 @@ public class EShopControllerIT {
 	public void testNewCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product2);
 		eShopController.newCartProduct(product);
-		assertThat(productRepository.allCart()).containsExactly(product2, product);
+		assertThat(cartRepository.allCart()).containsExactly(product2, product);
 		InOrder inOrder = inOrder(eShopView);
 		then(eShopView).should(inOrder).addToCartView(asList(product2, product));
-		then(eShopView).should(inOrder).updateTotal(product.getPrice());
+		then(eShopView).should(inOrder).showTotalCost(product.getPrice() + product2.getPrice());
 	}
 	
 	@Test
 	public void testRemoveCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product);
+		cartRepository.addToCart(product2);
 		eShopController.removeCartProduct(product);
-		assertThat(productRepository.allCart()).containsExactly(product2);
+		assertThat(cartRepository.allCart()).containsExactly(product2);
 		InOrder inOrder = inOrder(eShopView);
 		then(eShopView).should(inOrder).removeFromCartView(product);
-		double amountToRemove = product.getPrice() * product.getQuantity();
-		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
+		then(eShopView).should(inOrder).showTotalCost(product2.getPrice());
 	}
 	
 	@Test
 	public void testCheckoutCartWhenSuccessfull() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product);
+		cartRepository.addToCart(product2);
 		eShopController.checkoutCart();
 		InOrder inOrder = inOrder(eShopView);
 		then(eShopView).should(inOrder).showSuccessLabel();
 		then(eShopView).should(inOrder).clearCart();
 		then(eShopView).should(inOrder).resetTotalCost();	
-		assertThat(productRepository.allCart()).isEmpty();
+		assertThat(cartRepository.allCart()).isEmpty();
 		assertThat(productRepository.findAll()).containsExactly(
 				new Product("1", "Laptop", 1300, 0),
 				new Product("2", "Iphone", 1000, 0),
@@ -161,13 +164,13 @@ public class EShopControllerIT {
 	public void testCheckoutCartWhenTheCheckoutFails() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product);
-		productRepository.addToCart(product2);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product);
+		cartRepository.addToCart(product2);
+		cartRepository.addToCart(product2);
 		eShopController.checkoutCart();
 		then(eShopView).should().showFailureLabel(product2);
 		verifyNoMoreInteractions(eShopView);
-		assertThat(productRepository.allCart()).contains(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000, 2));
+		assertThat(cartRepository.allCart()).contains(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000, 2));
 		assertThat(productRepository.findAll()).containsExactly(
 				new Product("1", "Laptop", 1300, 1),
 				new Product("2", "Iphone", 1000, 1),
@@ -179,7 +182,7 @@ public class EShopControllerIT {
 	@Test
 	public void testShowCart() {
 		Product product = new Product("1", "Laptop", 1300);
-		productRepository.addToCart(product);
+		cartRepository.addToCart(product);
 		eShopController.showCart();
 		then(eShopView).should().showAllCart(asList(product));
 	}
@@ -188,9 +191,9 @@ public class EShopControllerIT {
 	public void testShowCartCost() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product);
-		productRepository.addToCart(product2);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product);
+		cartRepository.addToCart(product2);
+		cartRepository.addToCart(product2);
 		eShopController.showCartCost();
 		then(eShopView).should().showTotalCost(3300.0);
 	}
