@@ -333,13 +333,6 @@ public class EShopSwingView extends JFrame implements EShopView {
 	}
 
 	@Override
-	public void updateTotal(double price) {
-		String actualTotalString = getTotalCostlabel().getText();
-		double actualTotal = Double.parseDouble(actualTotalString.substring(0, actualTotalString.lastIndexOf("$")));
-		totalCostLabel.setText(String.valueOf(actualTotal + price) + "$");
-	}
-	
-	@Override
 	public void clearCart() {
 		cartListModel.clear();
 	}

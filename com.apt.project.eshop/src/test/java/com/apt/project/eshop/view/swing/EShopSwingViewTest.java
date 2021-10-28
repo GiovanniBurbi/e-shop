@@ -339,27 +339,6 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 	
 	@Test @GUITest
-	public void testUpdateTotalShowTheTotalCostInTheLabel() {
-		Product product = new Product("1", "Laptop", 1300);
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.updateTotal(product.getPrice());
-		});
-		window.label("totalCostLabel").requireText("1300.0$");		
-	}
-	
-	@Test @GUITest
-	public void testUpdateTotalWhenThereWasAlreadyAProductInTheCartShowTheTotalCostOfTheCartInTheLabel() {
-		Product product = new Product("1", "Laptop", 1300);
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getTotalCostlabel().setText("100$");
-					eShopSwingView.updateTotal(product.getPrice());
-		});
-		window.label("totalCostLabel").requireText("1400.0$");		
-	}
-	
-	@Test @GUITest
 	public void testCheckoutButtonShouldBeEnabledOnlyWhenAtLeastOneProductIsInsideTheCartList() {
 		GuiActionRunner.execute(
 			() -> {

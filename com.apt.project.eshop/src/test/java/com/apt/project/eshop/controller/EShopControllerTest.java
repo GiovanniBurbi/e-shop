@@ -2,6 +2,7 @@ package com.apt.project.eshop.controller;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
@@ -29,6 +31,8 @@ public class EShopControllerTest {
 
 	@Mock
 	private ProductRepository productRepository;
+	@Mock
+	private CartRepository cartRepository;
 	@Mock
 	private EShopView eShopView;
 	@InjectMocks
@@ -87,12 +91,14 @@ public class EShopControllerTest {
 	@Test
 	public void testNewCartProductShouldUpdateTotalCostOfTheCartInTheView() {
 		Product product = new Product("1", "Laptop", 1300);
-		given(productRepository.allCart()).willReturn(asList(product));
+		given(cartRepository.allCart()).willReturn(asList(product));
+		given(cartRepository.cartTotalCost()).willReturn(product.getPrice());
 		eShopController.newCartProduct(product);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).addToCart(product);
+		InOrder inOrder = inOrder(cartRepository, eShopView);
+		then(cartRepository).should(inOrder).addToCart(product);
 		then(eShopView).should(inOrder).addToCartView(asList(product));
-		then(eShopView).should(inOrder).updateTotal(product.getPrice());
+		then(cartRepository).should(inOrder).cartTotalCost();
+		then(eShopView).should(inOrder).showTotalCost(product.getPrice());
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		verifyNoMoreInteractions(eShopView);
 	}
@@ -101,12 +107,16 @@ public class EShopControllerTest {
 	public void testNewCartProductWhenCartHasFewProductsAlreadyShouldUpdateTotalCostOfTheCartInTheView() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		given(productRepository.allCart()).willReturn(asList(product1, product2));
+		given(cartRepository.allCart()).willReturn(asList(product1, product2));
+		double newAmount = product1.getPrice() + (product2.getPrice()*2);
+		given(cartRepository.cartTotalCost()).willReturn(newAmount);
 		eShopController.newCartProduct(product2);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).addToCart(product2);
+		InOrder inOrder = inOrder(cartRepository, eShopView);
+		then(cartRepository).should(inOrder).addToCart(product2);
+		then(cartRepository).should(inOrder).allCart();
 		then(eShopView).should(inOrder).addToCartView(asList(product1, product2));
-		then(eShopView).should(inOrder).updateTotal(product2.getPrice());
+		then(cartRepository).should(inOrder).cartTotalCost();
+		then(eShopView).should(inOrder).showTotalCost(newAmount);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		verifyNoMoreInteractions(eShopView);
 	}
@@ -114,12 +124,14 @@ public class EShopControllerTest {
 	@Test
 	public void testRemoveCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
-		doNothing().when(productRepository).removeFromCart(product);
+		doNothing().when(cartRepository).removeFromCart(product);
+		given(cartRepository.cartTotalCost()).willReturn(0.0);
 		eShopController.removeCartProduct(product);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).removeFromCart(product);
+		InOrder inOrder = inOrder(cartRepository, eShopView);
+		then(cartRepository).should(inOrder).removeFromCart(product);
 		then(eShopView).should(inOrder).removeFromCartView(product);
-		then(eShopView).should(inOrder).updateTotal(-(product.getPrice()));
+		then(cartRepository).should().cartTotalCost();
+		then(eShopView).should(inOrder).showTotalCost(0.0);
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);
 	}
@@ -127,13 +139,13 @@ public class EShopControllerTest {
 	@Test
 	public void testRemoveCartProductWhenCartHasMoreThanOneItemOfTheSameProductShouldUpdateCartCostForAllItemsOfTheSameProduct() { 
 		Product product = new Product("1", "Laptop", 1300, 2);
-		doNothing().when(productRepository).removeFromCart(product);
+		doNothing().when(cartRepository).removeFromCart(product);
+		given(cartRepository.cartTotalCost()).willReturn(0.0);
 		eShopController.removeCartProduct(product);
-		InOrder inOrder = inOrder(productRepository, eShopView);
-		then(productRepository).should(inOrder).removeFromCart(product);
+		InOrder inOrder = inOrder(cartRepository, eShopView);
+		then(cartRepository).should(inOrder).removeFromCart(product);
 		then(eShopView).should(inOrder).removeFromCartView(product);
-		double amountToRemove = product.getPrice() * product.getQuantity();
-		then(eShopView).should(inOrder).updateTotal(-(amountToRemove));
+		then(eShopView).should(inOrder).showTotalCost(0.0);
 		verifyNoMoreInteractions(productRepository);
 		verifyNoMoreInteractions(eShopView);
 	}
@@ -164,16 +176,29 @@ public class EShopControllerTest {
 	@Test
 	public void testShowCart() {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
-		given(productRepository.allCart()).willReturn(products);
+		given(cartRepository.allCart()).willReturn(products);
 		eShopController.showCart();
 		then(eShopView).should().showAllCart(products);
 	}
 	
 	@Test
 	public void testShowCartCost() {
-		List<Product> products = asList(new Product("1", "laptop", 1300),  new Product("2", "Iphone", 1000, 2));
-		given(productRepository.allCart()).willReturn(products);
+		double totalCart = 2500;
+		given(cartRepository.cartTotalCost()).willReturn(totalCart);
 		eShopController.showCartCost();
-		then(eShopView).should().showTotalCost(3300);
+		then(eShopView).should().showTotalCost(totalCart);
+	}
+	
+	@Test
+	public void testAllCartProductsDelegateToCartRepository() {
+		eShopController.allCartProducts();
+		then(cartRepository).should().allCart();
+	}
+	
+	@Test
+	public void testAllCartProductsShouldReturnCartProducts(){
+		List<Product> products = asList(new Product("1", "laptop", 1300, 2), new Product("2", "Iphone", 1000, 3));
+		given(cartRepository.allCart()).willReturn(products);
+		assertThat(eShopController.allCartProducts()).contains(new Product("1", "laptop", 1300, 2), new Product("2", "Iphone", 1000, 3));
 	}
 }

@@ -3,6 +3,7 @@ package com.apt.project.eshop.controller;
 import java.util.List;
 
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
@@ -10,11 +11,13 @@ import com.apt.project.eshop.view.EShopView;
 public class EShopController {
 
 	private ProductRepository productRepository;
+	private CartRepository cartRepository;
 	private EShopView eShopView;
 	private ShopManager shopManager;
 	
-	public EShopController(ProductRepository productRepository, EShopView eShopView, ShopManager shopManager) {
+	public EShopController(ProductRepository productRepository, CartRepository cartRepository, EShopView eShopView, ShopManager shopManager) {
 		this.productRepository = productRepository;
+		this.cartRepository = cartRepository;
 		this.eShopView = eShopView;
 		this.shopManager = shopManager;
 	}
@@ -37,16 +40,15 @@ public class EShopController {
 	}
 
 	public void newCartProduct(Product productToAdd) {
-		productRepository.addToCart(productToAdd);
-		eShopView.addToCartView(productRepository.allCart());
-		eShopView.updateTotal(productToAdd.getPrice());
+		cartRepository.addToCart(productToAdd);
+		eShopView.addToCartView(cartRepository.allCart());
+		eShopView.showTotalCost(cartRepository.cartTotalCost());
 	}
 
 	public void removeCartProduct(Product product) {
-		productRepository.removeFromCart(product);
+		cartRepository.removeFromCart(product);
 		eShopView.removeFromCartView(product);
-		double amountToRemove = product.getPrice() * product.getQuantity();
-		eShopView.updateTotal(-(amountToRemove));
+		eShopView.showTotalCost(cartRepository.cartTotalCost());
 	}
 
 	public void checkoutCart() {
@@ -64,15 +66,14 @@ public class EShopController {
 	}
 
 	public void showCart() {
-		eShopView.showAllCart(productRepository.allCart());
+		eShopView.showAllCart(cartRepository.allCart());
 	}
 
 	public void showCartCost() {
-		List<Product> products = productRepository.allCart();
-		double totalCost = 0;
-		for (Product product : products) {
-			totalCost += product.getPrice() * product.getQuantity();
-		}
-		eShopView.showTotalCost(totalCost);
+		eShopView.showTotalCost(cartRepository.cartTotalCost());
+	}
+
+	public List<Product> allCartProducts() {
+		return cartRepository.allCart();
 	}
 }

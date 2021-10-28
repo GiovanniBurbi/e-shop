@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -27,10 +28,11 @@ import com.mongodb.MongoException;
 
 public class TransactionalShopManagerTest {
 	
-	private ShopManager shopManager;
 	
 	@Mock
 	private TransactionManager transactionManager;
+	@InjectMocks
+	private ShopManager shopManager;
 	@Mock
 	private ProductRepository productRepository;
 	@Mock
@@ -46,7 +48,6 @@ public class TransactionalShopManagerTest {
 		given(transactionManager.doInTransaction(any()))
 			.willAnswer(
 				answer((TransactionCode<?> code) -> code.apply(productRepository)));
-		shopManager = new ShopManager(transactionManager);
 		shopManager.setShopController(shopController);
 	}
 
@@ -59,7 +60,7 @@ public class TransactionalShopManagerTest {
 	public void testCheckoutWhenSuccessfull() {
 		Product product1 = new Product("1", "laptop", 1300);
 		Product product2 = new Product("1", "eBook", 300);
-		given(productRepository.allCart()).willReturn(asList(product1, product2));
+		given(shopController.allCartProducts()).willReturn(asList(product1, product2));
 		shopManager.checkout();
 		InOrder inOrder = inOrder(productRepository, shopController);
 		try {
@@ -72,9 +73,9 @@ public class TransactionalShopManagerTest {
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
-		then(productRepository).should(inOrder).removeFromCart(product1);
-		then(productRepository).should(inOrder).removeFromCart(product2);
 		then(shopController).should(inOrder).checkoutSuccess();
+		then(shopController).should(inOrder).removeCartProduct(product1);
+		then(shopController).should(inOrder).removeCartProduct(product2);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 	
@@ -82,7 +83,7 @@ public class TransactionalShopManagerTest {
 	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowMongoExceptionAndDelegateToControllerSuccessCheckout() throws RepositoryException {
 		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
 		Product product2 = new Product("2", "eBook", 300, 1);
-		given(productRepository.allCart()).willReturn(asList(productNotAvailable, product2));
+		given(shopController.allCartProducts()).willReturn(asList(productNotAvailable, product2));
 		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
 		assertThatThrownBy(() -> shopManager.checkout())
 			.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
@@ -95,7 +96,7 @@ public class TransactionalShopManagerTest {
 		Product product1 = new Product("3", "Iphone", 1000.0, 1);
 		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
 		Product product2 = new Product("2", "eBook", 300, 1);
-		given(productRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2));
+		given(shopController.allCartProducts()).willReturn(asList(product1, productNotAvailable, product2));
 		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
 		InOrder inOrder = inOrder(productRepository, shopController);
 		assertThatThrownBy(() -> shopManager.checkout())

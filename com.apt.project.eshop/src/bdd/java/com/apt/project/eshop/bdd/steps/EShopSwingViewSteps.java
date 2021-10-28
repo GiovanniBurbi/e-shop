@@ -26,7 +26,8 @@ public class EShopSwingViewSteps {
 	private FrameFixture window;
 
 	static final String DB_NAME = "test-db";
-	static final String COLLECTION_NAME = "test-collection";
+	static final String PRODUCT_COLLECTION_NAME = "test-product-collection";
+	static final String CART_COLLECTION_NAME = "test-cart-collection";
 
 	@After
 	public void tearDown() {
@@ -39,7 +40,8 @@ public class EShopSwingViewSteps {
 		// start the Swing application
 		application("com.apt.project.eshop.app.swing.EShopSwingApp").withArgs(
 				"--db-name=" + DB_NAME,
-				"--db-collection=" + COLLECTION_NAME
+				"--db-product-collection=" + PRODUCT_COLLECTION_NAME,
+				"--db-cart-collection=" + CART_COLLECTION_NAME
 		).start();
 		// get a reference of its JFrame
 		window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {

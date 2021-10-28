@@ -23,6 +23,7 @@ import com.apt.project.eshop.repository.RepositoryException;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.TransactionManager;
 import com.apt.project.eshop.repository.TransactionalShopManager;
+import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -32,6 +33,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	
 	private static final String PRODUCTS_COLLECTION_NAME = "products";
 	private static final String ESHOP_DB_NAME = "eShop";
+	private static final String CART_COLLECTION_NAME = "cart";
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
@@ -47,6 +49,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private List<Product> catalog;
 	private ShopManager shopManager;
 	private TransactionManager transactionManager;
+	private CartMongoRepository cartRepository;
 	
 	@BeforeClass
 	public static void MongoConfiguration() {
@@ -72,13 +75,14 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 				new Product("4", "Lavatrice", 300)
 		);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
 		// make sure to start with the initial configuration
 		productRepository.loadCatalog(catalog);
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
-			eShopController = new EShopController(productRepository, eShopSwingView, shopManager);
+			eShopController = new EShopController(productRepository, cartRepository, eShopSwingView, shopManager);
 			eShopSwingView.setEShopController(eShopController);
 			return eShopSwingView;
 		});
@@ -245,8 +249,8 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	public void testShowAllCart() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product1);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product1);
+		cartRepository.addToCart(product2);
 		GuiActionRunner.execute(() -> {
 			eShopController.showCart();	
 		});
@@ -260,9 +264,9 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	public void testShowTotalCost() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		productRepository.addToCart(product1);
-		productRepository.addToCart(product2);
-		productRepository.addToCart(product2);
+		cartRepository.addToCart(product1);
+		cartRepository.addToCart(product2);
+		cartRepository.addToCart(product2);
 		GuiActionRunner.execute(() -> {
 			eShopController.showCartCost();	
 		});
