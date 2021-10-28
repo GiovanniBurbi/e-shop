@@ -27,14 +27,12 @@ public class ProductMongoRepository implements ProductRepository {
 	private static final String CART_NAME = "cart";
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
-	private MongoCollection<Product> cartCollection;
 	private ClientSession session;
 
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-		cartCollection = database.getCollection(CART_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName, ClientSession session) {
@@ -42,7 +40,6 @@ public class ProductMongoRepository implements ProductRepository {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-		cartCollection = database.getCollection(CART_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 	
 	@Override
@@ -63,25 +60,6 @@ public class ProductMongoRepository implements ProductRepository {
 					.find(Filters.regex("name",Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE))).spliterator(), false)
 					.collect(Collectors.toList()
 		);
-	}
-
-	@Override
-	public void addToCart(Product product) {
-		Product existingCartProduct = cartCollection.find(Filters.eq("name", product.getName())).first();
-		if (existingCartProduct != null)
-			cartCollection.updateOne(Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
-		else 
-			cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
-	}
-
-	@Override
-	public List<Product> allCart() {
-		return StreamSupport.stream(cartCollection.find().spliterator(), false).collect(Collectors.toList());
-	}
-
-	@Override
-	public void removeFromCart(Product product) {
-		cartCollection.findOneAndDelete(Filters.eq("name", product.getName()));
 	}
 
 	@Override
