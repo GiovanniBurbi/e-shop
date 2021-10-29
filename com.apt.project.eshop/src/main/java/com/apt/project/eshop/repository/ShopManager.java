@@ -17,18 +17,18 @@ public class ShopManager {
 	}
 
 	public void checkout() {
-		transactionManager.doInTransaction(productRepository -> {
-			List<Product> products = shopController.allCartProducts();
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			List<Product> products = cartRepository.allCart();
 			try {
 				for (Product product : products) {
 					productRepository.removeFromStorage(product);
+					cartRepository.removeFromCart(product);
 				}
 			} catch (RepositoryException e) {
 				shopController.checkoutFailure(e.getProduct());
 				throw new MongoException("Insufficient stock");
 			}
 			shopController.checkoutSuccess();
-			products.stream().forEach(shopController::removeCartProduct);
 			return null;
 		});
 	}

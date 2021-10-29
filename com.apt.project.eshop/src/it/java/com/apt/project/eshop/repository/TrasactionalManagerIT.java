@@ -2,7 +2,6 @@ package com.apt.project.eshop.repository;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import java.util.List;
@@ -14,7 +13,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.testcontainers.containers.GenericContainer;
 
 import com.apt.project.eshop.controller.EShopController;
@@ -74,10 +72,10 @@ public class TrasactionalManagerIT {
 				new Product("4", "Lavatrice", 300, 2)
 		);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
-		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		shopController = new EShopController(productRepository, cartRepository, shopView, shopManager);
 		shopManager.setShopController(shopController);
