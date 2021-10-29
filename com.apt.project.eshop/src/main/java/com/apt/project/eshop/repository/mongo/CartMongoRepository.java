@@ -34,16 +34,16 @@ public class CartMongoRepository implements CartRepository{
 
 	@Override
 	public void addToCart(Product product) {
-		Product existingCartProduct = cartCollection.find(Filters.eq("name", product.getName())).first();
+		Product existingCartProduct = cartCollection.find(session, Filters.eq("name", product.getName())).first();
 		if (existingCartProduct != null)
-			cartCollection.updateOne(Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
+			cartCollection.updateOne(session, Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
 		else 
-			cartCollection.insertOne(new Product(product.getId(), product.getName(), product.getPrice()));
+			cartCollection.insertOne(session, new Product(product.getId(), product.getName(), product.getPrice()));
 	}
 	
 	@Override
 	public List<Product> allCart() {
-		return StreamSupport.stream(cartCollection.find().spliterator(), false).collect(Collectors.toList());
+		return StreamSupport.stream(cartCollection.find(session).spliterator(), false).collect(Collectors.toList());
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class CartMongoRepository implements CartRepository{
 
 	@Override
 	public double cartTotalCost() {
-		List<Product> cartProducts = StreamSupport.stream(cartCollection.find().spliterator(), false).collect(Collectors.toList());
+		List<Product> cartProducts = StreamSupport.stream(cartCollection.find(session).spliterator(), false).collect(Collectors.toList());
 		double total = 0;
 		for (Product product : cartProducts) {
 			total += product.getPrice() * product.getQuantity();
