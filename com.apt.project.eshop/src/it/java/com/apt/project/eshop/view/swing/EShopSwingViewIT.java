@@ -27,6 +27,7 @@ import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.ClientSession;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
@@ -68,17 +69,18 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onSetUp() throws Exception {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		ClientSession session = client.startSession();
 		catalog = asList(
 				new Product("1", "Laptop", 1300),
 				new Product("2", "Iphone", 1000),
 				new Product("3", "Cuffie", 300),
 				new Product("4", "Lavatrice", 300)
 		);
-		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
 		// make sure to start with the initial configuration
 		productRepository.loadCatalog(catalog);
-		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();

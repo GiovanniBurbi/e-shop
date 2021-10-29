@@ -29,6 +29,7 @@ import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.EShopView;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.ClientSession;
 
 public class EShopControllerIT {
 
@@ -71,6 +72,7 @@ public class EShopControllerIT {
 	@Before
 	public void setup() {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
+		ClientSession session = client.startSession();
 		closeable = MockitoAnnotations.openMocks(this);
 		catalog = asList(
 				new Product("1", "Laptop", 1300),
@@ -78,10 +80,10 @@ public class EShopControllerIT {
 				new Product("3", "Cuffie", 300),
 				new Product("4", "Lavatrice", 300)
 			);
-		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
+		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
-		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME);
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
 		eShopController = new EShopController(productRepository, cartRepository, eShopView, shopManager);

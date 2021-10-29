@@ -27,12 +27,6 @@ public class ProductMongoRepository implements ProductRepository {
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
 	private ClientSession session;
-
-	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName) {
-		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		database = client.getDatabase(databaseName);
-		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
-	}
 	
 	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName, ClientSession session) {
 		this.session = session;
