@@ -36,4 +36,8 @@ public class ShopManager {
 			return null;
 		});
 	}
+	
+	public List<Product> allProducts() {
+		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> productRepository.findAll());
+	}
 }

@@ -23,7 +23,7 @@ public class EShopController {
 	}
 
 	public void allProducts() {	
-		eShopView.showAllProducts(productRepository.findAll());
+		eShopView.showAllProducts(shopManager.allProducts());
 	}
 
 	public void searchProducts(String searchName) {

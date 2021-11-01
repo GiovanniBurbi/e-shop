@@ -1,6 +1,7 @@
 package com.apt.project.eshop.repository;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.AdditionalAnswers.answer;
@@ -50,6 +51,9 @@ public class TransactionalShopManagerTest {
 		given(transactionManager.doInTransaction(any()))
 			.willAnswer(
 				answer((TransactionCode<?> code) -> code.apply(productRepository, cartRepository)));
+		given(transactionManager.doInTransactionAndReturnList(any()))
+		.willAnswer(
+			answer((TransactionCodeReturnList<?> code) -> code.execute(productRepository, cartRepository)));
 		shopManager.setShopController(shopController);
 	}
 
@@ -100,13 +104,24 @@ public class TransactionalShopManagerTest {
 		Product product2 = new Product("2", "eBook", 300, 1);
 		given(cartRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2));
 		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
-		InOrder inOrder = inOrder(productRepository, shopController);
+		InOrder inOrder = inOrder(productRepository, cartRepository, shopController);
 		assertThatThrownBy(() -> shopManager.checkout())
-		.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
+			.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
 		then(productRepository).should(inOrder).removeFromStorage(product1);
+		then(cartRepository).should(inOrder).removeFromCart(product1);
 		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
 		then(shopController).should(inOrder).checkoutFailure(productNotAvailable);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		verifyNoMoreInteractions(ignoreStubs(cartRepository));
 		then(transactionManager).should(times(1)).doInTransaction(any());
+	}
+	
+	@Test
+	public void testAllProductsShouldReturnAllProductsInTheDatabase() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		given(productRepository.findAll()).willReturn(asList(product1, product2));
+		assertThat(shopManager.allProducts()).containsExactly(product1, product2);
+		then(productRepository).should().findAll();
 	}
 }

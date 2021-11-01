@@ -52,10 +52,11 @@ public class EShopControllerTest {
 	}
 
 	@Test
-	public void testAllProducts() {
+	public void testAllProductsShouldDelegateToShopManager() {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
-		given(productRepository.findAll()).willReturn(products);
+		given(shopManager.allProducts()).willReturn(products);
 		eShopController.allProducts();
+		then(shopManager).should().allProducts();
 		then(eShopView).should().showAllProducts(products);
 	}
 	
