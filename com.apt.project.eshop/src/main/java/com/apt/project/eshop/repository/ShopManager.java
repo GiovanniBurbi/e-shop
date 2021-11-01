@@ -40,4 +40,12 @@ public class ShopManager {
 	public List<Product> allProducts() {
 		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> productRepository.findAll());
 	}
+	
+	public List<Product> productsByName(String nameToFind) {
+		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
+	}
+	
+	public List<Product> cartProducts() {
+		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> cartRepository.allCart());
+	}
 }

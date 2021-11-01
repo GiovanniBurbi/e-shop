@@ -10,13 +10,11 @@ import com.apt.project.eshop.view.EShopView;
 
 public class EShopController {
 
-	private ProductRepository productRepository;
 	private CartRepository cartRepository;
 	private EShopView eShopView;
 	private ShopManager shopManager;
 	
-	public EShopController(ProductRepository productRepository, CartRepository cartRepository, EShopView eShopView, ShopManager shopManager) {
-		this.productRepository = productRepository;
+	public EShopController(CartRepository cartRepository, EShopView eShopView, ShopManager shopManager) {
 		this.cartRepository = cartRepository;
 		this.eShopView = eShopView;
 		this.shopManager = shopManager;
@@ -27,7 +25,7 @@ public class EShopController {
 	}
 
 	public void searchProducts(String searchName) {
-		List<Product> productsFound = productRepository.findByName(searchName);
+		List<Product> productsFound = shopManager.productsByName(searchName);
 		if (!productsFound.isEmpty()) {
 			eShopView.showSearchedProducts(productsFound);
 			return;
@@ -36,7 +34,7 @@ public class EShopController {
 	}
 
 	public void resetSearch() {
-		eShopView.clearSearch(productRepository.findAll());
+		eShopView.clearSearch(shopManager.allProducts());
 	}
 
 	public void newCartProduct(Product productToAdd) {
@@ -66,14 +64,10 @@ public class EShopController {
 	}
 
 	public void showCart() {
-		eShopView.showAllCart(cartRepository.allCart());
+		eShopView.showAllCart(shopManager.cartProducts());
 	}
 
 	public void showCartCost() {
 		eShopView.showTotalCost(cartRepository.cartTotalCost());
-	}
-
-	public List<Product> allCartProducts() {
-		return cartRepository.allCart();
 	}
 }

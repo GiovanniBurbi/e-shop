@@ -2,7 +2,6 @@ package com.apt.project.eshop.controller;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
@@ -56,35 +55,42 @@ public class EShopControllerTest {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
 		given(shopManager.allProducts()).willReturn(products);
 		eShopController.allProducts();
-		then(shopManager).should().allProducts();
-		then(eShopView).should().showAllProducts(products);
+		InOrder inOrder = inOrder(shopManager, eShopView);
+		then(shopManager).should(inOrder).allProducts();
+		then(eShopView).should(inOrder).showAllProducts(products);
+		verifyNoMoreInteractions(ignoreStubs(shopManager));
 	}
 	
 	@Test
-	public void testSearchedProducts() {
+	public void testSearchedProductsShouldDelegateToShopManager() {
 		String nameSearch = "laptop";
 		List<Product> searchedProducts = asList(
 									new Product("1", "laptop", 1300),
 									new Product("3", "laptop MSI", 1200)
 								);
-		given(productRepository.findByName(nameSearch)).willReturn(searchedProducts);
+		given(shopManager.productsByName(nameSearch)).willReturn(searchedProducts);
 		eShopController.searchProducts(nameSearch);
-		then(eShopView).should().showSearchedProducts(searchedProducts);
+		InOrder inOrder = inOrder(shopManager, eShopView);
+		then(shopManager).should(inOrder).productsByName(nameSearch);
+		then(eShopView).should(inOrder).showSearchedProducts(searchedProducts);
+		verifyNoMoreInteractions(ignoreStubs(shopManager));
 	}
 	
 	@Test
 	public void testSearchedProductsWhenTheSearchedProductDoesNotExist() {
 		String nameSearch = "samsung";
-		given(productRepository.findByName(nameSearch)).willReturn(emptyList());
+		given(shopManager.productsByName(nameSearch)).willReturn(emptyList());
 		eShopController.searchProducts(nameSearch);
-		then(eShopView).should().showErrorProductNotFound(nameSearch);
-		verifyNoMoreInteractions(ignoreStubs(productRepository));
+		InOrder inOrder = inOrder(shopManager, eShopView);
+		then(shopManager).should(inOrder).productsByName(nameSearch);
+		then(eShopView).should(inOrder).showErrorProductNotFound(nameSearch);
+		verifyNoMoreInteractions(ignoreStubs(shopManager));
 	}
 	
 	@Test
 	public void testResetSearch() {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
-		given(productRepository.findAll()).willReturn(products);
+		given(shopManager.allProducts()).willReturn(products);
 		eShopController.resetSearch();
 		then(eShopView).should().clearSearch(products);
 	}
@@ -177,7 +183,7 @@ public class EShopControllerTest {
 	@Test
 	public void testShowCart() {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
-		given(cartRepository.allCart()).willReturn(products);
+		given(shopManager.cartProducts()).willReturn(products);
 		eShopController.showCart();
 		then(eShopView).should().showAllCart(products);
 	}
@@ -188,18 +194,5 @@ public class EShopControllerTest {
 		given(cartRepository.cartTotalCost()).willReturn(totalCart);
 		eShopController.showCartCost();
 		then(eShopView).should().showTotalCost(totalCart);
-	}
-	
-	@Test
-	public void testAllCartProductsDelegateToCartRepository() {
-		eShopController.allCartProducts();
-		then(cartRepository).should().allCart();
-	}
-	
-	@Test
-	public void testAllCartProductsShouldReturnCartProducts(){
-		List<Product> products = asList(new Product("1", "laptop", 1300, 2), new Product("2", "Iphone", 1000, 3));
-		given(cartRepository.allCart()).willReturn(products);
-		assertThat(eShopController.allCartProducts()).contains(new Product("1", "laptop", 1300, 2), new Product("2", "Iphone", 1000, 3));
 	}
 }

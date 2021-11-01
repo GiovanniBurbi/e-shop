@@ -90,7 +90,7 @@ public class EShopSwingApp implements Callable<Void> {
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, productCollectionName, cartCollectionName);
 				ShopManager shopManager = new ShopManager(transactionManager);
-				EShopController eShopController = new EShopController(productRepository, cartRepository, eShopView, shopManager);
+				EShopController eShopController = new EShopController(cartRepository, eShopView, shopManager);
 				shopManager.setShopController(eShopController);
 				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);

@@ -117,11 +117,30 @@ public class TransactionalShopManagerTest {
 	}
 	
 	@Test
-	public void testAllProductsShouldReturnAllProductsInTheDatabase() {
+	public void testAllProductsShouldDelegateToProductRepositoryAndReturnAllProductsInTheDatabase() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "eBook", 300);
 		given(productRepository.findAll()).willReturn(asList(product1, product2));
 		assertThat(shopManager.allProducts()).containsExactly(product1, product2);
 		then(productRepository).should().findAll();
+	}
+	
+	@Test
+	public void testProductsByNameShouldDelegateToProductRepositoryAndReturnAllProductsThatMatchAStringInTheDatabase() {
+		String nameToSearch = "Laptop";
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("3", "Laptop MSI", 1250);
+		given(productRepository.findByName(nameToSearch)).willReturn(asList(product1, product2));
+		assertThat(shopManager.productsByName(nameToSearch)).containsExactly(product1, product2);
+		then(productRepository).should().findByName(nameToSearch);
+	}
+	
+	@Test
+	public void testCartProductsShouldDelegateToCartRepositoryAndReturnAllProductsInTheCartInsideTheDatabase() {
+		Product product1 = new Product("1", "Laptop", 1300, 3);
+		Product product2 = new Product("2", "eBook", 300, 2);
+		given(cartRepository.allCart()).willReturn(asList(product1, product2));
+		assertThat(shopManager.cartProducts()).containsExactly(product1, product2);
+		then(cartRepository).should().allCart();
 	}
 }
