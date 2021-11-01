@@ -84,7 +84,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		shopManager = new ShopManager(transactionManager);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
-			eShopController = new EShopController(productRepository, cartRepository, eShopSwingView, shopManager);
+			eShopController = new EShopController(eShopSwingView, shopManager);
 			eShopSwingView.setEShopController(eShopController);
 			return eShopSwingView;
 		});

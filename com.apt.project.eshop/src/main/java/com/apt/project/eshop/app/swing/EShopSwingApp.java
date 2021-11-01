@@ -55,10 +55,10 @@ public class EShopSwingApp implements Callable<Void> {
 	@Option(names = { "--db-name" }, description = "Database name")
 	private String databaseName = "eShop";
 
-	@Option(names = { "--db-product-collection" }, description = "Collection name")
+	@Option(names = { "--db-product-collection" }, description = "Product collection name")
 	private String productCollectionName = "products";
 	
-	@Option(names = { "--db-cart-collection" }, description = "Collection name")
+	@Option(names = { "--db-cart-collection" }, description = "Cart collection name")
 	private String cartCollectionName = "cart";
 	
 	public static void main(String[] args) {
