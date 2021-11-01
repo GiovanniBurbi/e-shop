@@ -54,6 +54,9 @@ public class TransactionalShopManagerTest {
 		given(transactionManager.doInTransactionAndReturnList(any()))
 		.willAnswer(
 			answer((TransactionCodeReturnList<?> code) -> code.execute(productRepository, cartRepository)));
+		given(transactionManager.doInTransactionAndReturnValue(any()))
+		.willAnswer(
+			answer((TransactionCodeReturnValue<?> code) -> code.execute(productRepository, cartRepository)));
 		shopManager.setShopController(shopController);
 	}
 
@@ -142,5 +145,27 @@ public class TransactionalShopManagerTest {
 		given(cartRepository.allCart()).willReturn(asList(product1, product2));
 		assertThat(shopManager.cartProducts()).containsExactly(product1, product2);
 		then(cartRepository).should().allCart();
+	}
+	
+	@Test
+	public void testAddToCartShouldDelegateToCartRepository() {
+		Product product = new Product("1", "Laptop", 1300);
+		shopManager.addToCart(product);
+		then(cartRepository).should().addToCart(product);
+	}
+	
+	@Test
+	public void testCartCostShouldDelegateToCartRepositoryAndReturnADouble() {
+		double totalCart = 1250.0;
+		given(cartRepository.cartTotalCost()).willReturn(totalCart);
+		assertThat(shopManager.cartCost()).isEqualTo(totalCart);
+		then(cartRepository).should().cartTotalCost();
+	}
+	
+	@Test
+	public void testRemoveFromCartShouldDelegateToCartRepository() {
+		Product product = new Product("1", "Laptop", 1300);
+		shopManager.removeFromCart(product);
+		then(cartRepository).should().removeFromCart(product);
 	}
 }

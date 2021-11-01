@@ -8,4 +8,6 @@ public interface TransactionManager {
 	<T> T doInTransaction(TransactionCode<T> code);
 	
 	List<Product> doInTransactionAndReturnList(TransactionCodeReturnList<Product> code);
+	
+	double doInTransactionAndReturnValue(TransactionCodeReturnValue<Double> code);
 }

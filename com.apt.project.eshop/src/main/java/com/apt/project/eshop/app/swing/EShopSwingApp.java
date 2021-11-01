@@ -11,7 +11,6 @@ import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.TransactionalShopManager;
-import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
@@ -75,7 +74,6 @@ public class EShopSwingApp implements Callable<Void> {
 				MongoClient client= new MongoClient(MONGO_HOST, MONGO_PORT);
 				ClientSession session = client.startSession();
 				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	productCollectionName, session);
-				CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
 				if(productRepository.catalogIsEmpty()) {
 					productRepository.loadCatalog(asList(
 							new Product("1", "Laptop", 1300.0, 3),
@@ -90,7 +88,7 @@ public class EShopSwingApp implements Callable<Void> {
 				EShopSwingView eShopView = new EShopSwingView();
 				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, productCollectionName, cartCollectionName);
 				ShopManager shopManager = new ShopManager(transactionManager);
-				EShopController eShopController = new EShopController(cartRepository, eShopView, shopManager);
+				EShopController eShopController = new EShopController(eShopView, shopManager);
 				shopManager.setShopController(eShopController);
 				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);

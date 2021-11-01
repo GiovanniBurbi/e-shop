@@ -48,4 +48,22 @@ public class ShopManager {
 	public List<Product> cartProducts() {
 		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> cartRepository.allCart());
 	}
+	
+	public void addToCart(Product product) {
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			cartRepository.addToCart(product);
+			return null;
+		});
+	}
+	
+	public double cartCost() {
+		return transactionManager.doInTransactionAndReturnValue((productRepository, cartRepository) -> cartRepository.cartTotalCost());
+	}
+	
+	public void removeFromCart(Product product) {
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			cartRepository.removeFromCart(product);
+			return null;
+		});
+	}
 }

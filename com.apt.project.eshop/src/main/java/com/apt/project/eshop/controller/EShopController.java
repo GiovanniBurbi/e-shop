@@ -3,19 +3,15 @@ package com.apt.project.eshop.controller;
 import java.util.List;
 
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartRepository;
-import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopController {
 
-	private CartRepository cartRepository;
 	private EShopView eShopView;
 	private ShopManager shopManager;
 	
-	public EShopController(CartRepository cartRepository, EShopView eShopView, ShopManager shopManager) {
-		this.cartRepository = cartRepository;
+	public EShopController(EShopView eShopView, ShopManager shopManager) {
 		this.eShopView = eShopView;
 		this.shopManager = shopManager;
 	}
@@ -38,15 +34,15 @@ public class EShopController {
 	}
 
 	public void newCartProduct(Product productToAdd) {
-		cartRepository.addToCart(productToAdd);
-		eShopView.addToCartView(cartRepository.allCart());
-		eShopView.showTotalCost(cartRepository.cartTotalCost());
+		shopManager.addToCart(productToAdd);
+		eShopView.addToCartView(shopManager.cartProducts());
+		eShopView.showTotalCost(shopManager.cartCost());
 	}
 
 	public void removeCartProduct(Product product) {
-		cartRepository.removeFromCart(product);
+		shopManager.removeFromCart(product);
 		eShopView.removeFromCartView(product);
-		eShopView.showTotalCost(cartRepository.cartTotalCost());
+		eShopView.showTotalCost(shopManager.cartCost());
 	}
 
 	public void checkoutCart() {
@@ -68,6 +64,6 @@ public class EShopController {
 	}
 
 	public void showCartCost() {
-		eShopView.showTotalCost(cartRepository.cartTotalCost());
+		eShopView.showTotalCost(shopManager.cartCost());
 	}
 }
