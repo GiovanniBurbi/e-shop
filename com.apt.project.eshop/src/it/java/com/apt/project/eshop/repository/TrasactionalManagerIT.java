@@ -77,7 +77,7 @@ public class TrasactionalManagerIT {
 		productRepository.loadCatalog(catalog);
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
-		shopController = new EShopController(productRepository, cartRepository, shopView, shopManager);
+		shopController = new EShopController(shopView, shopManager);
 		shopManager.setShopController(shopController);
 	}
 

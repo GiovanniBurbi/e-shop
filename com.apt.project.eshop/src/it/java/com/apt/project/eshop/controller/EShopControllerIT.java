@@ -86,7 +86,7 @@ public class EShopControllerIT {
 		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
-		eShopController = new EShopController(productRepository, cartRepository, eShopView, shopManager);
+		eShopController = new EShopController(eShopView, shopManager);
 		shopManager.setShopController(eShopController);
 	}
 

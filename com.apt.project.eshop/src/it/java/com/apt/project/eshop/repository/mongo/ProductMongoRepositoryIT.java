@@ -155,15 +155,4 @@ public class ProductMongoRepositoryIT {
 		Bson filterNameProduct = Filters.eq("name", productNotAvailable.getName());
 		assertThat(productCollection.find(filterNameProduct).first().getQuantity()).isOne();
 	}
-	
-	@Test
-	public void testIsEmptyWhenDatabaseIsEmpty() {
-		assertThat(productRepository.catalogIsEmpty()).isTrue();
-	}
-	
-	@Test
-	public void testIsEmptyWhenDatabaseIsNotEmpty() {
-		productCollection.insertOne(new Product("1", "Laptop", 1300));
-		assertThat(productRepository.catalogIsEmpty()).isFalse();
-	}
 }

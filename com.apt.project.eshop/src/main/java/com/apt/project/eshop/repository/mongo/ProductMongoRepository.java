@@ -37,20 +37,20 @@ public class ProductMongoRepository implements ProductRepository {
 	
 	@Override
 	public List<Product> findAll() {
-		return StreamSupport.stream(productCollection.find().spliterator(), false).collect(Collectors.toList());
+		return StreamSupport.stream(productCollection.find(session).spliterator(), false).collect(Collectors.toList());
 	}
 
 	@Override
 	public void loadCatalog(List<Product> products) {
 		database.drop();
-		productCollection.insertMany(products);
+		productCollection.insertMany(session, products);
 	}
 
 	@Override
 	public List<Product> findByName(String nameSearch) {
 		return StreamSupport.stream(
 				productCollection
-					.find(Filters.regex("name",Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE))).spliterator(), false)
+					.find(session, Filters.regex("name",Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE))).spliterator(), false)
 					.collect(Collectors.toList()
 		);
 	}
@@ -59,16 +59,11 @@ public class ProductMongoRepository implements ProductRepository {
 	public void removeFromStorage(Product product) throws RepositoryException {
 		Bson filterNameProduct = Filters.eq("name", product.getName());
 		int quantityToReduce = product.getQuantity();
-		Product productInStorage = productCollection.find(filterNameProduct).first();
+		Product productInStorage = productCollection.find(session, filterNameProduct).first();
 		int quantityInStorage = productInStorage.getQuantity();
 		if (quantityInStorage < quantityToReduce)
 			throw new RepositoryException("Insufficient stock", productInStorage);
 		Bson update = Updates.inc("quantity", - quantityToReduce);
 		productCollection.findOneAndUpdate(session, filterNameProduct,update);
-	}
-
-	@Override
-	public boolean catalogIsEmpty() {
-		return (productCollection.find().first() == null);
 	}
 }

@@ -15,6 +15,10 @@ public class ShopManager {
 	public ShopManager(TransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
+	
+	public void setShopController(EShopController shopController) {
+		this.shopController = shopController;
+	}
 
 	public void checkout() {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
@@ -32,9 +36,41 @@ public class ShopManager {
 			return null;
 		});
 	}
-
-	public void setShopController(EShopController shopController) {
-		this.shopController = shopController;
+	
+	public List<Product> allProducts() {
+		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> productRepository.findAll());
 	}
-
+	
+	public List<Product> productsByName(String nameToFind) {
+		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
+	}
+	
+	public List<Product> cartProducts() {
+		return transactionManager.doInTransactionAndReturnList((productRepository, cartRepository) -> cartRepository.allCart());
+	}
+	
+	public void addToCart(Product product) {
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			cartRepository.addToCart(product);
+			return null;
+		});
+	}
+	
+	public double cartCost() {
+		return transactionManager.doInTransactionAndReturnValue((productRepository, cartRepository) -> cartRepository.cartTotalCost());
+	}
+	
+	public void removeFromCart(Product product) {
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			cartRepository.removeFromCart(product);
+			return null;
+		});
+	}
+	
+	public void loadCatalog(List<Product> products) {
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			productRepository.loadCatalog(products);
+			return null;
+		});
+	}
 }

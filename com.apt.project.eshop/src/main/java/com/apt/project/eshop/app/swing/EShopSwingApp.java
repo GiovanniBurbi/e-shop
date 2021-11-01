@@ -11,11 +11,8 @@ import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.repository.TransactionalShopManager;
-import com.apt.project.eshop.repository.mongo.CartMongoRepository;
-import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
-import com.mongodb.client.ClientSession;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -58,10 +55,10 @@ public class EShopSwingApp implements Callable<Void> {
 	@Option(names = { "--db-name" }, description = "Database name")
 	private String databaseName = "eShop";
 
-	@Option(names = { "--db-product-collection" }, description = "Collection name")
+	@Option(names = { "--db-product-collection" }, description = "Product collection name")
 	private String productCollectionName = "products";
 	
-	@Option(names = { "--db-cart-collection" }, description = "Collection name")
+	@Option(names = { "--db-cart-collection" }, description = "Cart collection name")
 	private String cartCollectionName = "cart";
 	
 	public static void main(String[] args) {
@@ -73,11 +70,14 @@ public class EShopSwingApp implements Callable<Void> {
 		EventQueue.invokeLater(() -> {
 			try {
 				MongoClient client= new MongoClient(MONGO_HOST, MONGO_PORT);
-				ClientSession session = client.startSession();
-				ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,	productCollectionName, session);
-				CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
-				if(productRepository.catalogIsEmpty()) {
-					productRepository.loadCatalog(asList(
+				EShopSwingView eShopView = new EShopSwingView();
+				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, productCollectionName, cartCollectionName);
+				ShopManager shopManager = new ShopManager(transactionManager);
+				EShopController eShopController = new EShopController(eShopView, shopManager);
+				shopManager.setShopController(eShopController);
+				eShopView.setEShopController(eShopController);
+				if(shopManager.allProducts().isEmpty()) {
+					shopManager.loadCatalog(asList(
 							new Product("1", "Laptop", 1300.0, 3),
 							new Product("2", "Iphone", 1000.0, 3),
 							new Product("3", "Laptop MSI", 1250.0, 3),
@@ -85,14 +85,8 @@ public class EShopSwingApp implements Callable<Void> {
 							new Product("5", "SmartTv", 400.0, 3),
 							new Product("6", "Playstation 5", 500.0, 3),
 							new Product("7", "Xbox", 500.0, 3)
-					));
+							));
 				}
-				EShopSwingView eShopView = new EShopSwingView();
-				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, productCollectionName, cartCollectionName);
-				ShopManager shopManager = new ShopManager(transactionManager);
-				EShopController eShopController = new EShopController(productRepository, cartRepository, eShopView, shopManager);
-				shopManager.setShopController(eShopController);
-				eShopView.setEShopController(eShopController);
 				eShopView.setVisible(true);
 				eShopController.allProducts();
 				eShopController.showCart();
