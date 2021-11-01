@@ -16,6 +16,8 @@ import com.mongodb.client.ClientSession;
 // Transactional Mongo Shop Manager
 public class TransactionalShopManager implements TransactionManager {
 
+	private static final String TRANSACTION_ENDED = "Transaction ended\n";
+	private static final String SUCCESSFUL_TRANSACTION = "Successful transaction\n";
 	MongoClient client;
 	private String databaseName;
 	private String productCollectionName;
@@ -43,7 +45,7 @@ public class TransactionalShopManager implements TransactionManager {
 				
 			session.commitTransaction();
 			Logger.getLogger(getClass().getName())
-				.log(Level.INFO, "Successful transaction\n");
+				.log(Level.INFO, SUCCESSFUL_TRANSACTION);
 			
 		} catch (MongoException e) {
 			session.abortTransaction();
@@ -54,7 +56,7 @@ public class TransactionalShopManager implements TransactionManager {
 			// close the transaction
 	        session.close();
 	        Logger.getLogger(getClass().getName())
-			.log(Level.INFO, "Transaction ended\n");
+			.log(Level.INFO, TRANSACTION_ENDED);
 	    }
 		return null;
 	}
@@ -72,10 +74,10 @@ public class TransactionalShopManager implements TransactionManager {
 		List<Product> products = code.execute(productRepository, cartRepository);
 
 		session.commitTransaction();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, "Successful transaction\n");
+		Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
 		// close the transaction
 		session.close();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, "Transaction ended\n");
+		Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
 		return products;
 	}
 
@@ -92,10 +94,10 @@ public class TransactionalShopManager implements TransactionManager {
 		double value = code.execute(productRepository, cartRepository);
 
 		session.commitTransaction();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, "Successful transaction\n");
+		Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
 		// close the transaction
 		session.close();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, "Transaction ended\n");
+		Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
 		return value;
 	}
 
