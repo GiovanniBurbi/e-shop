@@ -14,6 +14,8 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -167,5 +169,15 @@ public class TransactionalShopManagerTest {
 		Product product = new Product("1", "Laptop", 1300);
 		shopManager.removeFromCart(product);
 		then(cartRepository).should().removeFromCart(product);
+	}
+	
+	@Test
+	public void testLoadCatalogShouldDelegateToProductRepository() {
+		List<Product> products = asList(
+				new Product("1", "Laptop", 1300),
+				new Product("2", "eBook", 300)
+		);
+		shopManager.loadCatalog(products);
+		then(productRepository).should().loadCatalog(products);
 	}
 }

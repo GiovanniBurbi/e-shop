@@ -13,6 +13,4 @@ public interface ProductRepository {
 	public void loadCatalog(List<Product> products);
 
 	public void removeFromStorage(Product product) throws RepositoryException;
-
-	boolean catalogIsEmpty();
 }

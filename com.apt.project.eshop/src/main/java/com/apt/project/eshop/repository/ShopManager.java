@@ -66,4 +66,11 @@ public class ShopManager {
 			return null;
 		});
 	}
+	
+	public void loadCatalog(List<Product> products) {
+		transactionManager.doInTransaction((productRepository, cartRepository) -> {
+			productRepository.loadCatalog(products);
+			return null;
+		});
+	}
 }
