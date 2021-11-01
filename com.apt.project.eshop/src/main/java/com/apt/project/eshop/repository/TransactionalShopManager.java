@@ -1,8 +1,12 @@
 package com.apt.project.eshop.repository;
 
+import static java.util.Collections.emptyList;
+
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
@@ -54,6 +58,38 @@ public class TransactionalShopManager implements TransactionManager {
 			.log(Level.INFO, "Transaction ended\n");
 	    }
 		return null;
+	}
+
+	@Override
+	public List<Product> doInTransactionAndReturnList(TransactionCodeReturnList<Product> code) {
+		ClientSession session = client.startSession();
+		try {
+			// create a transaction
+			session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
+			// create a repository instance in the transaction
+			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, productCollectionName, session);
+			CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
+			// call a lambda passing the repository instance
+			List<Product> products = code.execute(productRepository, cartRepository);
+				
+			session.commitTransaction();
+			Logger.getLogger(getClass().getName())
+				.log(Level.INFO, "Successful transaction\n");
+			return products;
+			
+		} catch (MongoException e) {
+			session.abortTransaction();
+			Logger.getLogger(getClass().getName())
+				.log(Level.INFO, "ROLLBACK TRANSACTION\n");
+	
+		} finally {
+			// close the transaction
+	        session.close();
+	        Logger.getLogger(getClass().getName())
+			.log(Level.INFO, "Transaction ended\n");
+	    }
+		
+		return emptyList();
 	}
 
 }

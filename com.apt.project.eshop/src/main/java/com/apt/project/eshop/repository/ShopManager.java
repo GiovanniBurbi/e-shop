@@ -15,6 +15,10 @@ public class ShopManager {
 	public ShopManager(TransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
+	
+	public void setShopController(EShopController shopController) {
+		this.shopController = shopController;
+	}
 
 	public void checkout() {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
@@ -32,9 +36,4 @@ public class ShopManager {
 			return null;
 		});
 	}
-
-	public void setShopController(EShopController shopController) {
-		this.shopController = shopController;
-	}
-
 }
