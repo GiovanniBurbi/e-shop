@@ -2,27 +2,27 @@ Feature: eShop View
   Specifications of the behavior of the eShop View
 
   Background: 
-	Given The database contains products with the following values
-		| id | name | price | quantity |
-		| 1 | Laptop | 1300.0 | 2 |
-		| 2 | Iphone | 1000.0 | 2 |
-		| 3 | Laptop MSI | 1250.0 | 1 |
-		| 4 | Macbook | 1400.0 | 1 |
-		| 5 | SmartTv UHD | 400.0 | 1 |
-		| 6 | Dyson phon | 350.0 | 1 |
-		| 7 | Playstation 5 | 500.0 | 1 |
+		Given The database contains products with the following values
+			| id | name | price | quantity |
+			| 1 | Laptop | 1300.0 | 2 |
+			| 2 | Iphone | 1000.0 | 2 |
+			| 3 | Laptop MSI | 1250.0 | 1 |
+			| 4 | Macbook | 1400.0 | 1 |
+			| 5 | SmartTv UHD | 400.0 | 1 |
+			| 6 | Dyson phon | 350.0 | 1 |
+			| 7 | Playstation 5 | 500.0 | 1 |
 		When The eShop View is shown
   	
   Scenario: The initial state of the view
 		Then The list contains elements with the following values
-		| id | name | price |
-		| 1 | Laptop | 1300.0 |
-		| 2 | Iphone | 1000.0 |
-		| 3 | Laptop MSI | 1250.0 |
-		| 4 | Macbook | 1400.0 |
-		| 5 | SmartTv UHD | 400.0 |
-		| 6 | Dyson phon | 350.0 |
-		| 7 | Playstation 5 | 500.0 |
+			| id | name | price |
+			| 1 | Laptop | 1300.0 |
+			| 2 | Iphone | 1000.0 |
+			| 3 | Laptop MSI | 1250.0 |
+			| 4 | Macbook | 1400.0 |
+			| 5 | SmartTv UHD | 400.0 |
+			| 6 | Dyson phon | 350.0 |
+			| 7 | Playstation 5 | 500.0 |
 
 	Scenario: Search a product
 		Given The user enters in the search text field the name "la" 
@@ -38,14 +38,14 @@ Feature: eShop View
 		Given The user search the product "laptop"
 		When The user clicks the "Clear" button
 		Then The list contains elements with the following values
-		| id | name | price |
-		| 1 | Laptop | 1300.0 |
-		| 2 | Iphone | 1000.0 |
-		| 3 | Laptop MSI | 1250.0 |
-		| 4 | Macbook | 1400.0 |
-		| 5 | SmartTv UHD | 400.0 |
-		| 6 | Dyson phon | 350.0 |
-		| 7 | Playstation 5 | 500.0 |
+			| id | name | price |
+			| 1 | Laptop | 1300.0 |
+			| 2 | Iphone | 1000.0 |
+			| 3 | Laptop MSI | 1250.0 |
+			| 4 | Macbook | 1400.0 |
+			| 5 | SmartTv UHD | 400.0 |
+			| 6 | Dyson phon | 350.0 |
+			| 7 | Playstation 5 | 500.0 |
 		And The search text box is empty
  	
  Scenario: Add Product to Cart
@@ -53,9 +53,9 @@ Feature: eShop View
 		And The user select another product from the product list
 		When The user clicks the "Add To Cart" button 2 times
 		Then The cart list contains an element with the following values
-		| id | name | price | quantity |
-		| 5 | SmartTv UHD | 400.0 | 1 |
-		| 1 | Laptop | 1300.0 | 2 |
+			| id | name | price | quantity |
+			| 5 | SmartTv UHD | 400.0 | 1 |
+			| 1 | Laptop | 1300.0 | 2 |
 		And The view shows the updated total of "3000.0$"
     
 	Scenario: Remove Product from Cart
@@ -78,10 +78,10 @@ Feature: eShop View
 		When The user clicks the "Checkout" button
 		# The cart contents are not changed
 		Then The cart list contains an element with the following values
-		| id | name | price | quantity |
-		| 1 | Laptop | 1300.0 | 1 |
-		| 2 | Iphone | 1000.0 | 3 |
-		| 3 | Laptop MSI | 1250.0 | 1 |
+			| id | name | price | quantity |
+			| 1 | Laptop | 1300.0 | 1 |
+			| 2 | Iphone | 1000.0 | 3 |
+			| 3 | Laptop MSI | 1250.0 | 1 |
 		And The view shows the updated total of "5550.0$"
 		And The view shows a message about the outcome of the checkout
 		And The database storage of the products has not changed
