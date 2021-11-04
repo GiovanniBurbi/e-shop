@@ -48,7 +48,7 @@ Feature: eShop View
 			| 7 | Playstation 5 | 500.0 |
 		And The search text box is empty
  	
- Scenario: Add Product to Cart
+ 	Scenario: Add Product to Cart
 		Given The cart contains a product
 		And The user select another product from the product list
 		When The user clicks the "Add To Cart" button 2 times

@@ -59,5 +59,5 @@ public class CartMongoRepository implements CartRepository{
 			total += product.getPrice() * product.getQuantity();
 		}
 		return total;
-	}	
+	}
 }

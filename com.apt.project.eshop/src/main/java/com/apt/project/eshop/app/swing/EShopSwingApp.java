@@ -29,14 +29,7 @@ import picocli.CommandLine.Option;
  * 
  * +++ Open a new terminal and run +++
  * 
- * sudo docker exec -it mongoRs mongo
- * 
- * +++ finally +++
- * rs.initiate()
- * 
- * +++ To verify all is working you can run +++
- * rs.conf()
- * rs.status()
+ * sudo docker exec -it mongoRs mongo --eval 'rs.initiate()'
  * 
  * </pre>
  * 
