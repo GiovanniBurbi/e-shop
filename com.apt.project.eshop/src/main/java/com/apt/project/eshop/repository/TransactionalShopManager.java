@@ -1,10 +1,8 @@
 package com.apt.project.eshop.repository;
 
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
@@ -62,7 +60,7 @@ public class TransactionalShopManager implements TransactionManager {
 	}
 
 	@Override
-	public List<Product> doInTransactionAndReturnList(TransactionCodeReturnList<Product> code) {
+	public <T> T doInTransactionAndReturn(TransactionCode<T> code) {
 		ClientSession session = client.startSession();
 		// create a transaction
 		session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
@@ -71,27 +69,7 @@ public class TransactionalShopManager implements TransactionManager {
 				productCollectionName, session);
 		CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
 		// call a lambda passing the repository instance
-		List<Product> products = code.execute(productRepository, cartRepository);
-
-		session.commitTransaction();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
-		// close the transaction
-		session.close();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
-		return products;
-	}
-
-	@Override
-	public double doInTransactionAndReturnValue(TransactionCodeReturnValue<Double> code) {
-		ClientSession session = client.startSession();
-		// create a transaction
-		session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
-		// create a repository instance in the transaction
-		ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,
-				productCollectionName, session);
-		CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
-		// call a lambda passing the repository instance
-		double value = code.execute(productRepository, cartRepository);
+		T value = code.apply(productRepository, cartRepository);
 
 		session.commitTransaction();
 		Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
@@ -100,5 +78,4 @@ public class TransactionalShopManager implements TransactionManager {
 		Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
 		return value;
 	}
-
 }
