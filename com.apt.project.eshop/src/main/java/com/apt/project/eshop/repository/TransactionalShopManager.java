@@ -14,6 +14,7 @@ import com.mongodb.client.ClientSession;
 // Transactional Mongo Shop Manager
 public class TransactionalShopManager implements TransactionManager {
 
+	private static final String ROLLBACK_TRANSACTION = "ROLLBACK TRANSACTION\n";
 	private static final String TRANSACTION_ENDED = "Transaction ended\n";
 	private static final String SUCCESSFUL_TRANSACTION = "Successful transaction\n";
 	MongoClient client;
@@ -49,7 +50,7 @@ public class TransactionalShopManager implements TransactionManager {
 		} catch (MongoException e) {
 			session.abortTransaction();
 			Logger.getLogger(getClass().getName())
-				.log(Level.INFO, "ROLLBACK TRANSACTION\n");
+				.log(Level.INFO, ROLLBACK_TRANSACTION);
 			
 		} finally {
 			// close the transaction
