@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
-import com.mongodb.MongoException;
 
 public class ShopManager {
 
@@ -30,7 +29,7 @@ public class ShopManager {
 				}
 			} catch (RepositoryException e) {
 				shopController.checkoutFailure(e.getProduct());
-				throw new MongoException("Insufficient stock");
+				throw new RepositoryException("Insufficient stock", e.getProduct());
 			}
 			shopController.checkoutSuccess();
 			return null;

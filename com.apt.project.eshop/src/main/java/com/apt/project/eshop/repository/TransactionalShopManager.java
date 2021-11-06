@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
@@ -47,7 +46,7 @@ public class TransactionalShopManager implements TransactionManager {
 				.log(Level.INFO, SUCCESSFUL_TRANSACTION);
 			return result;
 			
-		} catch (MongoException e) {
+		} catch (RepositoryException e) {
 			session.abortTransaction();
 			Logger.getLogger(getClass().getName())
 				.log(Level.INFO, ROLLBACK_TRANSACTION);

@@ -26,7 +26,6 @@ import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
-import com.mongodb.MongoException;
 
 
 public class TransactionalShopManagerTest {
@@ -86,12 +85,18 @@ public class TransactionalShopManagerTest {
 	
 	@Test
 	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowMongoExceptionAndDelegateToControllerSuccessCheckout() throws RepositoryException {
-		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
+		Product productNotAvailable = new Product("1", "Laptop", 1300, 1);
+		Product product1 = new Product("1", "Laptop", 1300, 2);
 		Product product2 = new Product("2", "eBook", 300, 1);
-		given(cartRepository.allCart()).willReturn(asList(productNotAvailable, product2));
-		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
+		given(cartRepository.allCart()).willReturn(asList(product1, product2));
+		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(product1);
 		assertThatThrownBy(() -> shopManager.checkout())
-			.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
+			.isInstanceOf(RepositoryException.class)
+			.hasMessage("Repository exception! Insufficient stock, " 
+				+ productNotAvailable.getName() 
+				+ " left in stock: " 
+				+ productNotAvailable.getQuantity()
+		);
 		then(shopController).should().checkoutFailure(productNotAvailable);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
@@ -105,7 +110,12 @@ public class TransactionalShopManagerTest {
 		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository).removeFromStorage(productNotAvailable);
 		InOrder inOrder = inOrder(productRepository, cartRepository, shopController);
 		assertThatThrownBy(() -> shopManager.checkout())
-			.isInstanceOf(MongoException.class).hasMessage("Insufficient stock");
+			.isInstanceOf(RepositoryException.class)
+			.hasMessage("Repository exception! Insufficient stock, " 
+				+ productNotAvailable.getName() 
+				+ " left in stock: " 
+				+ productNotAvailable.getQuantity()
+		);
 		then(productRepository).should(inOrder).removeFromStorage(product1);
 		then(cartRepository).should(inOrder).removeFromCart(product1);
 		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
