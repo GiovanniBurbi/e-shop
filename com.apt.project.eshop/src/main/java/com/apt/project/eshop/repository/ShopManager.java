@@ -38,15 +38,15 @@ public class ShopManager {
 	}
 	
 	public List<Product> allProducts() {
-		return transactionManager.doInTransactionAndReturn((productRepository, cartRepository) -> productRepository.findAll());
+		return transactionManager.doInTransaction((productRepository, cartRepository) -> productRepository.findAll());
 	}
 	
 	public List<Product> productsByName(String nameToFind) {
-		return transactionManager.doInTransactionAndReturn((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
+		return transactionManager.doInTransaction((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
 	}
 	
 	public List<Product> cartProducts() {
-		return transactionManager.doInTransactionAndReturn((productRepository, cartRepository) -> cartRepository.allCart());
+		return transactionManager.doInTransaction((productRepository, cartRepository) -> cartRepository.allCart());
 	}
 	
 	public void addToCart(Product product) {
@@ -57,7 +57,7 @@ public class ShopManager {
 	}
 	
 	public double cartCost() {
-		return transactionManager.doInTransactionAndReturn((productRepository, cartRepository) -> cartRepository.cartTotalCost());
+		return transactionManager.doInTransaction((productRepository, cartRepository) -> cartRepository.cartTotalCost());
 	}
 	
 	public void removeFromCart(Product product) {

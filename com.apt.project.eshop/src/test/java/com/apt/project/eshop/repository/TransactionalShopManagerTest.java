@@ -53,9 +53,6 @@ public class TransactionalShopManagerTest {
 		given(transactionManager.doInTransaction(any()))
 			.willAnswer(
 				answer((TransactionCode<?> code) -> code.apply(productRepository, cartRepository)));
-		given(transactionManager.doInTransactionAndReturn(any()))
-		.willAnswer(
-			answer((TransactionCode<?> code) -> code.apply(productRepository, cartRepository)));
 		shopManager.setShopController(shopController);
 	}
 

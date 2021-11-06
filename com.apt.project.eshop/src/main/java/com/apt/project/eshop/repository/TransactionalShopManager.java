@@ -39,11 +39,12 @@ public class TransactionalShopManager implements TransactionManager {
 			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, productCollectionName, session);
 			CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
 			// call a lambda passing the repository instance
-			code.apply(productRepository, cartRepository);
+			T result = code.apply(productRepository, cartRepository);
 				
 			session.commitTransaction();
 			Logger.getLogger(getClass().getName())
 				.log(Level.INFO, SUCCESSFUL_TRANSACTION);
+			return result;
 			
 		} catch (MongoException e) {
 			session.abortTransaction();
@@ -57,25 +58,5 @@ public class TransactionalShopManager implements TransactionManager {
 			.log(Level.INFO, TRANSACTION_ENDED);
 	    }
 		return null;
-	}
-
-	@Override
-	public <T> T doInTransactionAndReturn(TransactionCode<T> code) {
-		ClientSession session = client.startSession();
-		// create a transaction
-		session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
-		// create a repository instance in the transaction
-		ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,
-				productCollectionName, session);
-		CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
-		// call a lambda passing the repository instance
-		T value = code.apply(productRepository, cartRepository);
-
-		session.commitTransaction();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
-		// close the transaction
-		session.close();
-		Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
-		return value;
 	}
 }
