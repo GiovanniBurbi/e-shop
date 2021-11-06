@@ -46,7 +46,7 @@ public class TransactionalShopManager implements TransactionManager {
 				.log(Level.INFO, SUCCESSFUL_TRANSACTION);
 			return result;
 			
-		} catch (RepositoryException e) {
+		} catch (Exception e) {
 			session.abortTransaction();
 			Logger.getLogger(getClass().getName())
 				.log(Level.INFO, ROLLBACK_TRANSACTION);
