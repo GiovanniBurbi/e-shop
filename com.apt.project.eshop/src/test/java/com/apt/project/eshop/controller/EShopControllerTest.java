@@ -25,7 +25,6 @@ import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
 
-
 public class EShopControllerTest {
 
 	@Mock
@@ -60,14 +59,11 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).showAllProducts(products);
 		verifyNoMoreInteractions(ignoreStubs(shopManager));
 	}
-	
+
 	@Test
 	public void testSearchedProductsShouldDelegateToShopManager() {
 		String nameSearch = "laptop";
-		List<Product> searchedProducts = asList(
-									new Product("1", "laptop", 1300),
-									new Product("3", "laptop MSI", 1200)
-								);
+		List<Product> searchedProducts = asList(new Product("1", "laptop", 1300), new Product("3", "laptop MSI", 1200));
 		given(shopManager.productsByName(nameSearch)).willReturn(searchedProducts);
 		eShopController.searchProducts(nameSearch);
 		InOrder inOrder = inOrder(shopManager, eShopView);
@@ -75,7 +71,7 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).showSearchedProducts(searchedProducts);
 		verifyNoMoreInteractions(ignoreStubs(shopManager));
 	}
-	
+
 	@Test
 	public void testSearchedProductsWhenTheSearchedProductDoesNotExist() {
 		String nameSearch = "samsung";
@@ -86,7 +82,7 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).showErrorProductNotFound(nameSearch);
 		verifyNoMoreInteractions(ignoreStubs(shopManager));
 	}
-	
+
 	@Test
 	public void testResetSearch() {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
@@ -94,7 +90,7 @@ public class EShopControllerTest {
 		eShopController.resetSearch();
 		then(eShopView).should().clearSearch(products);
 	}
-	
+
 	@Test
 	public void testNewCartProductShouldDelegateToShopManagerAndAddToCartViewAndUpdateTotalCostOfTheCartInTheView() {
 		Product product = new Product("1", "Laptop", 1300, 2);
@@ -110,14 +106,14 @@ public class EShopControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(shopManager));
 		verifyNoMoreInteractions(eShopView);
 	}
-	
+
 	@Test
 	public void testNewCartProductWhenCartHasFewProductsAlreadyShouldUpdateTotalCostOfTheCartInTheView() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000, 2);
 		given(shopManager.cartProducts()).willReturn(asList(product1, product2));
 		// total cost cart after new product2 is added
-		double newAmount = product1.getPrice() + (product2.getPrice()*product2.getQuantity());
+		double newAmount = product1.getPrice() + (product2.getPrice() * product2.getQuantity());
 		given(shopManager.cartCost()).willReturn(newAmount);
 		eShopController.newCartProduct(product2);
 		InOrder inOrder = inOrder(shopManager, eShopView);
@@ -129,7 +125,7 @@ public class EShopControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(shopManager));
 		verifyNoMoreInteractions(eShopView);
 	}
-	
+
 	@Test
 	public void testRemoveCartProductShouldDelegateToShopManagerAndUpdateTotalCostCart() {
 		Product onlyProductInCart = new Product("1", "Laptop", 1300);
@@ -144,9 +140,9 @@ public class EShopControllerTest {
 		verifyNoMoreInteractions(shopManager);
 		verifyNoMoreInteractions(eShopView);
 	}
-	
+
 	@Test
-	public void testRemoveCartProductWhenCartHasMoreThanOneItemOfTheSameProductShouldUpdateCartCostForAllItemsOfTheSameProduct() { 
+	public void testRemoveCartProductWhenCartHasMoreThanOneItemOfTheSameProductShouldUpdateCartCostForAllItemsOfTheSameProduct() {
 		Product product = new Product("1", "Laptop", 1300, 2);
 		doNothing().when(shopManager).removeFromCart(product);
 		given(shopManager.cartCost()).willReturn(0.0);
@@ -158,13 +154,13 @@ public class EShopControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(shopManager));
 		verifyNoMoreInteractions(eShopView);
 	}
-	
+
 	@Test
 	public void testCheckoutCartShouldDelegateToShopManager() {
 		eShopController.checkoutCart();
 		then(shopManager).should().checkout();
 	}
-	
+
 	@Test
 	public void testCheckoutSuccessShouldClearCartAndShowSuccessfullCheckoutAndResetTheTotalCost() {
 		eShopController.checkoutSuccess();
@@ -173,7 +169,7 @@ public class EShopControllerTest {
 		then(eShopView).should(inOrder).clearCart();
 		then(eShopView).should(inOrder).resetTotalCost();
 	}
-	
+
 	@Test
 	public void testCheckoutFailureShouldShowCheckoutFailureLabel() {
 		Product product = new Product("1", "Laptop", 1300.0, 1);
@@ -181,7 +177,7 @@ public class EShopControllerTest {
 		then(eShopView).should().showFailureLabel(product);
 		verifyNoMoreInteractions(eShopView);
 	}
-	
+
 	@Test
 	public void testShowCart() {
 		List<Product> products = asList(new Product("1", "laptop", 1300));
@@ -189,7 +185,7 @@ public class EShopControllerTest {
 		eShopController.showCart();
 		then(eShopView).should().showAllCart(products);
 	}
-	
+
 	@Test
 	public void testShowCartCost() {
 		double totalCart = 2500;

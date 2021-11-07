@@ -27,14 +27,16 @@ public class ProductMongoRepository implements ProductRepository {
 	private MongoCollection<Product> productCollection;
 	private MongoDatabase database;
 	private ClientSession session;
-	
-	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName, ClientSession session) {
+
+	public ProductMongoRepository(MongoClient client, String databaseName, String collectionName,
+			ClientSession session) {
 		this.session = session;
-		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
+				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		database = client.getDatabase(databaseName);
 		productCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
-	
+
 	@Override
 	public List<Product> findAll() {
 		return StreamSupport.stream(productCollection.find(session).spliterator(), false).collect(Collectors.toList());
@@ -48,11 +50,9 @@ public class ProductMongoRepository implements ProductRepository {
 
 	@Override
 	public List<Product> findByName(String nameSearch) {
-		return StreamSupport.stream(
-				productCollection
-					.find(session, Filters.regex("name",Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE))).spliterator(), false)
-					.collect(Collectors.toList()
-		);
+		return StreamSupport.stream(productCollection
+				.find(session, Filters.regex("name", Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE)))
+				.spliterator(), false).collect(Collectors.toList());
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class ProductMongoRepository implements ProductRepository {
 		int quantityInStorage = productInStorage.getQuantity();
 		if (quantityInStorage < quantityToReduce)
 			throw new RepositoryException("Insufficient stock", productInStorage);
-		Bson update = Updates.inc("quantity", - quantityToReduce);
-		productCollection.findOneAndUpdate(session, filterNameProduct,update);
+		Bson update = Updates.inc("quantity", -quantityToReduce);
+		productCollection.findOneAndUpdate(session, filterNameProduct, update);
 	}
 }

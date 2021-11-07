@@ -38,11 +38,9 @@ public class EShopSwingViewSteps {
 	@When("The eShop View is shown")
 	public void the_eShop_View_is_shown() {
 		// start the Swing application
-		application("com.apt.project.eshop.app.swing.EShopSwingApp").withArgs(
-				"--db-name=" + DB_NAME,
-				"--db-product-collection=" + PRODUCT_COLLECTION_NAME,
-				"--db-cart-collection=" + CART_COLLECTION_NAME
-		).start();
+		application("com.apt.project.eshop.app.swing.EShopSwingApp").withArgs("--db-name=" + DB_NAME,
+				"--db-product-collection=" + PRODUCT_COLLECTION_NAME, "--db-cart-collection=" + CART_COLLECTION_NAME)
+				.start();
 		// get a reference of its JFrame
 		window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override
@@ -70,7 +68,8 @@ public class EShopSwingViewSteps {
 
 	@Then("The list shows products with {string} in the name")
 	public void the_list_shows_products_with_in_the_name(String nameToSearch) {
-		assertThat(window.list("productList").contents()).isNotEmpty(); // per evitare positivo falso a causa di allSatisfy per lista vuota																		// ASSERISCE LISTA VUOTA
+		// per evitare positivo falso a causa di allSatisfy per lista vuota
+		assertThat(window.list("productList").contents()).isNotEmpty();
 		assertThat(window.list("productList").contents())
 				.allSatisfy(e -> assertThat(e.toLowerCase()).containsSubsequence(nameToSearch.toLowerCase()));
 	}
@@ -152,11 +151,10 @@ public class EShopSwingViewSteps {
 
 	@Then("The view shows a message about the successful checkout")
 	public void the_view_shows_a_message_about_the_successful_checkout() {
-		window.label("checkoutResultLabel").requireText(
-				"<html>Thank you for the purchase!!<br/>"
-				+ "<br/>You have spent 3300.0$ for the following products:<br/>" 
-				+ "-- Laptop, quantity:1<br/>"
-				+ "-- Iphone, quantity:2<br/></html>");
+		window.label("checkoutResultLabel")
+				.requireText("<html>Thank you for the purchase!!<br/>"
+						+ "<br/>You have spent 3300.0$ for the following products:<br/>" + "-- Laptop, quantity:1<br/>"
+						+ "-- Iphone, quantity:2<br/></html>");
 	}
 
 	@Given("The cart contains some products of which one has quantity greater than the stock")
@@ -173,11 +171,9 @@ public class EShopSwingViewSteps {
 
 	@Then("The view shows a message about the outcome of the checkout")
 	public void the_view_shows_a_message_about_the_outcome_of_the_checkout() {
-		window.label("checkoutResultLabel").requireText(
-				"<html>Error!<br/>" 
-				+ "<br/>Not enough stock for the following product:<br/>"
-				+ "-- Iphone, remaining stock:2<br/>" 
-				+ "<br/>Remove some products and try again</html>");
+		window.label("checkoutResultLabel")
+				.requireText("<html>Error!<br/>" + "<br/>Not enough stock for the following product:<br/>"
+						+ "-- Iphone, remaining stock:2<br/>" + "<br/>Remove some products and try again</html>");
 	}
 
 }

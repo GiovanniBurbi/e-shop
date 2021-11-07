@@ -27,7 +27,7 @@ import com.apt.project.eshop.model.Product;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
-	
+
 	@Mock
 	private EShopController eShopController;
 	private EShopSwingView eShopSwingView;
@@ -45,13 +45,14 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window = new FrameFixture(robot(), eShopSwingView); // FOR INTERACTING WITH THE GUI COMPONENTS
 		window.show();
 	}
-	
+
 	@Override
-	protected void onTearDown() throws Exception{
+	protected void onTearDown() throws Exception {
 		closeable.close();
 	}
 
-	@Test @GUITest
+	@Test
+	@GUITest
 	public void testControlsInitialStates() {
 		window.label(JLabelMatcher.withText("Products"));
 		window.list("productList");
@@ -68,416 +69,389 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
 		window.label("checkoutResultLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowAllProductsShouldShowsProductsInTheList() {
 		Product product = new Product("1", "Laptop", 1300);
-		GuiActionRunner.execute(()-> eShopSwingView.showAllProducts(Arrays.asList(product)));
+		GuiActionRunner.execute(() -> eShopSwingView.showAllProducts(Arrays.asList(product)));
 		String[] listContents = window.list("productList").contents();
 		assertThat(listContents).containsExactly(product.toString());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testWhenSearchTextBoxIsNotEmptyThenSearchButtonShouldBeEnabled() {
 		window.textBox("searchTextBox").enterText("Laptop");
 		window.button(JButtonMatcher.withText("Search")).requireEnabled();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testWhenSearchTextBoxIsWhiteSpaceThenSearchButtonShouldBeDisabled() {
 		window.textBox("searchTextBox").enterText(" ");
 		window.button(JButtonMatcher.withText("Search")).requireDisabled();
 	}
 
-	@Test @GUITest
+	@Test
+	@GUITest
 	public void testShowSearchedProductsShouldShowInTheProductListOnlySearchedProducts() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
 		Product product3 = new Product("3", "Laptop MSI", 1200);
-		GuiActionRunner.execute(
-			() -> {
-				DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
-				listProductsModel.addElement(product1);
-				listProductsModel.addElement(product2);
-				listProductsModel.addElement(product3);
-			}
-		);
-		
-		GuiActionRunner.execute(
-			() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product3))
-		);
-		
+		GuiActionRunner.execute(() -> {
+			DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
+			listProductsModel.addElement(product1);
+			listProductsModel.addElement(product2);
+			listProductsModel.addElement(product3);
+		});
+
+		GuiActionRunner.execute(() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product3)));
+
 		String[] listContents = window.list("productList").contents();
 		assertThat(listContents).containsExactly(product1.toString(), product3.toString());
 	}
-	
+
 	@Test
 	public void testSearchButtonShouldDelegateToEShopControllerSearchedProducts() {
 		window.textBox("searchTextBox").enterText("Laptop");
 		window.button(JButtonMatcher.withText("Search")).click();
 		verify(eShopController).searchProducts("Laptop");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowErrorProductNotFoundShouldShowAMessageInTheErrorLabel() {
 		String product = "Samsung s21";
-		GuiActionRunner.execute(
-			() -> eShopSwingView.showErrorProductNotFound(product)
-		);
+		GuiActionRunner.execute(() -> eShopSwingView.showErrorProductNotFound(product));
 		window.label("errorMessageLabel").foreground().requireEqualTo(Color.RED);
-		window.label("errorMessageLabel")
-			.requireText("Nessun risultato trovato per: \"" + product + "\"");
+		window.label("errorMessageLabel").requireText("Nessun risultato trovato per: \"" + product + "\"");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowErrorProductNotFoundWhenThereIsLeadingWhiteSpaceShouldShowAMessageInTheErrorLabelWithoutWhiteSpace() {
-		GuiActionRunner.execute(
-			() -> eShopSwingView.showErrorProductNotFound("   samsung")
-		);
-		window.label("errorMessageLabel").requireText(
-				"Nessun risultato trovato per: \"" + "samsung" + "\"");
+		GuiActionRunner.execute(() -> eShopSwingView.showErrorProductNotFound("   samsung"));
+		window.label("errorMessageLabel").requireText("Nessun risultato trovato per: \"" + "samsung" + "\"");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testResetErrorLabelWhenReleaseKeyInSearchTextBoxShouldResetErrorLabel() {
 		String product = "Samsun";
 		window.textBox("searchTextBox").enterText(product);
 		GuiActionRunner.execute(
-			() -> eShopSwingView.getLblErrorLabel()
-					.setText("Nessun risultato trovato per: \"" + product + "\"")
-		);
+				() -> eShopSwingView.getLblErrorLabel().setText("Nessun risultato trovato per: \"" + product + "\""));
 		window.textBox("searchTextBox").enterText("g");
 		window.label("errorMessageLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowSearchedProductsShouldEnableClearButton() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("3", "Laptop MSI", 1200);
-		GuiActionRunner.execute(
-			() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product2))
-		);
+		GuiActionRunner.execute(() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product2)));
 		window.button(JButtonMatcher.withText("Clear")).requireEnabled();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearSearchShouldDisableClearButtonAndResetSearchTextBox() {
 		window.textBox("searchTextBox").enterText("Laptop");
-		GuiActionRunner.execute(
-			() -> {
-				eShopSwingView.getBtnClear().setEnabled(true);
-				eShopSwingView.clearSearch(emptyList());
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnClear().setEnabled(true);
+			eShopSwingView.clearSearch(emptyList());
 		});
 		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
 		window.textBox("searchTextBox").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearSearchShouldMakeTheProductListShowAllProducts() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
 		Product product3 = new Product("3", "Laptop MSI", 1200);
-		GuiActionRunner.execute(
-			() -> {
-				DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
-				listProductsModel.addElement(product1);
-				listProductsModel.addElement(product3);
-			}
-		);
-		GuiActionRunner.execute(
-			() -> eShopSwingView.clearSearch(asList(product1, product2, product3))
-		);
+		GuiActionRunner.execute(() -> {
+			DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
+			listProductsModel.addElement(product1);
+			listProductsModel.addElement(product3);
+		});
+		GuiActionRunner.execute(() -> eShopSwingView.clearSearch(asList(product1, product2, product3)));
 		String[] listContents = window.list("productList").contents();
 		assertThat(listContents).containsExactly(product1.toString(), product2.toString(), product3.toString());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearSearchWhenThereWasAProductNotFoundErrorShouldResetTheErrorLabel() {
-		GuiActionRunner.execute(
-			() -> {
-				eShopSwingView.getBtnClear().setEnabled(true);
-				 eShopSwingView.getLblErrorLabel()
-					.setText("Nessun risultato trovato per: \"" + "Samsung" + "\"");
-				eShopSwingView.clearSearch(emptyList());
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnClear().setEnabled(true);
+			eShopSwingView.getLblErrorLabel().setText("Nessun risultato trovato per: \"" + "Samsung" + "\"");
+			eShopSwingView.clearSearch(emptyList());
 		});
 		window.label("errorMessageLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearButtonShouldDelegateToEShopControllerResetSearch() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getBtnClear().setEnabled(true);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnClear().setEnabled(true);
 		});
 		window.button(JButtonMatcher.withText("Clear")).click();
 		verify(eShopController).resetSearch();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testAddToCartButtonShouldBeEnabledOnlyWhenAProductInTheProductListIsSelected() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getProductListModel().addElement(new Product("1", "Laptop", 1300));
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getProductListModel().addElement(new Product("1", "Laptop", 1300));
 		});
 		window.list("productList").selectItem(0);
 		window.button(JButtonMatcher.withText("Add To Cart")).requireEnabled();
 		window.list("productList").clearSelection();
 		window.button(JButtonMatcher.withText("Add To Cart")).requireDisabled();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testAddToCartViewShouldShowAProductInTheCartList() {
 		Product product1 = new Product("1", "Laptop", 1300);
-		GuiActionRunner.execute(
-			() -> {
-				eShopSwingView.addToCartView(asList(product1));
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.addToCartView(asList(product1));
 		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product1.toStringExtended());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testAddToCartViewWhenAddMultipleTimesTheSameProductShouldShowOneIstanceOfTheProductInTheCartListWithTheRightQuantity() {
 		Product product1 = new Product("1", "Laptop", 1300, 1);
 		Product product2 = new Product("2", "eBook", 300, 1);
 		Product product1TwoTimes = new Product("1", "laptop", 1300, 2);
-		GuiActionRunner.execute(
-			() -> {
-				eShopSwingView.addToCartView(asList(product1));
-				eShopSwingView.addToCartView(asList(product2));
-				eShopSwingView.addToCartView(asList(product1TwoTimes, product2));				
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.addToCartView(asList(product1));
+			eShopSwingView.addToCartView(asList(product2));
+			eShopSwingView.addToCartView(asList(product1TwoTimes, product2));
 		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product1TwoTimes.toStringExtended(), product2.toStringExtended());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testAddToCartButtonShouldDelegateToEShopControllerNewCartProduct() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Kindle", 200);
-		GuiActionRunner.execute(
-				() -> {
-					DefaultListModel<Product> productListModel = eShopSwingView.getProductListModel();
-					productListModel.addElement(product1);
-					productListModel.addElement(product2);
-				});
+		GuiActionRunner.execute(() -> {
+			DefaultListModel<Product> productListModel = eShopSwingView.getProductListModel();
+			productListModel.addElement(product1);
+			productListModel.addElement(product2);
+		});
 		window.list("productList").selectItem(1);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		verify(eShopController).newCartProduct(product2);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testRemoveFromCartButtonShouldBeEnabledOnlyWhenAProductInTheCartListIsSelected() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
 		});
 		window.list("cartList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireEnabled();
 		window.list("cartList").clearSelection();
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireDisabled();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testRemoveFromCartViewShouldRemoveTheSelectedProductFromTheCartList() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		GuiActionRunner.execute(
-			() -> {
-					DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
-					cartListModel.addElement(product1);
-					cartListModel.addElement(product2);
-					eShopSwingView.removeFromCartView(product1);
+		GuiActionRunner.execute(() -> {
+			DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
+			cartListModel.addElement(product1);
+			cartListModel.addElement(product2);
+			eShopSwingView.removeFromCartView(product1);
 		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product2.toStringExtended());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testRemoveFromCartButtonShouldDelegateToEShopControllerRemoveCartProduct() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Kindle", 200);
-		GuiActionRunner.execute(
-			() -> {
-					DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
-					cartListModel.addElement(product1);
-					cartListModel.addElement(product2);
+		GuiActionRunner.execute(() -> {
+			DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
+			cartListModel.addElement(product1);
+			cartListModel.addElement(product2);
 		});
 		window.list("cartList").selectItem(1);
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
 		verify(eShopController).removeCartProduct(product2);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testTheUIWhenTheUserSelectSomethingFromTheProductListAndThenSomethingInTheCartListShoudDeselectTheElementFromTheProductList() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getProductListModel().addElement(product1);
-					eShopSwingView.getCartListModel().addElement(product2);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getProductListModel().addElement(product1);
+			eShopSwingView.getCartListModel().addElement(product2);
 		});
 		window.list("productList").selectItem(0);
 		window.list("cartList").selectItem(0);
 		window.list("productList").requireNoSelection();
 		window.list("cartList").requireSelection(0);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testTheUIWhenTheUserSelectSomethingFromTheCartListAndThenSomethingInTheProductListShoudDeselectTheElementFromTheCartList() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getProductListModel().addElement(product1);
-					eShopSwingView.getCartListModel().addElement(product2);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getProductListModel().addElement(product1);
+			eShopSwingView.getCartListModel().addElement(product2);
 		});
 		window.list("cartList").selectItem(0);
 		window.list("productList").selectItem(0);
 		window.list("cartList").requireNoSelection();
 		window.list("productList").requireSelection(0);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testCheckoutButtonShouldBeEnabledOnlyWhenAtLeastOneProductIsInsideTheCartList() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
 		});
 		window.button(JButtonMatcher.withText("Checkout")).requireEnabled();
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getCartListModel().removeAllElements();
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getCartListModel().removeAllElements();
 		});
 		window.button(JButtonMatcher.withText("Checkout")).requireDisabled();
 	}
-	
+
 	@Test
 	public void testCheckoutButtonShouldDelegateToEShopControllerCheckoutCart() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getBtnCheckout().setEnabled(true);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnCheckout().setEnabled(true);
 		});
 		window.button(JButtonMatcher.withText("Checkout")).click();
 		verify(eShopController).checkoutCart();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearCartShouldRemoveAllElementsFromTheCartList() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
-					eShopSwingView.clearCart();
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+			eShopSwingView.clearCart();
 		});
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).isEmpty();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowSuccessLabelShouldShowAMessageForTheSuccessfulCheckout() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
-					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 2));
-					eShopSwingView.getTotalCostlabel().setText("1900.0$");
-					eShopSwingView.showSuccessLabel();
-			}
-		);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+			eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 2));
+			eShopSwingView.getTotalCostlabel().setText("1900.0$");
+			eShopSwingView.showSuccessLabel();
+		});
 		window.label("checkoutResultLabel")
-			.requireText(
-				"<html>Thank you for the purchase!!<br/>"
-				+ "<br/>You have spent 1900.0$ for the following products:<br/>"
-				+ "-- Laptop, quantity:1<br/>"
-				+ "-- eBook, quantity:2<br/></html>"		
-		);
+				.requireText("<html>Thank you for the purchase!!<br/>"
+						+ "<br/>You have spent 1900.0$ for the following products:<br/>" + "-- Laptop, quantity:1<br/>"
+						+ "-- eBook, quantity:2<br/></html>");
 		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.BLACK);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearCheckoutResultWhenTheUserClicksAddToCartButton() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getBtnAddToCart().setEnabled(true);
-					eShopSwingView.getLblCheckoutLabel().setText("some text");
-			}
-		);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnAddToCart().setEnabled(true);
+			eShopSwingView.getLblCheckoutLabel().setText("some text");
+		});
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		window.label("checkoutResultLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearCheckoutResultWhenTheUserClicksRemoveFromCartButton() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getBtnRemoveFromCart().setEnabled(true);
-					eShopSwingView.getLblCheckoutLabel().setText("some text");
-			}
-		);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnRemoveFromCart().setEnabled(true);
+			eShopSwingView.getLblCheckoutLabel().setText("some text");
+		});
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
 		window.label("checkoutResultLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearCheckoutResultWhenTheUserClicksSearchButton() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getBtnSearch().setEnabled(true);
-					eShopSwingView.getLblCheckoutLabel().setText("some text");
-			}
-		);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnSearch().setEnabled(true);
+			eShopSwingView.getLblCheckoutLabel().setText("some text");
+		});
 		window.button(JButtonMatcher.withText("Search")).click();
 		window.label("checkoutResultLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearCheckoutResultWhenTheUserClicksClearButton() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getBtnClear().setEnabled(true);
-					eShopSwingView.getLblCheckoutLabel().setText("some text");
-			}
-		);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getBtnClear().setEnabled(true);
+			eShopSwingView.getLblCheckoutLabel().setText("some text");
+		});
 		window.button(JButtonMatcher.withText("Clear")).click();
 		window.label("checkoutResultLabel").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testshowFailureLabelShouldShowAMessageForTheCheckoutFailure() {
-		GuiActionRunner.execute(
-			() -> {
-					eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
-					eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 5));
-					eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 2));
-			}
-		);
+		GuiActionRunner.execute(() -> {
+			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+			eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 5));
+			eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 2));
+		});
 		window.label("checkoutResultLabel")
-			.requireText(
-				"<html>Error!<br/>"
-				+ "<br/>Not enough stock for the following product:<br/>"
-				+ "-- eBook, remaining stock:2<br/>"
-				+ "<br/>Remove some products and try again</html>"		
-		);
+				.requireText("<html>Error!<br/>" + "<br/>Not enough stock for the following product:<br/>"
+						+ "-- eBook, remaining stock:2<br/>" + "<br/>Remove some products and try again</html>");
 		window.label("checkoutResultLabel").foreground().requireEqualTo(Color.RED);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowAllCartShouldShowsProductsInTheCart() {
 		Product product = new Product("1", "Laptop", 1300);
-		GuiActionRunner.execute(()-> eShopSwingView.showAllCart(Arrays.asList(product)));
+		GuiActionRunner.execute(() -> eShopSwingView.showAllCart(Arrays.asList(product)));
 		String[] listContents = window.list("cartList").contents();
 		assertThat(listContents).containsExactly(product.toStringExtended());
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowTotalCostShouldShowsTheCartPriceInTheLabel() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000, 2);
-		GuiActionRunner.execute(
-			()-> eShopSwingView.showTotalCost(
-					(product.getPrice()*product.getQuantity()) 
-					+ (product2.getPrice()*product2.getQuantity())
-		));
+		GuiActionRunner.execute(() -> eShopSwingView.showTotalCost(
+				(product.getPrice() * product.getQuantity()) + (product2.getPrice() * product2.getQuantity())));
 		window.label("totalCostLabel").requireText("3300.0$");
 	}
 }
-

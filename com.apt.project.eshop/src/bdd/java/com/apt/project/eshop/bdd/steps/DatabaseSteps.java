@@ -20,7 +20,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 public class DatabaseSteps {
-	
+
 	private static final String MONGO_HOST = "localhost";
 	static final String DB_NAME = "test-db";
 	static final String COLLECTION_NAME = "test-product-collection";
@@ -58,7 +58,8 @@ public class DatabaseSteps {
 						new Product("4", "Macbook", 1400.0, 1),
 						new Product("5", "SmartTv UHD", 400.0, 1),
 						new Product("6", "Dyson phon", 350, 1),
-						new Product("7", "Playstation 5", 500, 1));
+						new Product("7", "Playstation 5", 500, 1)
+			);
 	}
 
 	@Then("The database storage of the products has not changed")
@@ -71,6 +72,7 @@ public class DatabaseSteps {
 						new Product("4", "Macbook", 1400.0, 1),
 						new Product("5", "SmartTv UHD", 400.0, 1),
 						new Product("6", "Dyson phon", 350, 1),
-						new Product("7", "Playstation 5", 500, 1));
+						new Product("7", "Playstation 5", 500, 1)
+			);
 	}
 }

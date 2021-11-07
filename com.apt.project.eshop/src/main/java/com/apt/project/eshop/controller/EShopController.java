@@ -10,13 +10,13 @@ public class EShopController {
 
 	private EShopView eShopView;
 	private ShopManager shopManager;
-	
+
 	public EShopController(EShopView eShopView, ShopManager shopManager) {
 		this.eShopView = eShopView;
 		this.shopManager = shopManager;
 	}
 
-	public void allProducts() {	
+	public void allProducts() {
 		eShopView.showAllProducts(shopManager.allProducts());
 	}
 
@@ -48,13 +48,13 @@ public class EShopController {
 	public void checkoutCart() {
 		shopManager.checkout();
 	}
-	
+
 	public void checkoutSuccess() {
 		eShopView.showSuccessLabel();
 		eShopView.clearCart();
 		eShopView.resetTotalCost();
 	}
-	
+
 	public void checkoutFailure(Product productWanted) {
 		eShopView.showFailureLabel(productWanted);
 	}

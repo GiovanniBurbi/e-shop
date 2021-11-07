@@ -19,15 +19,15 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
-public class CartMongoRepository implements CartRepository{
-		
+public class CartMongoRepository implements CartRepository {
+
 	private MongoCollection<Product> cartCollection;
 	private ClientSession session;
 
-	public CartMongoRepository(MongoClient client, String databaseName, String collectionName,
-			ClientSession session) {
+	public CartMongoRepository(MongoClient client, String databaseName, String collectionName, ClientSession session) {
 		this.session = session;
-		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
+				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		MongoDatabase database = client.getDatabase(databaseName);
 		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
@@ -37,10 +37,10 @@ public class CartMongoRepository implements CartRepository{
 		Product existingCartProduct = cartCollection.find(session, Filters.eq("name", product.getName())).first();
 		if (existingCartProduct != null)
 			cartCollection.updateOne(session, Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
-		else 
+		else
 			cartCollection.insertOne(session, new Product(product.getId(), product.getName(), product.getPrice()));
 	}
-	
+
 	@Override
 	public List<Product> allCart() {
 		return StreamSupport.stream(cartCollection.find(session).spliterator(), false).collect(Collectors.toList());
@@ -53,11 +53,13 @@ public class CartMongoRepository implements CartRepository{
 
 	@Override
 	public double cartTotalCost() {
-		List<Product> cartProducts = StreamSupport.stream(cartCollection.find(session).spliterator(), false).collect(Collectors.toList());
+		List<Product> cartProducts = 
+			StreamSupport.stream(cartCollection.find(session).spliterator(), false)
+				.collect(Collectors.toList());
 		double total = 0;
 		for (Product product : cartProducts) {
 			total += product.getPrice() * product.getQuantity();
 		}
 		return total;
-	}	
+	}
 }

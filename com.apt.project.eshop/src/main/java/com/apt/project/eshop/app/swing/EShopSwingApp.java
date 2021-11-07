@@ -18,9 +18,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-
 /**
- *  Start MongoDB with replica set using Docker with
+ * Start MongoDB with replica set using Docker with
  *
  * <pre>
  * 
@@ -29,14 +28,7 @@ import picocli.CommandLine.Option;
  * 
  * +++ Open a new terminal and run +++
  * 
- * sudo docker exec -it mongoRs mongo
- * 
- * +++ finally +++
- * rs.initiate()
- * 
- * +++ To verify all is working you can run +++
- * rs.conf()
- * rs.status()
+ * sudo docker exec -it mongoRs mongo --eval 'rs.initiate()'
  * 
  * </pre>
  * 
@@ -47,7 +39,7 @@ import picocli.CommandLine.Option;
  */
 @Command(mixinStandardHelpOptions = true)
 public class EShopSwingApp implements Callable<Void> {
-	
+
 	private static final String MONGO_HOST = "localhost";
 
 	private static final int MONGO_PORT = 27017;
@@ -57,43 +49,43 @@ public class EShopSwingApp implements Callable<Void> {
 
 	@Option(names = { "--db-product-collection" }, description = "Product collection name")
 	private String productCollectionName = "products";
-	
+
 	@Option(names = { "--db-cart-collection" }, description = "Cart collection name")
 	private String cartCollectionName = "cart";
-	
+
 	public static void main(String[] args) {
 		new CommandLine(new EShopSwingApp()).execute(args);
 	}
-	
+
 	@Override
 	public Void call() throws Exception {
 		EventQueue.invokeLater(() -> {
 			try {
-				MongoClient client= new MongoClient(MONGO_HOST, MONGO_PORT);
+				MongoClient client = new MongoClient(MONGO_HOST, MONGO_PORT);
 				EShopSwingView eShopView = new EShopSwingView();
-				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName, productCollectionName, cartCollectionName);
+				TransactionalShopManager transactionManager = new TransactionalShopManager(client, databaseName,
+						productCollectionName, cartCollectionName);
 				ShopManager shopManager = new ShopManager(transactionManager);
 				EShopController eShopController = new EShopController(eShopView, shopManager);
 				shopManager.setShopController(eShopController);
 				eShopView.setEShopController(eShopController);
-				if(shopManager.allProducts().isEmpty()) {
+				// Carica catalogo se lista prodotti è vuota
+				if (shopManager.allProducts().isEmpty()) {
 					shopManager.loadCatalog(asList(
-							new Product("1", "Laptop", 1300.0, 3),
-							new Product("2", "Iphone", 1000.0, 3),
-							new Product("3", "Laptop MSI", 1250.0, 3),
-							new Product("4", "Macbook", 1400.0, 3),
-							new Product("5", "SmartTv", 400.0, 3),
-							new Product("6", "Playstation 5", 500.0, 3),
-							new Product("7", "Xbox", 500.0, 3)
-							));
+						new Product("1", "Laptop", 1300.0, 3),
+						new Product("2", "Iphone", 1000.0, 3),
+						new Product("3", "Laptop MSI", 1250.0, 3),
+						new Product("4", "Macbook", 1400.0, 3),
+						new Product("5", "SmartTv", 400.0, 3),
+						new Product("6", "Playstation 5", 500.0, 3),
+						new Product("7", "Xbox", 500.0, 3)));
 				}
 				eShopView.setVisible(true);
 				eShopController.allProducts();
 				eShopController.showCart();
 				eShopController.showCartCost();
 			} catch (Exception e) {
-				Logger.getLogger(getClass().getName())
-				.log(Level.SEVERE, "Exception", e);
+				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception", e);
 			}
 		});
 		return null;

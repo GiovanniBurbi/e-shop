@@ -39,15 +39,14 @@ public class EShopControllerIT {
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
-    public static GenericContainer mongo = new GenericContainer("mongo:4.4.3")
-            .withExposedPorts(27017)
-            .withCommand("--replSet rs0");
-	
+	public static GenericContainer mongo = new GenericContainer("mongo:4.4.3").withExposedPorts(27017)
+			.withCommand("--replSet rs0");
+
 	private MongoClient client;
-	
+
 	@Spy
 	private EShopView eShopView;
-	
+
 	private EShopController eShopController;
 	private ProductRepository productRepository;
 	private CartRepository cartRepository;
@@ -55,7 +54,7 @@ public class EShopControllerIT {
 	private List<Product> catalog;
 	private ShopManager shopManager;
 	private TransactionManager transactionManager;
-	
+
 	@BeforeClass
 	public static void mongoConfiguration() {
 		// configure replica set in MongoDB with TestContainers
@@ -75,12 +74,13 @@ public class EShopControllerIT {
 		ClientSession session = client.startSession();
 		closeable = MockitoAnnotations.openMocks(this);
 		catalog = asList(
-				new Product("1", "Laptop", 1300),
-				new Product("2", "Iphone", 1000),
-				new Product("3", "Cuffie", 300),
-				new Product("4", "Lavatrice", 300)
-			);
-		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, CART_COLLECTION_NAME);
+			new Product("1", "Laptop", 1300),
+			new Product("2", "Iphone", 1000),
+			new Product("3", "Cuffie", 300),
+			new Product("4", "Lavatrice", 300)
+		);
+		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME,
+				CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
 		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
@@ -101,22 +101,22 @@ public class EShopControllerIT {
 		eShopController.allProducts();
 		then(eShopView).should().showAllProducts(catalog);
 	}
-	
+
 	@Test
 	public void testSearchProducts() {
 		eShopController.searchProducts("la");
 		then(eShopView).should().showSearchedProducts(asList(
-				new Product("1", "Laptop", 1300),
-				new Product("4", "Lavatrice", 300)
-		));
+			new Product("1", "Laptop", 1300),
+			new Product("4", "Lavatrice", 300))
+		);
 	}
-	
+
 	@Test
 	public void testResetSearch() {
 		eShopController.resetSearch();
 		then(eShopView).should().clearSearch(catalog);
 	}
-	
+
 	@Test
 	public void testNewCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
@@ -128,7 +128,7 @@ public class EShopControllerIT {
 		then(eShopView).should(inOrder).addToCartView(asList(product2, product));
 		then(eShopView).should(inOrder).showTotalCost(product.getPrice() + product2.getPrice());
 	}
-	
+
 	@Test
 	public void testRemoveCartProduct() {
 		Product product = new Product("1", "Laptop", 1300);
@@ -141,7 +141,7 @@ public class EShopControllerIT {
 		then(eShopView).should(inOrder).removeFromCartView(product);
 		then(eShopView).should(inOrder).showTotalCost(product2.getPrice());
 	}
-	
+
 	@Test
 	public void testCheckoutCartWhenSuccessfull() {
 		Product product = new Product("1", "Laptop", 1300);
@@ -152,16 +152,16 @@ public class EShopControllerIT {
 		InOrder inOrder = inOrder(eShopView);
 		then(eShopView).should(inOrder).showSuccessLabel();
 		then(eShopView).should(inOrder).clearCart();
-		then(eShopView).should(inOrder).resetTotalCost();	
+		then(eShopView).should(inOrder).resetTotalCost();
 		assertThat(cartRepository.allCart()).isEmpty();
 		assertThat(productRepository.findAll()).containsExactly(
 				new Product("1", "Laptop", 1300, 0),
 				new Product("2", "Iphone", 1000, 0),
 				new Product("3", "Cuffie", 300),
-				new Product("4", "Lavatrice", 300)	
+				new Product("4", "Lavatrice", 300)
 		);
 	}
-	
+
 	@Test
 	public void testCheckoutCartWhenTheCheckoutFails() {
 		Product product = new Product("1", "Laptop", 1300);
@@ -172,15 +172,18 @@ public class EShopControllerIT {
 		eShopController.checkoutCart();
 		then(eShopView).should().showFailureLabel(product2);
 		verifyNoMoreInteractions(eShopView);
-		assertThat(cartRepository.allCart()).contains(new Product("1", "Laptop", 1300), new Product("2", "Iphone", 1000, 2));
+		assertThat(cartRepository.allCart()).contains(
+				new Product("1", "Laptop", 1300),
+				new Product("2", "Iphone", 1000, 2)
+		);
 		assertThat(productRepository.findAll()).containsExactly(
 				new Product("1", "Laptop", 1300, 1),
 				new Product("2", "Iphone", 1000, 1),
 				new Product("3", "Cuffie", 300, 1),
-				new Product("4", "Lavatrice", 300, 1)	
+				new Product("4", "Lavatrice", 300, 1)
 		);
 	}
-	
+
 	@Test
 	public void testShowCart() {
 		Product product = new Product("1", "Laptop", 1300);
@@ -188,7 +191,7 @@ public class EShopControllerIT {
 		eShopController.showCart();
 		then(eShopView).should().showAllCart(asList(product));
 	}
-	
+
 	@Test
 	public void testShowCartCost() {
 		Product product = new Product("1", "Laptop", 1300);
@@ -200,4 +203,3 @@ public class EShopControllerIT {
 		then(eShopView).should().showTotalCost(3300.0);
 	}
 }
-

@@ -31,17 +31,16 @@ import com.mongodb.client.ClientSession;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
-	
+
 	private static final String PRODUCTS_COLLECTION_NAME = "products";
 	private static final String ESHOP_DB_NAME = "eShop";
 	private static final String CART_COLLECTION_NAME = "cart";
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
-    public static GenericContainer mongo = new GenericContainer("mongo:4.4.3")
-            .withExposedPorts(27017)
-            .withCommand("--replSet rs0");
-	
+	public static GenericContainer mongo = new GenericContainer("mongo:4.4.3").withExposedPorts(27017)
+			.withCommand("--replSet rs0");
+
 	private MongoClient client;
 	private ProductMongoRepository productRepository;
 	private EShopSwingView eShopSwingView;
@@ -51,13 +50,12 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private ShopManager shopManager;
 	private TransactionManager transactionManager;
 	private CartMongoRepository cartRepository;
-	
+
 	@BeforeClass
 	public static void MongoConfiguration() {
 		// configure replica set in MongoDB with TestContainers
 		try {
-			mongo.execInContainer("/bin/bash", "-c",
-					"mongo --eval 'printjson(rs.initiate())' " + "--quiet");
+			mongo.execInContainer("/bin/bash", "-c", "mongo --eval 'printjson(rs.initiate())' " + "--quiet");
 			mongo.execInContainer("/bin/bash", "-c",
 					"until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1;"
 							+ "do sleep 1;done");
@@ -71,16 +69,17 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		ClientSession session = client.startSession();
 		catalog = asList(
-				new Product("1", "Laptop", 1300),
-				new Product("2", "Iphone", 1000),
-				new Product("3", "Cuffie", 300),
-				new Product("4", "Lavatrice", 300)
+			new Product("1", "Laptop", 1300),
+			new Product("2", "Iphone", 1000),
+			new Product("3", "Cuffie", 300),
+			new Product("4", "Lavatrice", 300)
 		);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
 		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
 		// make sure to start with the initial configuration
 		productRepository.loadCatalog(catalog);
-		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, CART_COLLECTION_NAME);
+		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME,
+				CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		GuiActionRunner.execute(() -> {
 			eShopSwingView = new EShopSwingView();
@@ -91,27 +90,29 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		shopManager.setShopController(eShopController);
 		window = new FrameFixture(robot(), eShopSwingView);
 		window.show(); // shows the frame to test
-		
+
 	}
-	
+
 	@Override
 	protected void onTearDown() throws Exception {
 		client.close();
 	}
 
-	@Test @GUITest
+	@Test
+	@GUITest
 	public void testAllProducts() {
 		GuiActionRunner.execute(() -> eShopController.allProducts());
 		// verify that the view's list is populated
 		assertThat(window.list("productList").contents()).containsExactly(
-				new Product("1", "Laptop", 1300).toString(),
-				new Product("2", "Iphone", 1000).toString(),
-				new Product("3", "Cuffie", 300).toString(),
-				new Product("4", "Lavatrice", 300).toString()
+			new Product("1", "Laptop", 1300).toString(),
+			new Product("2", "Iphone", 1000).toString(),
+			new Product("3", "Cuffie", 300).toString(),
+			new Product("4", "Lavatrice", 300).toString()
 		);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testSearchButtonSuccess() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
@@ -119,12 +120,13 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("searchTextBox").enterText("la");
 		window.button(JButtonMatcher.withText("Search")).click();
 		assertThat(window.list("productList").contents()).containsExactly(
-				new Product("1", "Laptop", 1300).toString(),
-				new Product("4", "Lavatrice", 300).toString()
+			new Product("1", "Laptop", 1300).toString(),
+			new Product("4", "Lavatrice", 300).toString()
 		);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testSearchBottonProductNotFoundError() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
@@ -132,17 +134,16 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("searchTextBox").enterText("Samsung");
 		window.button(JButtonMatcher.withText("Search")).click();
 		assertThat(window.list("productList").contents()).containsExactly(
-				new Product("1", "Laptop", 1300).toString(),
-				new Product("2", "Iphone", 1000).toString(),
-				new Product("3", "Cuffie", 300).toString(),
-				new Product("4", "Lavatrice", 300).toString()
+			new Product("1", "Laptop", 1300).toString(),
+			new Product("2", "Iphone", 1000).toString(),
+			new Product("3", "Cuffie", 300).toString(),
+			new Product("4", "Lavatrice", 300).toString()
 		);
-		window.label("errorMessageLabel").requireText(
-				"Nessun risultato trovato per: \"Samsung\""		
-		);
+		window.label("errorMessageLabel").requireText("Nessun risultato trovato per: \"Samsung\"");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearBotton() {
 		window.textBox("searchTextBox").enterText("la");
 		GuiActionRunner.execute(() -> {
@@ -150,15 +151,16 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		window.button(JButtonMatcher.withText("Clear")).click();
 		assertThat(window.list("productList").contents()).containsExactly(
-				new Product("1", "Laptop", 1300).toString(),
-				new Product("2", "Iphone", 1000).toString(),
-				new Product("3", "Cuffie", 300).toString(),
-				new Product("4", "Lavatrice", 300).toString()
+			new Product("1", "Laptop", 1300).toString(),
+			new Product("2", "Iphone", 1000).toString(),
+			new Product("3", "Cuffie", 300).toString(),
+			new Product("4", "Lavatrice", 300).toString()
 		);
 		window.textBox("searchTextBox").requireText("");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testClearButtonWhenTheSearchFailWithAllProductsShownInTheListShouldStayDisable() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
@@ -166,19 +168,23 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testAddToCartButtonShouldShowTheProductSelectedInTheCartAndTheTotalCostOfTheCart() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
 		});
 		window.list("productList").selectItem(0);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
-		assertThat(window.list("cartList").contents()).containsExactly(new Product("1", "Laptop", 1300).toStringExtended());
+		assertThat(window.list("cartList").contents()).containsExactly(
+			new Product("1", "Laptop", 1300).toStringExtended()
+		);
 		window.label("totalCostLabel").requireText("1300.0$");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testAddToCartButtonWhenTheProductSelectedIsAlreadyInTheCartShouldOnlyIncreaseTheFieldQuantityOfThatProductInTheCart() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
@@ -187,82 +193,85 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		window.list("productList").selectItem(0);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
-		assertThat(window.list("cartList").contents())
-			.containsExactly(
-					new Product("1", "Laptop", 1300, 2).toStringExtended(),
-					new Product("2", "Iphone", 1000).toStringExtended()
+		assertThat(window.list("cartList").contents()).containsExactly(
+			new Product("1", "Laptop", 1300, 2).toStringExtended(),
+			new Product("2", "Iphone", 1000).toStringExtended()
 		);
 		window.label("totalCostLabel").requireText("3600.0$");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testRemoveFromCartButtonShouldRemoveTheProductSelectedInTheCart() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
 			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
-			eShopController.newCartProduct(new Product("2", "Iphone", 1000));			
+			eShopController.newCartProduct(new Product("2", "Iphone", 1000));
 		});
 		window.list("cartList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
-		assertThat(window.list("cartList").contents()).containsExactly(new Product("2", "Iphone", 1000).toStringExtended());
+		assertThat(window.list("cartList").contents()).containsExactly(
+			new Product("2", "Iphone", 1000).toStringExtended());
 		window.label("totalCostLabel").requireText("1000.0$");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testCheckoutButtonWhenCheckoutSuccessfullShouldClearCartAndResetTotalCostLabelAndShowSuccessCheckoutLabel() {
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
 			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
-			eShopController.newCartProduct(new Product("2", "Iphone", 1000));	
+			eShopController.newCartProduct(new Product("2", "Iphone", 1000));
 		});
 		window.button(JButtonMatcher.withText("Checkout")).click();
 		assertThat(window.list("cartList").contents()).isEmpty();
 		window.label("totalCostLabel").requireText("0.0$");
-		window.label("checkoutResultLabel").requireText(
-			"<html>Thank you for the purchase!!<br/>"
-			+ "<br/>You have spent 2300.0$ for the following products:<br/>"
-			+ "-- Laptop, quantity:1<br/>"
-			+ "-- Iphone, quantity:1<br/></html>"
-		);
+		window.label("checkoutResultLabel")
+				.requireText("<html>Thank you for the purchase!!<br/>"
+						+ "<br/>You have spent 2300.0$ for the following products:<br/>" + "-- Laptop, quantity:1<br/>"
+						+ "-- Iphone, quantity:1<br/></html>");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testCheckoutButtonWhenCheckoutFailureShouldOnlyShowFailureCheckoutLabel() throws RepositoryException {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
 			eShopController.newCartProduct(product1);
-			eShopController.newCartProduct(product2);	
-			eShopController.newCartProduct(product2);	
+			eShopController.newCartProduct(product2);
+			eShopController.newCartProduct(product2);
 		});
 		window.button(JButtonMatcher.withText("Checkout")).click();
-		assertThat(window.list("cartList").contents()).containsExactly(new Product("1", "Laptop", 1300).toStringExtended(), new Product("2", "Iphone", 1000, 2).toStringExtended());
-		window.label("totalCostLabel").requireText("3300.0$");
-		window.label("checkoutResultLabel").requireText(
-			"<html>Error!<br/>"
-			+ "<br/>Not enough stock for the following product:<br/>"
-			+ "-- Iphone, remaining stock:1<br/>"
-			+ "<br/>Remove some products and try again</html>"
+		assertThat(window.list("cartList").contents()).containsExactly(
+			new Product("1", "Laptop", 1300).toStringExtended(),
+			new Product("2", "Iphone", 1000, 2).toStringExtended()
 		);
+		window.label("totalCostLabel").requireText("3300.0$");
+		window.label("checkoutResultLabel")
+				.requireText("<html>Error!<br/>" + "<br/>Not enough stock for the following product:<br/>"
+						+ "-- Iphone, remaining stock:1<br/>" + "<br/>Remove some products and try again</html>");
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowAllCart() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
 		cartRepository.addToCart(product1);
 		cartRepository.addToCart(product2);
 		GuiActionRunner.execute(() -> {
-			eShopController.showCart();	
+			eShopController.showCart();
 		});
 		assertThat(window.list("cartList").contents()).containsExactly(
-				product1.toStringExtended(),
-				product2.toStringExtended()
+			product1.toStringExtended(),
+			product2.toStringExtended()
 		);
 	}
-	
-	@Test @GUITest
+
+	@Test
+	@GUITest
 	public void testShowTotalCost() {
 		Product product1 = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "Iphone", 1000);
@@ -270,7 +279,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		cartRepository.addToCart(product2);
 		cartRepository.addToCart(product2);
 		GuiActionRunner.execute(() -> {
-			eShopController.showCartCost();	
+			eShopController.showCartCost();
 		});
 		window.label("totalCostLabel").requireText("3300.0$");
 	}
