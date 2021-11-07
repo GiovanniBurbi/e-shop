@@ -8,13 +8,13 @@ import com.apt.project.eshop.model.Product;
 public class ShopManager {
 
 	private TransactionManager transactionManager;
-	
+
 	private EShopController shopController;
 
 	public ShopManager(TransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
-	
+
 	public void setShopController(EShopController shopController) {
 		this.shopController = shopController;
 	}
@@ -35,37 +35,39 @@ public class ShopManager {
 			return null;
 		});
 	}
-	
+
 	public List<Product> allProducts() {
 		return transactionManager.doInTransaction((productRepository, cartRepository) -> productRepository.findAll());
 	}
-	
+
 	public List<Product> productsByName(String nameToFind) {
-		return transactionManager.doInTransaction((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
+		return transactionManager
+				.doInTransaction((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
 	}
-	
+
 	public List<Product> cartProducts() {
 		return transactionManager.doInTransaction((productRepository, cartRepository) -> cartRepository.allCart());
 	}
-	
+
 	public void addToCart(Product product) {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
 			cartRepository.addToCart(product);
 			return null;
 		});
 	}
-	
+
 	public double cartCost() {
-		return transactionManager.doInTransaction((productRepository, cartRepository) -> cartRepository.cartTotalCost());
+		return transactionManager
+				.doInTransaction((productRepository, cartRepository) -> cartRepository.cartTotalCost());
 	}
-	
+
 	public void removeFromCart(Product product) {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
 			cartRepository.removeFromCart(product);
 			return null;
 		});
 	}
-	
+
 	public void loadCatalog(List<Product> products) {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
 			productRepository.loadCatalog(products);

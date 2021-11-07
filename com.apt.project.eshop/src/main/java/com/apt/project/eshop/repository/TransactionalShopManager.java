@@ -36,27 +36,26 @@ public class TransactionalShopManager implements TransactionManager {
 			// create a transaction
 			session.startTransaction(TransactionOptions.builder().writeConcern(WriteConcern.MAJORITY).build());
 			// create a repository instance in the transaction
-			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName, productCollectionName, session);
-			CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, session);
+			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,
+					productCollectionName, session);
+			CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName,
+					session);
 			// call a lambda passing the repository instance
 			T result = code.apply(productRepository, cartRepository);
-				
+
 			session.commitTransaction();
-			Logger.getLogger(getClass().getName())
-				.log(Level.INFO, SUCCESSFUL_TRANSACTION);
+			Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
 			return result;
-			
+
 		} catch (Exception e) {
 			session.abortTransaction();
-			Logger.getLogger(getClass().getName())
-				.log(Level.INFO, ROLLBACK_TRANSACTION);
-			
+			Logger.getLogger(getClass().getName()).log(Level.INFO, ROLLBACK_TRANSACTION);
+
 		} finally {
 			// close the transaction
-	        session.close();
-	        Logger.getLogger(getClass().getName())
-			.log(Level.INFO, TRANSACTION_ENDED);
-	    }
+			session.close();
+			Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
+		}
 		return null;
 	}
 }

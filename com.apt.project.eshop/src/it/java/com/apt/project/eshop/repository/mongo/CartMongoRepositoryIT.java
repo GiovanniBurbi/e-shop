@@ -21,7 +21,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 public class CartMongoRepositoryIT {
-	
+
 	private static final String CART_COLLECTION_NAME = "cart";
 	private static final String ESHOP_DB_NAME = "eShop";
 
@@ -56,19 +56,20 @@ public class CartMongoRepositoryIT {
 		database.drop();
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
 				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		cartCollection = database.getCollection(CART_COLLECTION_NAME, Product.class).withCodecRegistry(pojoCodecRegistry);
+		cartCollection = database.getCollection(CART_COLLECTION_NAME, Product.class)
+				.withCodecRegistry(pojoCodecRegistry);
 	}
 
 	@After
 	public void tearDown() {
 		client.close();
 	}
-	
+
 	@Test
 	public void testAddToCart() {
 		Product product = new Product("1", "eBook", 300);
 		cartRepository.addToCart(product);
-		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300));
+		assertThat(cartCollection.find()).containsExactly(product);
 	}
 
 	@Test
@@ -79,7 +80,7 @@ public class CartMongoRepositoryIT {
 		cartRepository.addToCart(secondProduct);
 		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300, 2));
 	}
-	
+
 	@Test
 	public void testAllCartWhenCartCollectionIsEmpty() {
 		assertThat(cartRepository.allCart()).isEmpty();
@@ -103,18 +104,18 @@ public class CartMongoRepositoryIT {
 		cartRepository.removeFromCart(product);
 		assertThat(cartCollection.find()).containsExactly(product2);
 	}
-	
+
 	@Test
 	public void testCartTotalCostWhenCartIsEmpty() {
 		assertThat(cartRepository.cartTotalCost()).isEqualTo(0.0);
 	}
-	
+
 	@Test
 	public void testCartTotalCost() {
 		Product product1 = new Product("1", "Laptop", 1300, 4);
 		Product product2 = new Product("2", "eBook", 300, 3);
 		cartCollection.insertOne(product1);
 		cartCollection.insertOne(product2);
-		assertThat(cartRepository.cartTotalCost()).isEqualTo(6100);	
+		assertThat(cartRepository.cartTotalCost()).isEqualTo(6100);
 	}
 }
