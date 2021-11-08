@@ -25,7 +25,7 @@ The project eShop is a project that simulate a very simple online shop. This app
 The following instructions are meant for Linux and Mac environment
 * Clone this repository with GitHub CLI in your IDE, Eclipse has been used for this project.
 * To run the Maven build:
-  Run the root directory of the project as Maven build with goals:
+  * Run the root directory of the project as Maven build with goals:
     `clean verify`
   * you can generate the code coverage report by enable the jacoco profile
     `clean verify -Pjacoco`
