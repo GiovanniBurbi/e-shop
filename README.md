@@ -32,7 +32,8 @@ The project eShop simulate a very simple online shop. This app is developed in J
     `clean verify -Ppitest`
 * To run the Java application
   * First start the container with MongoDB replica set:
-     * Open a terminal and navigate inside the root directory of the project and run the command:
+     * Open a terminal and navigate inside the root directory of the project
+     * Run the command:
        `docker-compose up`
    * In your IDE open the file "EShopSwingApp" and run it as Java application.
 
