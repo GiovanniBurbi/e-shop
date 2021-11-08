@@ -27,9 +27,9 @@ The following instructions are meant for Linux and Mac environment
 * To run the Maven build:
   * Run the root directory of the project as Maven build with goals:
     `clean verify`
-  * you can generate the code coverage report by enable the jacoco profile
+  * To generate the code coverage report by enable the jacoco profile
     `clean verify -Pjacoco`
-  * you can generate the mutation testing report by enable the pitest profile
+  * To generate the mutation testing report by enable the pitest profile
     `clean verify -Ppitest`
 * To run the Java application
   * First start the container with MongoDB replica set:
@@ -37,4 +37,4 @@ The following instructions are meant for Linux and Mac environment
       `docker-compose up`
    * In your IDE open the file "EShopSwingApp" and run it as Java application.
 
-If you are using Windows OS that is recommended to use linux containers. You can see this guide: https://docs.docker.com/desktop/windows/
+If you are using Windows environment then is recommended to use linux containers. You can see this guide: https://docs.docker.com/desktop/windows/
