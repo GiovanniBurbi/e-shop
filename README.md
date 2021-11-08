@@ -20,7 +20,7 @@ In the development of this project has been used this tools and related versions
  * Docker (20.10.8)
  * Docker compose (1.29.2)
 ## Brief introduction
-The project eShop simulate a very simple online shop. This app is developed in Java 8 using a MongoDB database with some of its advanced features and Java Swing for the GUI. The goal of this project is to use tools and techniques meant to increase productivity, the quality of the source code and its maintainability. All tools are wired together in the CI server provided by GitHub Actions through workflows files. The build automation process is managed by Maven. For more details on the development of the project and the tools used see the report [FinalReport.pdf](https://www.example.com).
+The project eShop simulate a very simple online shop. This app is developed in Java 8 using a MongoDB database with some of its advanced features and Java Swing for the GUI. The goal of this project is to use tools and techniques meant to increase productivity, the quality of the source code and its maintainability. All tools are wired together in the CI server provided by GitHub Actions through workflows files. The build automation process is managed by Maven. For more details on the development of the project and the tools used see the [Final Report](https://www.example.com).
 ## Getting started
 * Clone this repository with GitHub CLI in your IDE, Eclipse has been used for this project.
 * To run the Maven build:
