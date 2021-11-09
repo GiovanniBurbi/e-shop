@@ -13,8 +13,8 @@
  # eShop App
 > Advanced programming techniques Project using BDD, Docker, MongoDB, Swing and CI.
 
-## Prerequisite 
-In the development of this project has been used this tools and related versions:
+## Prerequisites 
+In the development of this project has been used these tools and related versions:
  * Java (>=8)
  * Maven (3.8.2)
  * Docker (20.10.8)
@@ -58,4 +58,4 @@ The project eShop simulate a very simple online shop. This app is developed in J
      * Start the application with:
        `java -jar target/eshop-0.0.1-SNAPSHOT-jar-with-dependencies.jar`
        
-If you are using Windows environment then is recommended to use linux containers. You can see this guide: https://docs.docker.com/desktop/windows/
+If you are using Windows environment then is recommended to use linux containers. You can see this guide: https://docs.docker.com/desktop/windows/#switch-between-windows-and-linux-containers
