@@ -20,7 +20,7 @@ import org.testcontainers.containers.GenericContainer;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.management.TransactionManager;
-import com.apt.project.eshop.management.TransactionalShopManager;
+import com.apt.project.eshop.management.mongo.TransactionalShopManager;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.RepositoryException;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;

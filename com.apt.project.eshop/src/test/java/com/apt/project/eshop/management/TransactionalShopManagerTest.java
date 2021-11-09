@@ -85,7 +85,7 @@ public class TransactionalShopManagerTest {
 	}
 
 	@Test
-	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowMongoExceptionAndDelegateToControllerSuccessCheckout()
+	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowRepositoryExceptionAndDelegateToControllerSuccessCheckout()
 			throws RepositoryException {
 		Product productNotAvailable = new Product("1", "Laptop", 1300, 1);
 		Product product1 = new Product("1", "Laptop", 1300, 2);

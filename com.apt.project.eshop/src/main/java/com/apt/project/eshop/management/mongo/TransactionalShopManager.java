@@ -1,8 +1,10 @@
-package com.apt.project.eshop.management;
+package com.apt.project.eshop.management.mongo;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.apt.project.eshop.management.TransactionCode;
+import com.apt.project.eshop.management.TransactionManager;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.mongodb.MongoClient;
