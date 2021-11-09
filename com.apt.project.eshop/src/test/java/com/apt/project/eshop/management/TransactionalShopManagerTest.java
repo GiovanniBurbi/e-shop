@@ -1,4 +1,4 @@
-package com.apt.project.eshop.repository;
+package com.apt.project.eshop.management;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +26,9 @@ import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartRepository;
+import com.apt.project.eshop.repository.ProductRepository;
+import com.apt.project.eshop.repository.RepositoryException;
 
 public class TransactionalShopManagerTest {
 

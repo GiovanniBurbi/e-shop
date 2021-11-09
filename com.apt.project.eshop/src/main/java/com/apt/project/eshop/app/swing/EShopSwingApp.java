@@ -8,9 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.management.ShopManager;
+import com.apt.project.eshop.management.TransactionalShopManager;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.ShopManager;
-import com.apt.project.eshop.repository.TransactionalShopManager;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
 

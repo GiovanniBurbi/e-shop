@@ -160,7 +160,7 @@
               <param>com.apt.project.eshop.app.swing.*</param>
               <param>com.apt.project.eshop.model.*</param>
 			  <param>com.apt.project.eshop.view.swing.*</param>
-			  <param>com.apt.project.eshop.repository.TransactionalShopManager</param>
+			  <param>com.apt.project.eshop.management.TransactionalShopManager</param>
               <param>com.apt.project.eshop.repository.RepositoryException</param>
             </excludedClasses>
             <excludedTestClasses>
@@ -168,8 +168,8 @@
               <param>com.apt.project.eshop.bdd.*</param>
               <param>com.apt.project.eshop.controller.*IT</param>
               <param>com.apt.project.eshop.view.swing.*IT</param>
-              <param>com.apt.project.eshop.repository.TrasactionalManagerIT</param>
-              <param>com.apt.project.eshop.repository.TransactionalShopManagerTest.*</param>
+              <param>com.apt.project.eshop.management.TrasactionalManagerIT</param>
+              <param>com.apt.project.eshop.management.TransactionalShopManagerTest.*</param>
             </excludedTestClasses>
             <mutators>
               <mutator>DEFAULTS</mutator>

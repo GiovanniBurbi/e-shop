@@ -1,4 +1,4 @@
-package com.apt.project.eshop.repository;
+package com.apt.project.eshop.management;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
