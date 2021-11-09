@@ -160,7 +160,7 @@
               <param>com.apt.project.eshop.app.swing.*</param>
               <param>com.apt.project.eshop.model.*</param>
 			  <param>com.apt.project.eshop.view.swing.*</param>
-			  <param>com.apt.project.eshop.management.TransactionalShopManager</param>
+			  <param>com.apt.project.eshop.management.mongo.TransactionalShopManager</param>
               <param>com.apt.project.eshop.repository.RepositoryException</param>
             </excludedClasses>
             <excludedTestClasses>
