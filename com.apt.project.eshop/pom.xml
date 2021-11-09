@@ -320,6 +320,30 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Maven assembly plugin -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.1.1</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <archive>
+                  <manifest>
+                    <mainClass>com.apt.project.eshop.app.swing.EShopSwingApp</mainClass>
+                  </manifest>
+                </archive>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
     </plugins>
   </build>
   <!-- To resolve warning in Github Actions CI process in step "Generate JUnit Report;
