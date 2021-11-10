@@ -53,9 +53,9 @@ The project eShop simulate a very simple online shop. This app is developed in J
      * Run the command:
        `docker-compose up`
    * In a new terminal navigate inside the root directory of the project
-     * Compile and create the FatJar of the application with:
-       `mvn compile package`
-     * Start the application with:
-       `java -jar target/eshop-0.0.1-SNAPSHOT-jar-with-dependencies.jar`
+   * Compile and create the FatJar of the application with:
+     `mvn compile package`
+   * Start the application with:
+     `java -jar target/eshop-0.0.1-SNAPSHOT-jar-with-dependencies.jar`
        
 If you are using Windows environment then is recommended to use linux containers. You can see this guide: https://docs.docker.com/desktop/windows/#switch-between-windows-and-linux-containers
