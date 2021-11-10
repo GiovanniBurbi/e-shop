@@ -10,7 +10,7 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=GiovanniBurbi_e-shop&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=GiovanniBurbi_e-shop)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=GiovanniBurbi_e-shop&metric=bugs)](https://sonarcloud.io/summary/new_code?id=GiovanniBurbi_e-shop)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=GiovanniBurbi_e-shop&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=GiovanniBurbi_e-shop)
- # eShop App
+ # eShop/Shopping Cart App
 > Advanced programming techniques Project using BDD, Docker, MongoDB, Swing and CI.
 
 ## Prerequisites 
@@ -20,7 +20,7 @@ In the development of this project has been used these tools and related version
  * Docker (20.10.8)
  * Docker compose (1.29.2)
 ## Brief introduction
-The project eShop simulate a very simple online shop. This app is developed in Java 8 using a MongoDB database with some of its advanced features and Java Swing for the GUI. The goal of this project is to use tools and techniques meant to increase productivity, the quality of the source code and its maintainability. All tools are wired together in the CI server provided by GitHub Actions through workflows files. The build automation process is managed by Maven. For more details on the development of the project and the tools used see the [Final Report](https://www.example.com).
+The project eShop simulate a shopping cart of a very simple online shop. This app is developed in Java 8 using a MongoDB database with some of its advanced features and Java Swing for the GUI. The goal of this project is to use tools and techniques meant to increase productivity, the quality of the source code and its maintainability. All tools are wired together in the CI server provided by GitHub Actions through workflows files. The build automation process is managed by Maven. For more details on the development of the project and the tools used see the [Final Report](https://www.example.com).
 ## Getting started
 ### Using IDE
 * Clone this repository in your IDE, Eclipse has been used for this project.
