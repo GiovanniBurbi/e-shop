@@ -1,4 +1,4 @@
-package com.apt.project.eshop.repository;
+package com.apt.project.eshop.management.mongo;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +16,11 @@ import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.GenericContainer;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.management.ShopManager;
+import com.apt.project.eshop.management.TransactionManager;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartRepository;
+import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
 import com.apt.project.eshop.view.EShopView;

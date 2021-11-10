@@ -19,10 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
-import com.apt.project.eshop.repository.ShopManager;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopControllerTest {
