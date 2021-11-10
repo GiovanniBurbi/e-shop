@@ -1,4 +1,4 @@
-package com.apt.project.eshop.view.swing;
+package com.apt.project.eshop.view.swing.mongo;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +25,7 @@ import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.RepositoryException;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
+import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.ClientSession;

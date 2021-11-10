@@ -167,7 +167,7 @@
               <param>com.apt.project.eshop.view.swing.*</param>
               <param>com.apt.project.eshop.bdd.*</param>
               <param>com.apt.project.eshop.controller.*IT</param>
-              <param>com.apt.project.eshop.view.swing.*IT</param>
+              <param>com.apt.project.eshop.view.swing.mongo.*IT</param>
               <param>com.apt.project.eshop.management.TrasactionalManagerIT</param>
               <param>com.apt.project.eshop.management.TransactionalShopManagerTest.*</param>
             </excludedTestClasses>
