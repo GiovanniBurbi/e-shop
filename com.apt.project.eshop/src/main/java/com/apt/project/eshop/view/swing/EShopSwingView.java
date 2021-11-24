@@ -98,6 +98,7 @@ public class EShopSwingView extends JFrame implements EShopView {
 	 * Create the frame.
 	 */
 	public EShopSwingView() {
+		setResizable(false);
 		setTitle("eShop View");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1134, 600);
