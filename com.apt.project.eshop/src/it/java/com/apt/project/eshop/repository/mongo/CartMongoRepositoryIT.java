@@ -38,6 +38,7 @@ public class CartMongoRepositoryIT {
 		// configure replica set in MongoDB with TestContainers
 		try {
 			mongo.execInContainer("/bin/bash", "-c", "mongo --eval 'printjson(rs.initiate())' " + "--quiet");
+			// '> /dev/null 2>&1' has the effect of silencing the command by throwing away all of its output
 			mongo.execInContainer("/bin/bash", "-c",
 					"until mongo --eval \"printjson(rs.isMaster())\" | grep ismaster | grep true > /dev/null 2>&1;"
 							+ "do sleep 1;done");
