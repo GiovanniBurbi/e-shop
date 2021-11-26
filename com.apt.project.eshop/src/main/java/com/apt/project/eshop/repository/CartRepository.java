@@ -8,7 +8,7 @@ public interface CartRepository {
 
 	void addToCart(Product product);
 
-	List<Product> allCart();
+	List<CartItem> allCart();
 
 	void removeFromCart(Product product);
 

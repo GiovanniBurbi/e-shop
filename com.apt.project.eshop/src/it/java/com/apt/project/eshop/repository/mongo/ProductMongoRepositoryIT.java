@@ -40,6 +40,7 @@ public class ProductMongoRepositoryIT {
 	private MongoClient client;
 	private ProductMongoRepository productRepository;
 	private MongoCollection<Document> productCollection;
+	private ClientSession session;
 
 	@BeforeClass
 	public static void mongoConfiguration() {
@@ -58,7 +59,7 @@ public class ProductMongoRepositoryIT {
 	@Before
 	public void setup() {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
-		ClientSession session = client.startSession();
+		session = client.startSession();
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
 		MongoDatabase database = client.getDatabase(ESHOP_DB_NAME);
 		// start with clean database
@@ -135,7 +136,8 @@ public class ProductMongoRepositoryIT {
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
 		addTestItemToDatabase("2", "eBook", 300.0, 1);
 		try {
-			productRepository.removeFromStorage(product);
+			// todo fix remove from storage method
+			productRepository.removeFromStorage(productAvailable);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
@@ -150,6 +152,7 @@ public class ProductMongoRepositoryIT {
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
 		addTestItemToDatabase("2", "eBook", 300.0, 1);
 		CatalogItem catalogItemNotAvailable = new CatalogItem(product, 2);
+		// todo fix remove from storage method
 		assertThatThrownBy(() -> productRepository.removeFromStorage(productNotAvailable))
 				.isInstanceOf(RepositoryException.class)
 				.hasMessage("Repository exception! Insufficient stock, Laptop left in stock: 1");
@@ -159,18 +162,18 @@ public class ProductMongoRepositoryIT {
 	
 	private List<CatalogItem> readAllCatalogFromDatabase() {
 		return StreamSupport.
-			stream(productCollection.find().spliterator(), false)
+			stream(productCollection.find(session).spliterator(), false)
 				.map(d -> new CatalogItem(new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price")), d.getInteger("storage")))
 				.collect(Collectors.toList());
 	}
 	
-	private void addTestItemToDatabase(String id, String name, Double price, int quantity) {
+	private void addTestItemToDatabase(String id, String name, Double price, int storage) {
 		productCollection.insertOne(
 				new Document()
 					.append("id", id)
 					.append("name", name)
 					.append("price", price)
-					.append("quantity", quantity)
+					.append("storage", storage)
 		);
 	}
 }

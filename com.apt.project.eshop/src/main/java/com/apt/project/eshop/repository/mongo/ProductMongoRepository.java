@@ -50,18 +50,6 @@ public class ProductMongoRepository implements ProductRepository {
 		productCollection.insertMany(session, documents);
 	}
 
-	private List<Document> fromCatalogItemsToDocuments(List<CatalogItem> items) {
-		List<Document> documents = new ArrayList<>();
-		for (CatalogItem item : items) {
-			documents.add(new Document()
-					.append("id", item.getProduct().getId())
-					.append("name", item.getProduct().getName())
-					.append("price", item.getProduct().getPrice())
-					.append("storage", item.getStorage())
-			);
-		}
-		return documents;
-	}
 
 	@Override
 	public List<Product> findByName(String nameSearch) {
@@ -84,6 +72,19 @@ public class ProductMongoRepository implements ProductRepository {
 		productCollection.findOneAndUpdate(session, filterNameProduct, update);
 	}
 
+	private List<Document> fromCatalogItemsToDocuments(List<CatalogItem> items) {
+		List<Document> documents = new ArrayList<>();
+		for (CatalogItem item : items) {
+			documents.add(new Document()
+					.append("id", item.getProduct().getId())
+					.append("name", item.getProduct().getName())
+					.append("price", item.getProduct().getPrice())
+					.append("storage", item.getStorage())
+					);
+		}
+		return documents;
+	}
+	
 	private Product fromDocumentToProduct(Document d) {
 		return new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price"));
 	}

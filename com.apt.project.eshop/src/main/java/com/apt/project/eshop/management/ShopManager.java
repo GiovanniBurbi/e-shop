@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartItem;
+import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.repository.RepositoryException;
 
 public class ShopManager {
@@ -46,7 +48,7 @@ public class ShopManager {
 				.doInTransaction((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
 	}
 
-	public List<Product> cartProducts() {
+	public List<CartItem> cartProducts() {
 		return transactionManager.doInTransaction((productRepository, cartRepository) -> cartRepository.allCart());
 	}
 
@@ -69,7 +71,7 @@ public class ShopManager {
 		});
 	}
 
-	public void loadCatalog(List<Product> products) {
+	public void loadCatalog(List<CatalogItem> products) {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
 			productRepository.loadCatalog(products);
 			return null;
