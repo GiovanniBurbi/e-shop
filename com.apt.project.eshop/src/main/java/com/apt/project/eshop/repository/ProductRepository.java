@@ -12,5 +12,5 @@ public interface ProductRepository {
 
 	public void loadCatalog(List<CatalogItem> items);
 
-	public void removeFromStorage(Product product) throws RepositoryException;
+	public void removeFromStorage(CartItem item) throws RepositoryException;
 }

@@ -1,5 +1,6 @@
 package com.apt.project.eshop.repository.mongo;
 
+import static java.util.Collections.emptyList;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -15,6 +16,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartItem;
 import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.RepositoryException;
@@ -61,14 +63,14 @@ public class ProductMongoRepository implements ProductRepository {
 	}
 
 	@Override
-	public void removeFromStorage(Product product) throws RepositoryException {
-		Bson filterNameProduct = Filters.eq("name", product.getName());
-		int quantityToReduce = product.getQuantity();
-		Product productInStorage = productCollection.find(session, filterNameProduct).first();
-		int quantityInStorage = productInStorage.getQuantity();
-		if (quantityInStorage < quantityToReduce)
+	public void removeFromStorage(CartItem item) throws RepositoryException {
+		int quantityRequested = item.getQuantity();
+		Bson filterNameProduct = Filters.eq("id", item.getProduct().getId());
+		CatalogItem productInStorage = fromDocumentToCatalogItem(productCollection.find(session, filterNameProduct).first());
+		int quantityInStorage = productInStorage.getStorage();
+		if (quantityInStorage < quantityRequested)
 			throw new RepositoryException("Insufficient stock", productInStorage);
-		Bson update = Updates.inc("quantity", -quantityToReduce);
+		Bson update = Updates.inc("storage", -quantityRequested);
 		productCollection.findOneAndUpdate(session, filterNameProduct, update);
 	}
 
@@ -83,6 +85,10 @@ public class ProductMongoRepository implements ProductRepository {
 					);
 		}
 		return documents;
+	}
+	
+	private CatalogItem fromDocumentToCatalogItem(Document doc) {
+		return new CatalogItem(new Product(""+doc.get("id"), ""+doc.get("name"), doc.getDouble("price")), doc.getInteger("storage"));
 	}
 	
 	private Product fromDocumentToProduct(Document d) {

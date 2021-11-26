@@ -3,17 +3,14 @@ package com.apt.project.eshop.repository.mongo;
 import static com.mongodb.client.model.Aggregates.lookup;
 import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Aggregates.unwind;
-import static com.mongodb.client.model.Projections.exclude;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;

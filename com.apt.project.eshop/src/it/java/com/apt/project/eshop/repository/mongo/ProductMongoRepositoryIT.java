@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartItem;
 import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.repository.RepositoryException;
 import com.mongodb.MongoClient;
@@ -135,9 +136,9 @@ public class ProductMongoRepositoryIT {
 		Product product2 = new Product("2", "eBook", 300);
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
 		addTestItemToDatabase("2", "eBook", 300.0, 1);
+		CartItem itemAvailable = new CartItem(product, 1);
 		try {
-			// todo fix remove from storage method
-			productRepository.removeFromStorage(productAvailable);
+			productRepository.removeFromStorage(itemAvailable);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
@@ -151,9 +152,8 @@ public class ProductMongoRepositoryIT {
 		Product product2 = new Product("2", "eBook", 300);
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
 		addTestItemToDatabase("2", "eBook", 300.0, 1);
-		CatalogItem catalogItemNotAvailable = new CatalogItem(product, 2);
-		// todo fix remove from storage method
-		assertThatThrownBy(() -> productRepository.removeFromStorage(productNotAvailable))
+		CartItem ItemNotAvailable = new CartItem(product, 2);
+		assertThatThrownBy(() -> productRepository.removeFromStorage(ItemNotAvailable))
 				.isInstanceOf(RepositoryException.class)
 				.hasMessage("Repository exception! Insufficient stock, Laptop left in stock: 1");
 		// assert that the product with not enough storage has not its storage field updated in the product collection
