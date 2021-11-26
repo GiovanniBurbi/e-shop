@@ -132,31 +132,29 @@ public class ProductMongoRepositoryIT {
 	public void testRemoveFromStorageWhenThereIsEnoughStorage() {
 		Product product = new Product("1", "Laptop", 1300);
 		Product product2 = new Product("2", "eBook", 300);
-		productCollection.insertOne(product);
-		productCollection.insertOne(product2);
+		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
+		addTestItemToDatabase("2", "eBook", 300.0, 1);
 		try {
 			productRepository.removeFromStorage(product);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
-		assertThat(productCollection.find()).containsExactly(product, product2);
-		Bson filterNameProduct = Filters.eq("name", product.getName());
-		assertThat(productCollection.find(filterNameProduct).first().getQuantity()).isZero();
+		// assert that the product removed has its storage field updated in the product collection
+		assertThat(readAllCatalogFromDatabase()).containsExactly(new CatalogItem(product, 0), new CatalogItem(product2, 1));
 	}
 
 	@Test
 	public void testRemoveFromStorageWhenThereIsNotEnoughStorageShouldThrowRepositoryException() {
-		Product product = new Product("1", "Laptop", 1300, 1);
-		Product product2 = new Product("2", "eBook", 300, 1);
-		productCollection.insertOne(product);
-		productCollection.insertOne(product2);
-		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
+		Product product = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
+		addTestItemToDatabase("2", "eBook", 300.0, 1);
+		CatalogItem catalogItemNotAvailable = new CatalogItem(product, 2);
 		assertThatThrownBy(() -> productRepository.removeFromStorage(productNotAvailable))
 				.isInstanceOf(RepositoryException.class)
 				.hasMessage("Repository exception! Insufficient stock, Laptop left in stock: 1");
-		assertThat(productCollection.find()).containsExactly(product, product2);
-		Bson filterNameProduct = Filters.eq("name", productNotAvailable.getName());
-		assertThat(productCollection.find(filterNameProduct).first().getQuantity()).isOne();
+		// assert that the product with not enough storage has not its storage field updated in the product collection
+		assertThat(readAllCatalogFromDatabase()).containsExactly(new CatalogItem(product, 1), new CatalogItem(product2, 1));
 	}
 	
 	private List<CatalogItem> readAllCatalogFromDatabase() {
