@@ -13,5 +13,7 @@ public interface CartRepository {
 	void removeFromCart(Product product);
 
 	double cartTotalCost();
+	
+	
 
 }

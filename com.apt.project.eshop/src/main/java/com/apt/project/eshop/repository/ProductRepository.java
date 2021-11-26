@@ -10,7 +10,7 @@ public interface ProductRepository {
 
 	public List<Product> findByName(String nameSearch);
 
-	public void loadCatalog(List<Product> products);
+	public void loadCatalog(List<CatalogItem> items);
 
 	public void removeFromStorage(Product product) throws RepositoryException;
 }
