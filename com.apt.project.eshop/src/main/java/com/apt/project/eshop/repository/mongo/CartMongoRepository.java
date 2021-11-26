@@ -54,12 +54,7 @@ public class CartMongoRepository implements CartRepository {
 	@Override
 	public List<CartItem> allCart() {
 		// Fill documents of this collection with related products in productCollection
-		Bson lookup = lookup(productCollectionName, REF_FIELD, ID_EXTERNAL_FIELD, REF_FIELD);
-		Bson project = project(fields(include(REF_FIELD, QUANTITY_FIELD), excludeId()));
-		Bson unwind = unwind("$product");
-		List<Document> cartJoined = cartCollection
-			.aggregate(session, asList(lookup, project, unwind))
-			.into(new ArrayList<>());
+		List<Document> cartJoined = aggregateCollections();
 		return cartJoined.stream()
 				.map(d -> new CartItem(fromDocumentToProduct(d.get(REF_FIELD, Document.class)), d.getInteger(QUANTITY_FIELD)))
 				.collect(Collectors.toList());
@@ -67,22 +62,35 @@ public class CartMongoRepository implements CartRepository {
 
 	@Override
 	public void removeFromCart(Product product) {
-		cartCollection.findOneAndDelete(session, Filters.eq("name", product.getName()));
+		cartCollection.findOneAndDelete(session, Filters.eq("product", product.getId()));
 	}
 
 	@Override
 	public double cartTotalCost() {
-		List<Product> cartProducts = 
-			StreamSupport.stream(cartCollection.find(session).spliterator(), false)
+		List<Document> cartJoined = aggregateCollections();
+		List<CartItem> cartItems = cartJoined.stream()
+				.map(d -> new CartItem(fromDocumentToProduct(d.get(REF_FIELD, Document.class)), d.getInteger(QUANTITY_FIELD)))
 				.collect(Collectors.toList());
 		double total = 0;
-		for (Product product : cartProducts) {
-			total += product.getPrice() * product.getQuantity();
+		for (CartItem item : cartItems) {
+			total += item.getProduct().getPrice() * item.getQuantity();
 		}
 		return total;
 	}
 	
 	private Product fromDocumentToProduct(Document d) {
 		return new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price"));
+	}
+	
+	private List<Document> aggregateCollections() {
+		// aggregate collections cart and products using field REF_FIELD of cartCollection that match field ID_EXTERNAL_FIELD of productCollection
+		// and put the results in REF_FIELD. 
+		//Then exclude field _id of documents and unwind field REF_FIELD
+		Bson lookup = lookup(productCollectionName, REF_FIELD, ID_EXTERNAL_FIELD, REF_FIELD);
+		Bson project = project(fields(include(REF_FIELD, QUANTITY_FIELD), excludeId()));
+		Bson unwind = unwind("$" + REF_FIELD);
+		return cartCollection
+				.aggregate(session, asList(lookup, project, unwind))
+				.into(new ArrayList<>());
 	}
 }

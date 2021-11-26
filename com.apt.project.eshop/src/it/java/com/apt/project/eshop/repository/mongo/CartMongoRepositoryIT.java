@@ -1,21 +1,10 @@
 package com.apt.project.eshop.repository.mongo;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static com.mongodb.client.model.Aggregates.lookup;
-import static com.mongodb.client.model.Aggregates.project;
-import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Projections.excludeId;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
 import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -88,7 +77,7 @@ public class CartMongoRepositoryIT {
 		cartRepository.addToCart(product);
 		// retrive all documents in cartCollection without field _id
 		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
-				.append("productId", product.getId())
+				.append("product", product.getId())
 				.append("quantity", 1)
 		);
 	}
@@ -99,7 +88,7 @@ public class CartMongoRepositoryIT {
 		addTestItemToDatabase(product.getId(), 1);
 		cartRepository.addToCart(product);
 		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
-				.append("productId", product.getId())
+				.append("product", product.getId())
 				.append("quantity", 2)
 		);
 	}
@@ -123,12 +112,15 @@ public class CartMongoRepositoryIT {
 
 	@Test
 	public void testRemoveFromCart() {
-		Product product = new Product("1", "Laptop", 1300, 4);
-		Product product2 = new Product("2", "eBook", 300, 3);
-		cartCollection.insertOne(product);
-		cartCollection.insertOne(product2);
-		cartRepository.removeFromCart(product);
-		assertThat(cartCollection.find()).containsExactly(product2);
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		addTestItemToDatabase(product1.getId(), 4);
+		addTestItemToDatabase(product2.getId(), 3);
+		cartRepository.removeFromCart(product1);
+		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
+				.append("product", product2.getId())
+				.append("quantity", 3)	
+		);
 	}
 
 	@Test
@@ -138,13 +130,13 @@ public class CartMongoRepositoryIT {
 
 	@Test
 	public void testCartTotalCost() {
-		Product product1 = new Product("1", "Laptop", 1300, 4);
-		Product product2 = new Product("2", "eBook", 300, 3);
-		cartCollection.insertOne(product1);
-		cartCollection.insertOne(product2);
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		addTestItemToDatabase(product1.getId(), 4);
+		addTestItemToDatabase(product2.getId(), 3);
 		assertThat(cartRepository.cartTotalCost()).isEqualTo(6100);
 	}
-	
+		
 	private void addTestItemToDatabase(String id, int quantity) {
 		cartCollection.insertOne(
 				new Document()
