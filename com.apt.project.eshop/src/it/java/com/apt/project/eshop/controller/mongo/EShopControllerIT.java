@@ -22,6 +22,8 @@ import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.management.TransactionManager;
 import com.apt.project.eshop.management.mongo.TransactionalShopManager;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
@@ -52,7 +54,7 @@ public class EShopControllerIT {
 	private ProductRepository productRepository;
 	private CartRepository cartRepository;
 	private AutoCloseable closeable;
-	private List<Product> catalog;
+	private List<CatalogItem> catalog;
 	private ShopManager shopManager;
 	private TransactionManager transactionManager;
 
@@ -76,16 +78,16 @@ public class EShopControllerIT {
 		ClientSession session = client.startSession();
 		closeable = MockitoAnnotations.openMocks(this);
 		catalog = asList(
-			new Product("1", "Laptop", 1300),
-			new Product("2", "Iphone", 1000),
-			new Product("3", "Cuffie", 300),
-			new Product("4", "Lavatrice", 300)
+			new CatalogItem(new Product("1", "Laptop", 1300), 1),
+			new CatalogItem(new Product("2", "Iphone", 1000), 1),
+			new CatalogItem(new Product("3", "Cuffie", 300), 1),
+			new CatalogItem(new Product("4", "Lavatrice", 300), 1)
 		);
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME,
 				CART_COLLECTION_NAME);
 		shopManager = new ShopManager(transactionManager);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, PRODUCTS_COLLECTION_NAME, session);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
 		eShopController = new EShopController(eShopView, shopManager);
@@ -108,8 +110,8 @@ public class EShopControllerIT {
 	public void testSearchProducts() {
 		eShopController.searchProducts("la");
 		then(eShopView).should().showSearchedProducts(asList(
-			new Product("1", "Laptop", 1300),
-			new Product("4", "Lavatrice", 300))
+			new CatalogItem(new Product("1", "Laptop", 1300), 1),
+			new CatalogItem(new Product("4", "Lavatrice", 300), 1))
 		);
 	}
 
@@ -121,27 +123,27 @@ public class EShopControllerIT {
 
 	@Test
 	public void testNewCartProduct() {
-		Product product = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
-		cartRepository.addToCart(product2);
-		eShopController.newCartProduct(product);
-		assertThat(cartRepository.allCart()).containsExactly(product2, product);
+		CartItem item1= new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
+		cartRepository.addToCart(item2.getProduct());
+		eShopController.newCartProduct(item1.getProduct());
+		assertThat(cartRepository.allCart()).containsExactly(item2, item1);
 		InOrder inOrder = inOrder(eShopView);
-		then(eShopView).should(inOrder).addToCartView(asList(product2, product));
-		then(eShopView).should(inOrder).showTotalCost(product.getPrice() + product2.getPrice());
+		then(eShopView).should(inOrder).addToCartView(asList(item2, item1));
+		then(eShopView).should(inOrder).showTotalCost(item1.getProduct().getPrice() + item2.getProduct().getPrice());
 	}
 
 	@Test
 	public void testRemoveCartProduct() {
-		Product product = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
-		cartRepository.addToCart(product);
-		cartRepository.addToCart(product2);
-		eShopController.removeCartProduct(product);
-		assertThat(cartRepository.allCart()).containsExactly(product2);
+		CartItem item1= new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
+		cartRepository.addToCart(item1.getProduct());
+		cartRepository.addToCart(item2.getProduct());
+		eShopController.removeCartProduct(item1);
+		assertThat(cartRepository.allCart()).containsExactly(item2);
 		InOrder inOrder = inOrder(eShopView);
-		then(eShopView).should(inOrder).removeFromCartView(product);
-		then(eShopView).should(inOrder).showTotalCost(product2.getPrice());
+		then(eShopView).should(inOrder).removeFromCartView(item1);
+		then(eShopView).should(inOrder).showTotalCost(item2.getProduct().getPrice());
 	}
 
 	@Test
@@ -157,10 +159,10 @@ public class EShopControllerIT {
 		then(eShopView).should(inOrder).resetTotalCost();
 		assertThat(cartRepository.allCart()).isEmpty();
 		assertThat(productRepository.findAll()).containsExactly(
-				new Product("1", "Laptop", 1300, 0),
-				new Product("2", "Iphone", 1000, 0),
-				new Product("3", "Cuffie", 300),
-				new Product("4", "Lavatrice", 300)
+				new CatalogItem(new Product("1", "Laptop", 1300), 0),
+				new CatalogItem(new Product("2", "Iphone", 1000), 0),
+				new CatalogItem(new Product("3", "Cuffie", 300), 1),
+				new CatalogItem(new Product("4", "Lavatrice", 300), 1)
 		);
 	}
 
@@ -172,26 +174,26 @@ public class EShopControllerIT {
 		cartRepository.addToCart(product2);
 		cartRepository.addToCart(product2);
 		eShopController.checkoutCart();
-		then(eShopView).should().showFailureLabel(product2);
+		then(eShopView).should().showFailureLabel(new CatalogItem(product2, 1));
 		verifyNoMoreInteractions(eShopView);
 		assertThat(cartRepository.allCart()).contains(
-				new Product("1", "Laptop", 1300),
-				new Product("2", "Iphone", 1000, 2)
+				new CartItem(product, 1),
+				new CartItem(product2, 2)
 		);
 		assertThat(productRepository.findAll()).containsExactly(
-				new Product("1", "Laptop", 1300, 1),
-				new Product("2", "Iphone", 1000, 1),
-				new Product("3", "Cuffie", 300, 1),
-				new Product("4", "Lavatrice", 300, 1)
+				new CatalogItem(new Product("1", "Laptop", 1300), 1),
+				new CatalogItem(new Product("2", "Iphone", 1000), 1),
+				new CatalogItem(new Product("3", "Cuffie", 300), 1),
+				new CatalogItem(new Product("4", "Lavatrice", 300), 1)
 		);
 	}
 
 	@Test
 	public void testShowCart() {
-		Product product = new Product("1", "Laptop", 1300);
-		cartRepository.addToCart(product);
+		CartItem item = new CartItem(new Product("1", "Laptop", 1300), 1);
+		cartRepository.addToCart(item.getProduct());
 		eShopController.showCart();
-		then(eShopView).should().showAllCart(asList(product));
+		then(eShopView).should().showAllCart(asList(item));
 	}
 
 	@Test

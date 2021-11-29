@@ -14,6 +14,7 @@ import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 
+import com.apt.project.eshop.model.CartItem;
 import com.apt.project.eshop.model.Product;
 
 import io.cucumber.java.After;
@@ -106,8 +107,11 @@ public class EShopSwingViewSteps {
 	@Then("The cart list contains an element with the following values")
 	public void the_cart_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
 		values.forEach(v -> assertThat(window.list("cartList").contents())
-				.anySatisfy(e -> assertThat(e).contains(new Product(v.get("id"), v.get("name"),
-						Double.parseDouble(v.get("price")), Integer.parseInt(v.get("quantity"))).toStringExtended())));
+				.anySatisfy(e -> assertThat(e).contains(
+					new CartItem(new Product(v.get("id"), v.get("name"),
+						Double.parseDouble(v.get("price"))),
+						Integer.parseInt(v.get("quantity"))).toString()
+		)));
 	}
 
 	@Given("The cart contains a product")

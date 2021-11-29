@@ -1,11 +1,10 @@
 package com.apt.project.eshop.repository.mongo;
 
+import static com.mongodb.client.model.Projections.excludeId;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -13,6 +12,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -22,6 +23,7 @@ import com.mongodb.client.MongoDatabase;
 
 public class CartMongoRepositoryIT {
 
+	private static final String PRODUCT_COLLECTION_NAME = "products";
 	private static final String CART_COLLECTION_NAME = "cart";
 	private static final String ESHOP_DB_NAME = "eShop";
 
@@ -31,7 +33,9 @@ public class CartMongoRepositoryIT {
 			.withCommand("--replSet rs0");
 	private MongoClient client;
 	private CartMongoRepository cartRepository;
-	private MongoCollection<Product> cartCollection;
+	private MongoCollection<Document> cartCollection;
+	private ProductMongoRepository productRepository;
+	private ClientSession session;
 
 	@BeforeClass
 	public static void mongoConfiguration() {
@@ -50,15 +54,16 @@ public class CartMongoRepositoryIT {
 	@Before
 	public void setup() {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
-		ClientSession session = client.startSession();
+		session = client.startSession();
 		MongoDatabase database = client.getDatabase(ESHOP_DB_NAME);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
-		// start with clean database
-		database.drop();
-		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		cartCollection = database.getCollection(CART_COLLECTION_NAME, Product.class)
-				.withCodecRegistry(pojoCodecRegistry);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, PRODUCT_COLLECTION_NAME, session);
+		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCT_COLLECTION_NAME, session);
+		// start with a default database
+		productRepository.loadCatalog(asList(
+				new CatalogItem(new Product("1", "Laptop", 1300), 2),
+				new CatalogItem(new Product("2", "eBook", 300), 2)				
+		));
+		cartCollection = database.getCollection(CART_COLLECTION_NAME);
 	}
 
 	@After
@@ -68,18 +73,24 @@ public class CartMongoRepositoryIT {
 
 	@Test
 	public void testAddToCart() {
-		Product product = new Product("1", "eBook", 300);
+		Product product = new Product("1", "Laptop", 1300);
 		cartRepository.addToCart(product);
-		assertThat(cartCollection.find()).containsExactly(product);
+		// retrive all documents in cartCollection without field _id
+		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
+				.append("product", product.getId())
+				.append("quantity", 1)
+		);
 	}
 
 	@Test
 	public void testAddToCartWhenTheUserAddTwoTimesTheSameProduct() {
-		Product product = new Product("1", "eBook", 300);
-		cartCollection.insertOne(product);
-		Product secondProduct = new Product("1", "eBook", 300);
-		cartRepository.addToCart(secondProduct);
-		assertThat(cartCollection.find()).containsExactly(new Product("1", "eBook", 300, 2));
+		Product product = new Product("1", "Laptop", 1300);
+		addTestItemToDatabase(product.getId(), 1);
+		cartRepository.addToCart(product);
+		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
+				.append("product", product.getId())
+				.append("quantity", 2)
+		);
 	}
 
 	@Test
@@ -89,21 +100,27 @@ public class CartMongoRepositoryIT {
 
 	@Test
 	public void testAllCartWhenCartCollectionIsNotEmpty() {
-		Product product1 = new Product("1", "Laptop", 1300, 4);
-		Product product2 = new Product("2", "eBook", 300, 3);
-		cartCollection.insertOne(product1);
-		cartCollection.insertOne(product2);
-		assertThat(cartRepository.allCart()).containsExactly(product1, product2);
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		addTestItemToDatabase(product1.getId(), 2);
+		addTestItemToDatabase(product2.getId(), 3);
+		assertThat(cartRepository.allCart()).containsExactly(
+				new CartItem(product1, 2),
+				new CartItem(product2, 3)
+		);
 	}
 
 	@Test
 	public void testRemoveFromCart() {
-		Product product = new Product("1", "Laptop", 1300, 4);
-		Product product2 = new Product("2", "eBook", 300, 3);
-		cartCollection.insertOne(product);
-		cartCollection.insertOne(product2);
-		cartRepository.removeFromCart(product);
-		assertThat(cartCollection.find()).containsExactly(product2);
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		addTestItemToDatabase(product1.getId(), 4);
+		addTestItemToDatabase(product2.getId(), 3);
+		cartRepository.removeFromCart(product1);
+		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
+				.append("product", product2.getId())
+				.append("quantity", 3)	
+		);
 	}
 
 	@Test
@@ -113,10 +130,18 @@ public class CartMongoRepositoryIT {
 
 	@Test
 	public void testCartTotalCost() {
-		Product product1 = new Product("1", "Laptop", 1300, 4);
-		Product product2 = new Product("2", "eBook", 300, 3);
-		cartCollection.insertOne(product1);
-		cartCollection.insertOne(product2);
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "eBook", 300);
+		addTestItemToDatabase(product1.getId(), 4);
+		addTestItemToDatabase(product2.getId(), 3);
 		assertThat(cartRepository.cartTotalCost()).isEqualTo(6100);
+	}
+		
+	private void addTestItemToDatabase(String id, int quantity) {
+		cartCollection.insertOne(
+				new Document()
+					.append("product", id)
+					.append("quantity", quantity)
+		);
 	}
 }

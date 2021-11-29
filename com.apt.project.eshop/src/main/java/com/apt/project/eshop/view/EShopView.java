@@ -2,21 +2,22 @@ package com.apt.project.eshop.view;
 
 import java.util.List;
 
-import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 
 public interface EShopView {
 
-	void showAllProducts(List<Product> products);
+	void showAllProducts(List<CatalogItem> products);
 
-	void showSearchedProducts(List<Product> searchedProducts);
+	void showSearchedProducts(List<CatalogItem> searchedProducts);
 
 	void showErrorProductNotFound(String product);
 
-	void clearSearch(List<Product> products);
+	void clearSearch(List<CatalogItem> items);
 
-	void addToCartView(List<Product> products);
+	void addToCartView(List<CartItem> items);
 
-	void removeFromCartView(Product product);
+	void removeFromCartView(CartItem item);
 
 	void clearCart();
 
@@ -24,9 +25,9 @@ public interface EShopView {
 
 	void resetTotalCost();
 
-	void showFailureLabel(Product productWanted);
+	void showFailureLabel(CatalogItem itemWanted);
 
-	void showAllCart(List<Product> cartProducts);
+	void showAllCart(List<CartItem> cartItems);
 
 	void showTotalCost(double cartPrice);
 

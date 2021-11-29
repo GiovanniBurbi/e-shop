@@ -3,6 +3,8 @@ package com.apt.project.eshop.controller;
 import java.util.List;
 
 import com.apt.project.eshop.management.ShopManager;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.EShopView;
 
@@ -21,7 +23,7 @@ public class EShopController {
 	}
 
 	public void searchProducts(String searchName) {
-		List<Product> productsFound = shopManager.productsByName(searchName);
+		List<CatalogItem> productsFound = shopManager.productsByName(searchName);
 		if (!productsFound.isEmpty()) {
 			eShopView.showSearchedProducts(productsFound);
 			return;
@@ -39,9 +41,9 @@ public class EShopController {
 		eShopView.showTotalCost(shopManager.cartCost());
 	}
 
-	public void removeCartProduct(Product product) {
-		shopManager.removeFromCart(product);
-		eShopView.removeFromCartView(product);
+	public void removeCartProduct(CartItem item) {
+		shopManager.removeFromCart(item.getProduct());
+		eShopView.removeFromCartView(item);
 		eShopView.showTotalCost(shopManager.cartCost());
 	}
 
@@ -55,7 +57,7 @@ public class EShopController {
 		eShopView.resetTotalCost();
 	}
 
-	public void checkoutFailure(Product productWanted) {
+	public void checkoutFailure(CatalogItem productWanted) {
 		eShopView.showFailureLabel(productWanted);
 	}
 

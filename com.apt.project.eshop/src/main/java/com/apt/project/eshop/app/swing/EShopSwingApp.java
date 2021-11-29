@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.management.mongo.TransactionalShopManager;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
@@ -69,16 +70,17 @@ public class EShopSwingApp implements Callable<Void> {
 				EShopController eShopController = new EShopController(eShopView, shopManager);
 				shopManager.setShopController(eShopController);
 				eShopView.setEShopController(eShopController);
-				// Carica catalogo se lista prodotti è vuota
+				// Load Catalog if product list is empty
 				if (shopManager.allProducts().isEmpty()) {
 					shopManager.loadCatalog(asList(
-						new Product("1", "Laptop", 1300.0, 3),
-						new Product("2", "Iphone", 1000.0, 3),
-						new Product("3", "Laptop MSI", 1250.0, 3),
-						new Product("4", "Macbook", 1400.0, 3),
-						new Product("5", "SmartTv", 400.0, 3),
-						new Product("6", "Playstation 5", 500.0, 3),
-						new Product("7", "Xbox", 500.0, 3)));
+						new CatalogItem(new Product("1", "Laptop", 1300.0), 3),
+						new CatalogItem(new Product("2", "Iphone", 1000.0), 3),
+						new CatalogItem(new Product("3", "Laptop MSI", 1250.0), 3),
+						new CatalogItem(new Product("4", "Macbook", 1400.0), 3),
+						new CatalogItem(new Product("5", "SmartTv", 400.0), 3),
+						new CatalogItem(new Product("6", "Playstation 5", 500.0), 3),
+						new CatalogItem(new Product("7", "Xbox", 500.0), 3)
+					));
 				}
 				eShopView.setVisible(true);
 				eShopController.allProducts();

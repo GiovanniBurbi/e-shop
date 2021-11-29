@@ -25,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
@@ -63,23 +65,23 @@ public class TransactionalShopManagerTest {
 
 	@Test
 	public void testCheckoutWhenSuccessfull() {
-		Product product1 = new Product("1", "laptop", 1300);
-		Product product2 = new Product("1", "eBook", 300);
-		given(cartRepository.allCart()).willReturn(asList(product1, product2));
+		CartItem item1 = new CartItem(new Product("1", "laptop", 1300), 1);
+		CartItem item2 = new CartItem(new Product("1", "eBook", 300), 1);
+		given(cartRepository.allCart()).willReturn(asList(item1, item2));
 		shopManager.checkout();
 		InOrder inOrder = inOrder(productRepository, cartRepository, shopController);
 		try {
-			then(productRepository).should(inOrder).removeFromStorage(product1);
+			then(productRepository).should(inOrder).removeFromStorage(item1);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
-		then(cartRepository).should(inOrder).removeFromCart(product1);
+		then(cartRepository).should(inOrder).removeFromCart(item1.getProduct());
 		try {
-			then(productRepository).should(inOrder).removeFromStorage(product2);
+			then(productRepository).should(inOrder).removeFromStorage(item2);
 		} catch (RepositoryException e) {
 			fail("Should not throw an exception in this test case!");
 		}
-		then(cartRepository).should(inOrder).removeFromCart(product2);
+		then(cartRepository).should(inOrder).removeFromCart(item2.getProduct());
 		then(shopController).should(inOrder).checkoutSuccess();
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
@@ -87,36 +89,37 @@ public class TransactionalShopManagerTest {
 	@Test
 	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowRepositoryExceptionAndDelegateToControllerSuccessCheckout()
 			throws RepositoryException {
-		Product productNotAvailable = new Product("1", "Laptop", 1300, 1);
-		Product product1 = new Product("1", "Laptop", 1300, 2);
-		Product product2 = new Product("2", "eBook", 300, 1);
-		given(cartRepository.allCart()).willReturn(asList(product1, product2));
-		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository)
-				.removeFromStorage(product1);
+		CatalogItem itemNotAvailable = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 2);
+		CartItem item2 = new CartItem(new Product("2", "eBook", 300), 1);
+		given(cartRepository.allCart()).willReturn(asList(item1, item2));
+		willThrow(new RepositoryException("Insufficient stock", itemNotAvailable)).given(productRepository)
+				.removeFromStorage(item1);
 		assertThatThrownBy(() -> shopManager.checkout()).isInstanceOf(RepositoryException.class)
-				.hasMessage("Repository exception! Insufficient stock, " + productNotAvailable.getName()
-						+ " left in stock: " + productNotAvailable.getQuantity());
-		then(shopController).should().checkoutFailure(productNotAvailable);
+				.hasMessage("Repository exception! Insufficient stock, " + itemNotAvailable.getProduct().getName()
+						+ " left in stock: " + itemNotAvailable.getStorage());
+		then(shopController).should().checkoutFailure(itemNotAvailable);
 		then(transactionManager).should(times(1)).doInTransaction(any());
 	}
 
 	@Test
 	public void testCheckoutWhenThereIsNotEnoughStockOfAProductShouldNotRemoveAnyProductFromTheCartAndDelegateToControllerCheckoutFailure()
 			throws RepositoryException {
-		Product product1 = new Product("3", "Iphone", 1000.0, 1);
-		Product productNotAvailable = new Product("1", "Laptop", 1300, 2);
-		Product product2 = new Product("2", "eBook", 300, 1);
-		given(cartRepository.allCart()).willReturn(asList(product1, productNotAvailable, product2));
-		willThrow(new RepositoryException("Insufficient stock", productNotAvailable)).given(productRepository)
-				.removeFromStorage(productNotAvailable);
+		CartItem item1 = new CartItem(new Product("3", "Iphone", 1000.0), 1);
+		CartItem itemNotAvailable = new CartItem(new Product("1", "Laptop", 1300), 2);
+		CatalogItem catalogItemNoStock = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2 = new CartItem(new Product("2", "eBook", 300), 1);
+		given(cartRepository.allCart()).willReturn(asList(item1, itemNotAvailable, item2));
+		willThrow(new RepositoryException("Insufficient stock", catalogItemNoStock)).given(productRepository)
+				.removeFromStorage(itemNotAvailable);
 		InOrder inOrder = inOrder(productRepository, cartRepository, shopController);
 		assertThatThrownBy(() -> shopManager.checkout()).isInstanceOf(RepositoryException.class)
-				.hasMessage("Repository exception! Insufficient stock, " + productNotAvailable.getName()
-						+ " left in stock: " + productNotAvailable.getQuantity());
-		then(productRepository).should(inOrder).removeFromStorage(product1);
-		then(cartRepository).should(inOrder).removeFromCart(product1);
-		then(productRepository).should(inOrder).removeFromStorage(productNotAvailable);
-		then(shopController).should(inOrder).checkoutFailure(productNotAvailable);
+				.hasMessage("Repository exception! Insufficient stock, " + catalogItemNoStock.getProduct().getName()
+						+ " left in stock: " + catalogItemNoStock.getStorage());
+		then(productRepository).should(inOrder).removeFromStorage(item1);
+		then(cartRepository).should(inOrder).removeFromCart(item1.getProduct());
+		then(productRepository).should(inOrder).removeFromStorage(itemNotAvailable);
+		then(shopController).should(inOrder).checkoutFailure(catalogItemNoStock);
 		verifyNoMoreInteractions(ignoreStubs(productRepository));
 		verifyNoMoreInteractions(ignoreStubs(cartRepository));
 		then(transactionManager).should(times(1)).doInTransaction(any());
@@ -124,29 +127,29 @@ public class TransactionalShopManagerTest {
 
 	@Test
 	public void testAllProductsShouldDelegateToProductRepositoryAndReturnAllProductsInTheDatabase() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "eBook", 300);
-		given(productRepository.findAll()).willReturn(asList(product1, product2));
-		assertThat(shopManager.allProducts()).containsExactly(product1, product2);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CatalogItem item2 = new CatalogItem(new Product("2", "eBook", 300), 1);
+		given(productRepository.findAll()).willReturn(asList(item1, item2));
+		assertThat(shopManager.allProducts()).containsExactly(item1, item2);
 		then(productRepository).should().findAll();
 	}
 
 	@Test
 	public void testProductsByNameShouldDelegateToProductRepositoryAndReturnAllProductsThatMatchAStringInTheDatabase() {
 		String nameToSearch = "Laptop";
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("3", "Laptop MSI", 1250);
-		given(productRepository.findByName(nameToSearch)).willReturn(asList(product1, product2));
-		assertThat(shopManager.productsByName(nameToSearch)).containsExactly(product1, product2);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CatalogItem item2 = new CatalogItem(new Product("3", "Laptop MSI", 1250), 1);
+		given(productRepository.findByName(nameToSearch)).willReturn(asList(item1, item2));
+		assertThat(shopManager.productsByName(nameToSearch)).containsExactly(item1, item2);
 		then(productRepository).should().findByName(nameToSearch);
 	}
 
 	@Test
 	public void testCartProductsShouldDelegateToCartRepositoryAndReturnAllProductsInTheCartInsideTheDatabase() {
-		Product product1 = new Product("1", "Laptop", 1300, 3);
-		Product product2 = new Product("2", "eBook", 300, 2);
-		given(cartRepository.allCart()).willReturn(asList(product1, product2));
-		assertThat(shopManager.cartProducts()).containsExactly(product1, product2);
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 3);
+		CartItem item2 = new CartItem(new Product("2", "eBook", 300), 2);
+		given(cartRepository.allCart()).willReturn(asList(item1, item2));
+		assertThat(shopManager.cartProducts()).containsExactly(item1, item2);
 		then(cartRepository).should().allCart();
 	}
 
@@ -174,8 +177,10 @@ public class TransactionalShopManagerTest {
 
 	@Test
 	public void testLoadCatalogShouldDelegateToProductRepository() {
-		List<Product> products = asList(new Product("1", "Laptop", 1300), new Product("2", "eBook", 300));
-		shopManager.loadCatalog(products);
-		then(productRepository).should().loadCatalog(products);
+		List<CatalogItem> items = asList(
+				new CatalogItem(new Product("1", "Laptop", 1300), 1),
+				new CatalogItem(new Product("2", "eBook", 300), 1));
+		shopManager.loadCatalog(items);
+		then(productRepository).should().loadCatalog(items);
 	}
 }

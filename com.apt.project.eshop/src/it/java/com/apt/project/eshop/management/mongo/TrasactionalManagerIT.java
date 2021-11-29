@@ -18,6 +18,8 @@ import org.testcontainers.containers.GenericContainer;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.management.TransactionManager;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.apt.project.eshop.repository.ProductRepository;
@@ -48,7 +50,7 @@ public class TrasactionalManagerIT {
 	@Mock
 	private EShopView shopView;
 	private AutoCloseable closeable;
-	private List<Product> catalog;
+	private List<CatalogItem> catalog;
 
 	@BeforeClass
 	public static void mongoConfiguration() {
@@ -70,13 +72,13 @@ public class TrasactionalManagerIT {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		ClientSession session = client.startSession();
 		catalog = asList(
-			new Product("1", "Laptop", 1300, 2),
-			new Product("2", "Iphone", 1000, 2),
-			new Product("3", "Cuffie", 300, 2),
-			new Product("4", "Lavatrice", 300, 2)
+			new CatalogItem(new Product("1", "Laptop", 1300), 2),
+			new CatalogItem(new Product("2", "Iphone", 1000), 2),
+			new CatalogItem(new Product("3", "Cuffie", 300), 2),
+			new CatalogItem(new Product("4", "Lavatrice", 300), 2)
 		);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, PRODUCTS_COLLECTION_NAME, session);
 		// set initial state of the database through the repository
 		productRepository.loadCatalog(catalog);
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME,
@@ -102,10 +104,10 @@ public class TrasactionalManagerIT {
 		shopManager.checkout();
 		then(shopView).should().showSuccessLabel();
 		assertThat(cartRepository.allCart()).isEmpty();
-		Product product1RepositoryQuery = productRepository.findByName("Laptop").get(0);
-		assertThat(product1RepositoryQuery.getQuantity()).isEqualTo(1);
-		Product product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
-		assertThat(product2RepositoryQuery.getQuantity()).isZero();
+		CatalogItem product1RepositoryQuery = productRepository.findByName("Laptop").get(0);
+		assertThat(product1RepositoryQuery.getStorage()).isOne();
+		CatalogItem product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
+		assertThat(product2RepositoryQuery.getStorage()).isZero();
 	}
 
 	@Test
@@ -119,17 +121,17 @@ public class TrasactionalManagerIT {
 		cartRepository.addToCart(product2);
 		cartRepository.addToCart(product3);
 		shopManager.checkout();
-		then(shopView).should().showFailureLabel(product2);
+		then(shopView).should().showFailureLabel(new CatalogItem(product2, 2));
 		assertThat(cartRepository.allCart()).containsExactly(
-			new Product("1", "Laptop", 1300, 1),
-			new Product("2", "Iphone", 1000, 3),
-			new Product("3", "Cuffie", 300, 1)
+			new CartItem(new Product("1", "Laptop", 1300), 1),
+			new CartItem(new Product("2", "Iphone", 1000), 3),
+			new CartItem(new Product("3", "Cuffie", 300), 1)
 		);
-		Product product1RepositoryQuery = productRepository.findByName("Laptop").get(0);
-		assertThat(product1RepositoryQuery.getQuantity()).isEqualTo(2);
-		Product product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
-		assertThat(product2RepositoryQuery.getQuantity()).isEqualTo(2);
-		Product product3RepositoryQuery = productRepository.findByName("Cuffie").get(0);
-		assertThat(product3RepositoryQuery.getQuantity()).isEqualTo(2);
+		CatalogItem product1RepositoryQuery = productRepository.findByName("Laptop").get(0);
+		assertThat(product1RepositoryQuery.getStorage()).isEqualTo(2);
+		CatalogItem product2RepositoryQuery = productRepository.findByName("Iphone").get(0);
+		assertThat(product2RepositoryQuery.getStorage()).isEqualTo(2);
+		CatalogItem product3RepositoryQuery = productRepository.findByName("Cuffie").get(0);
+		assertThat(product3RepositoryQuery.getStorage()).isEqualTo(2);
 	}
 }

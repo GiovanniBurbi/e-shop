@@ -1,65 +1,93 @@
 package com.apt.project.eshop.repository.mongo;
 
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static com.mongodb.client.model.Aggregates.lookup;
+import static com.mongodb.client.model.Aggregates.project;
+import static com.mongodb.client.model.Aggregates.unwind;
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
+import static java.util.Arrays.asList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
+import com.apt.project.eshop.model.CartItem;
 import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
 public class CartMongoRepository implements CartRepository {
 
-	private MongoCollection<Product> cartCollection;
+	private static final String REF_FIELD = "product";
+	private static final String QUANTITY_FIELD = "quantity";
+	private static final String ID_EXTERNAL_FIELD = "id";
+	private MongoCollection<Document> cartCollection;
 	private ClientSession session;
+	private String productCollectionName;
 
-	public CartMongoRepository(MongoClient client, String databaseName, String collectionName, ClientSession session) {
+	public CartMongoRepository(MongoClient client, String databaseName, String collectionName, String productCollectionName, ClientSession session) {
+		cartCollection = client.getDatabase(databaseName).getCollection(collectionName);
+		this.productCollectionName = productCollectionName;
 		this.session = session;
-		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-		MongoDatabase database = client.getDatabase(databaseName);
-		cartCollection = database.getCollection(collectionName, Product.class).withCodecRegistry(pojoCodecRegistry);
 	}
 
 	@Override
 	public void addToCart(Product product) {
-		Product existingCartProduct = cartCollection.find(session, Filters.eq("name", product.getName())).first();
+		Document existingCartProduct = cartCollection.find(session, Filters.eq(REF_FIELD, product.getId())).first();
 		if (existingCartProduct != null)
-			cartCollection.updateOne(session, Filters.eq("name", product.getName()), Updates.inc("quantity", 1));
-		else
-			cartCollection.insertOne(session, new Product(product.getId(), product.getName(), product.getPrice()));
+			cartCollection.updateOne(session, Filters.eq(REF_FIELD, product.getId()), Updates.inc(QUANTITY_FIELD, 1));
+		else 
+			cartCollection.insertOne(session, new Document().append(REF_FIELD, product.getId()).append(QUANTITY_FIELD, 1));
 	}
 
 	@Override
-	public List<Product> allCart() {
-		return StreamSupport.stream(cartCollection.find(session).spliterator(), false).collect(Collectors.toList());
+	public List<CartItem> allCart() {
+		// Fill documents of this collection with related products in productCollection
+		List<Document> cartJoined = aggregateCollections();
+		return cartJoined.stream()
+				.map(d -> new CartItem(fromDocumentToProduct(d.get(REF_FIELD, Document.class)), d.getInteger(QUANTITY_FIELD)))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void removeFromCart(Product product) {
-		cartCollection.findOneAndDelete(session, Filters.eq("name", product.getName()));
+		cartCollection.findOneAndDelete(session, Filters.eq(REF_FIELD, product.getId()));
 	}
 
 	@Override
 	public double cartTotalCost() {
-		List<Product> cartProducts = 
-			StreamSupport.stream(cartCollection.find(session).spliterator(), false)
+		List<Document> cartJoined = aggregateCollections();
+		List<CartItem> cartItems = cartJoined.stream()
+				.map(d -> new CartItem(fromDocumentToProduct(d.get(REF_FIELD, Document.class)), d.getInteger(QUANTITY_FIELD)))
 				.collect(Collectors.toList());
 		double total = 0;
-		for (Product product : cartProducts) {
-			total += product.getPrice() * product.getQuantity();
+		for (CartItem item : cartItems) {
+			total += item.getProduct().getPrice() * item.getQuantity();
 		}
 		return total;
+	}
+	
+	private Product fromDocumentToProduct(Document d) {
+		return new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price"));
+	}
+	
+	private List<Document> aggregateCollections() {
+		// aggregate collections cart and products using field REF_FIELD of cartCollection that match field ID_EXTERNAL_FIELD of productCollection
+		// and put the results in REF_FIELD. 
+		//Then exclude field _id of documents and unwind field REF_FIELD
+		Bson lookup = lookup(productCollectionName, REF_FIELD, ID_EXTERNAL_FIELD, REF_FIELD);
+		Bson project = project(fields(include(REF_FIELD, QUANTITY_FIELD), excludeId()));
+		Bson unwind = unwind("$" + REF_FIELD);
+		return cartCollection
+				.aggregate(session, asList(lookup, project, unwind))
+				.into(new ArrayList<>());
 	}
 }

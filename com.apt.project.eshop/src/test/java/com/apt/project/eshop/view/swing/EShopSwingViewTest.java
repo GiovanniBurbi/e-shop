@@ -23,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
 
 @RunWith(GUITestRunner.class)
@@ -73,10 +75,10 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowAllProductsShouldShowsProductsInTheList() {
-		Product product = new Product("1", "Laptop", 1300);
+		CatalogItem product = new CatalogItem(new Product("1", "Laptop", 1300), 1);
 		GuiActionRunner.execute(() -> eShopSwingView.showAllProducts(Arrays.asList(product)));
 		String[] listContents = window.list("productList").contents();
-		assertThat(listContents).containsExactly(product.toString());
+		assertThat(listContents).containsExactly(product.getProduct().toString());
 	}
 
 	@Test
@@ -96,20 +98,20 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowSearchedProductsShouldShowInTheProductListOnlySearchedProducts() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
-		Product product3 = new Product("3", "Laptop MSI", 1200);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CatalogItem item2= new CatalogItem(new Product("2", "Iphone", 1000), 1);
+		CatalogItem item3= new CatalogItem(new Product("3", "Laptop MSI", 1200), 1);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
-			listProductsModel.addElement(product1);
-			listProductsModel.addElement(product2);
-			listProductsModel.addElement(product3);
+			listProductsModel.addElement(item1.getProduct());
+			listProductsModel.addElement(item2.getProduct());
+			listProductsModel.addElement(item3.getProduct());
 		});
 
-		GuiActionRunner.execute(() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product3)));
+		GuiActionRunner.execute(() -> eShopSwingView.showSearchedProducts(Arrays.asList(item1, item3)));
 
 		String[] listContents = window.list("productList").contents();
-		assertThat(listContents).containsExactly(product1.toString(), product3.toString());
+		assertThat(listContents).containsExactly(item1.getProduct().toString(), item3.getProduct().toString());
 	}
 
 	@Test
@@ -149,9 +151,9 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowSearchedProductsShouldEnableClearButton() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("3", "Laptop MSI", 1200);
-		GuiActionRunner.execute(() -> eShopSwingView.showSearchedProducts(Arrays.asList(product1, product2)));
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CatalogItem item2 = new CatalogItem(new Product("3", "Laptop MSI", 1200), 1);
+		GuiActionRunner.execute(() -> eShopSwingView.showSearchedProducts(Arrays.asList(item1, item2)));
 		window.button(JButtonMatcher.withText("Clear")).requireEnabled();
 	}
 
@@ -170,17 +172,17 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testClearSearchShouldMakeTheProductListShowAllProducts() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
-		Product product3 = new Product("3", "Laptop MSI", 1200);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CatalogItem item2= new CatalogItem(new Product("2", "Iphone", 1000), 1);
+		CatalogItem item3= new CatalogItem(new Product("3", "Laptop MSI", 1200), 1);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Product> listProductsModel = eShopSwingView.getProductListModel();
-			listProductsModel.addElement(product1);
-			listProductsModel.addElement(product3);
+			listProductsModel.addElement(item1.getProduct());
+			listProductsModel.addElement(item3.getProduct());
 		});
-		GuiActionRunner.execute(() -> eShopSwingView.clearSearch(asList(product1, product2, product3)));
+		GuiActionRunner.execute(() -> eShopSwingView.clearSearch(asList(item1, item2, item3)));
 		String[] listContents = window.list("productList").contents();
-		assertThat(listContents).containsExactly(product1.toString(), product2.toString(), product3.toString());
+		assertThat(listContents).containsExactly(item1.getProduct().toString(), item2.getProduct().toString(), item3.getProduct().toString());
 	}
 
 	@Test
@@ -219,49 +221,49 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testAddToCartViewShouldShowAProductInTheCartList() {
-		Product product1 = new Product("1", "Laptop", 1300);
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.addToCartView(asList(product1));
+			eShopSwingView.addToCartView(asList(item1));
 		});
 		String[] listContents = window.list("cartList").contents();
-		assertThat(listContents).containsExactly(product1.toStringExtended());
+		assertThat(listContents).containsExactly(item1.toString());
 	}
 
 	@Test
 	@GUITest
 	public void testAddToCartViewWhenAddMultipleTimesTheSameProductShouldShowOneIstanceOfTheProductInTheCartListWithTheRightQuantity() {
-		Product product1 = new Product("1", "Laptop", 1300, 1);
-		Product product2 = new Product("2", "eBook", 300, 1);
-		Product product1TwoTimes = new Product("1", "laptop", 1300, 2);
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
+		CartItem item1TwoTimes = new CartItem(new Product("1", "Laptop", 1300), 2);		
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.addToCartView(asList(product1));
-			eShopSwingView.addToCartView(asList(product2));
-			eShopSwingView.addToCartView(asList(product1TwoTimes, product2));
+			eShopSwingView.addToCartView(asList(item1));
+			eShopSwingView.addToCartView(asList(item2));
+			eShopSwingView.addToCartView(asList(item1TwoTimes, item2));
 		});
 		String[] listContents = window.list("cartList").contents();
-		assertThat(listContents).containsExactly(product1TwoTimes.toStringExtended(), product2.toStringExtended());
+		assertThat(listContents).containsExactly(item1TwoTimes.toString(), item2.toString());
 	}
 
 	@Test
 	@GUITest
 	public void testAddToCartButtonShouldDelegateToEShopControllerNewCartProduct() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Kindle", 200);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CatalogItem item2= new CatalogItem(new Product("2", "Iphone", 1000), 1);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Product> productListModel = eShopSwingView.getProductListModel();
-			productListModel.addElement(product1);
-			productListModel.addElement(product2);
+			productListModel.addElement(item1.getProduct());
+			productListModel.addElement(item2.getProduct());
 		});
 		window.list("productList").selectItem(1);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
-		verify(eShopController).newCartProduct(product2);
+		verify(eShopController).newCartProduct(item2.getProduct());
 	}
 
 	@Test
 	@GUITest
 	public void testRemoveFromCartButtonShouldBeEnabledOnlyWhenAProductInTheCartListIsSelected() {
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+			eShopSwingView.getCartListModel().addElement(new CartItem(new Product("1", "Laptop", 1300), 1));
 		});
 		window.list("cartList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove From Cart")).requireEnabled();
@@ -272,41 +274,41 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testRemoveFromCartViewShouldRemoveTheSelectedProductFromTheCartList() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
 		GuiActionRunner.execute(() -> {
-			DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
-			cartListModel.addElement(product1);
-			cartListModel.addElement(product2);
-			eShopSwingView.removeFromCartView(product1);
+			DefaultListModel<CartItem> cartListModel = eShopSwingView.getCartListModel();
+			cartListModel.addElement(item1);
+			cartListModel.addElement(item2);
+			eShopSwingView.removeFromCartView(item1);
 		});
 		String[] listContents = window.list("cartList").contents();
-		assertThat(listContents).containsExactly(product2.toStringExtended());
+		assertThat(listContents).containsExactly(item2.toString());
 	}
 
 	@Test
 	@GUITest
 	public void testRemoveFromCartButtonShouldDelegateToEShopControllerRemoveCartProduct() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Kindle", 200);
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
 		GuiActionRunner.execute(() -> {
-			DefaultListModel<Product> cartListModel = eShopSwingView.getCartListModel();
-			cartListModel.addElement(product1);
-			cartListModel.addElement(product2);
+			DefaultListModel<CartItem> cartListModel = eShopSwingView.getCartListModel();
+			cartListModel.addElement(item1);
+			cartListModel.addElement(item2);
 		});
 		window.list("cartList").selectItem(1);
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
-		verify(eShopController).removeCartProduct(product2);
+		verify(eShopController).removeCartProduct(item2);
 	}
 
 	@Test
 	@GUITest
 	public void testTheUIWhenTheUserSelectSomethingFromTheProductListAndThenSomethingInTheCartListShoudDeselectTheElementFromTheProductList() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getProductListModel().addElement(product1);
-			eShopSwingView.getCartListModel().addElement(product2);
+			eShopSwingView.getProductListModel().addElement(item1.getProduct());
+			eShopSwingView.getCartListModel().addElement(item2);
 		});
 		window.list("productList").selectItem(0);
 		window.list("cartList").selectItem(0);
@@ -317,11 +319,11 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testTheUIWhenTheUserSelectSomethingFromTheCartListAndThenSomethingInTheProductListShoudDeselectTheElementFromTheCartList() {
-		Product product1 = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000);
+		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getProductListModel().addElement(product1);
-			eShopSwingView.getCartListModel().addElement(product2);
+			eShopSwingView.getProductListModel().addElement(item1.getProduct());
+			eShopSwingView.getCartListModel().addElement(item2);
 		});
 		window.list("cartList").selectItem(0);
 		window.list("productList").selectItem(0);
@@ -333,7 +335,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testCheckoutButtonShouldBeEnabledOnlyWhenAtLeastOneProductIsInsideTheCartList() {
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+			eShopSwingView.getCartListModel().addElement(new CartItem(new Product("1", "Laptop", 1300), 1));
 		});
 		window.button(JButtonMatcher.withText("Checkout")).requireEnabled();
 		GuiActionRunner.execute(() -> {
@@ -355,7 +357,7 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testClearCartShouldRemoveAllElementsFromTheCartList() {
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
+			eShopSwingView.getCartListModel().addElement(new CartItem(new Product("1", "Laptop", 1300), 1));
 			eShopSwingView.clearCart();
 		});
 		String[] listContents = window.list("cartList").contents();
@@ -365,9 +367,11 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowSuccessLabelShouldShowAMessageForTheSuccessfulCheckout() {
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "eBook", 300), 2);
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
-			eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 2));
+			eShopSwingView.getCartListModel().addElement(item1);
+			eShopSwingView.getCartListModel().addElement(item2);
 			eShopSwingView.getTotalCostlabel().setText("1900.0$");
 			eShopSwingView.showSuccessLabel();
 		});
@@ -425,10 +429,13 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testshowFailureLabelShouldShowAMessageForTheCheckoutFailure() {
+		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2= new CartItem(new Product("2", "eBook", 300), 5);
+		CatalogItem item2Catalog= new CatalogItem(new Product("2", "eBook", 300), 2);
 		GuiActionRunner.execute(() -> {
-			eShopSwingView.getCartListModel().addElement(new Product("1", "Laptop", 1300));
-			eShopSwingView.getCartListModel().addElement(new Product("2", "eBook", 300, 5));
-			eShopSwingView.showFailureLabel(new Product("2", "eBook", 300, 2));
+			eShopSwingView.getCartListModel().addElement(item1);
+			eShopSwingView.getCartListModel().addElement(item2);
+			eShopSwingView.showFailureLabel(item2Catalog);
 		});
 		window.label("checkoutResultLabel")
 				.requireText("<html>Error!<br/>" + "<br/>Not enough stock for the following product:<br/>"
@@ -439,19 +446,19 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowAllCartShouldShowsProductsInTheCart() {
-		Product product = new Product("1", "Laptop", 1300);
-		GuiActionRunner.execute(() -> eShopSwingView.showAllCart(Arrays.asList(product)));
+		CartItem item = new CartItem(new Product("1", "Laptop", 1300), 1);
+		GuiActionRunner.execute(() -> eShopSwingView.showAllCart(Arrays.asList(item)));
 		String[] listContents = window.list("cartList").contents();
-		assertThat(listContents).containsExactly(product.toStringExtended());
+		assertThat(listContents).containsExactly(item.toString());
 	}
 
 	@Test
 	@GUITest
 	public void testShowTotalCostShouldShowsTheCartPriceInTheLabel() {
-		Product product = new Product("1", "Laptop", 1300);
-		Product product2 = new Product("2", "Iphone", 1000, 2);
+		CartItem item1= new CartItem(new Product("1", "Laptop", 1300), 1);
+		CartItem item2 = new CartItem(new Product("2", "Iphone", 1000), 2);
 		GuiActionRunner.execute(() -> eShopSwingView.showTotalCost(
-				(product.getPrice() * product.getQuantity()) + (product2.getPrice() * product2.getQuantity())));
+				(item1.getProduct().getPrice() * item1.getQuantity()) + (item2.getProduct().getPrice() * item2.getQuantity())));
 		window.label("totalCostLabel").requireText("3300.0$");
 	}
 }

@@ -40,7 +40,7 @@ public class TransactionalShopManager implements TransactionManager {
 			// create a repository instance in the transaction
 			ProductMongoRepository productRepository = new ProductMongoRepository(client, databaseName,
 					productCollectionName, session);
-			CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName,
+			CartMongoRepository cartRepository = new CartMongoRepository(client, databaseName, cartCollectionName, productCollectionName,
 					session);
 			// call a lambda passing the repository instance
 			T result = code.apply(productRepository, cartRepository);
