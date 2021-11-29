@@ -3,6 +3,7 @@ package com.apt.project.eshop.view;
 import java.util.List;
 
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CatalogItem;
 
 public interface EShopView {
 
@@ -24,7 +25,7 @@ public interface EShopView {
 
 	void resetTotalCost();
 
-	void showFailureLabel(Product productWanted);
+	void showFailureLabel(CatalogItem itemWanted);
 
 	void showAllCart(List<Product> cartProducts);
 

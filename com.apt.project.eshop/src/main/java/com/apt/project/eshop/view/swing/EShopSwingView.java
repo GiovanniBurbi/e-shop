@@ -29,6 +29,7 @@ import javax.swing.event.ListDataListener;
 
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopSwingView extends JFrame implements EShopView {
@@ -355,10 +356,10 @@ public class EShopSwingView extends JFrame implements EShopView {
 	}
 
 	@Override
-	public void showFailureLabel(Product productWanted) {
+	public void showFailureLabel(CatalogItem itemWanted) {
 		getLblCheckoutLabel().setForeground(Color.RED);
 		getLblCheckoutLabel().setText("<html>Error!<br/>" + "<br/>Not enough stock for the following product:<br/>"
-				+ "-- " + productWanted.getName() + ", remaining stock:" + productWanted.getQuantity() + "<br/>"
+				+ "-- " + itemWanted.getProduct().getName() + ", remaining stock:" + itemWanted.getStorage() + "<br/>"
 				+ "<br/>Remove some products and try again</html>");
 	}
 

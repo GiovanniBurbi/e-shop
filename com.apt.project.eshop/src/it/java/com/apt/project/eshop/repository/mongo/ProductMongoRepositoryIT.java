@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,7 +26,6 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 
 public class ProductMongoRepositoryIT {
 
@@ -81,7 +79,7 @@ public class ProductMongoRepositoryIT {
 	@Test
 	public void testFindAllWhenDatabaseIsNotEmpty() {
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
-		assertThat(productRepository.findAll()).containsExactly(new Product("1", "Laptop", 1300));
+		assertThat(productRepository.findAll()).containsExactly(new CatalogItem(new Product("1", "Laptop", 1300), 1));
 	}
 
 	@Test
@@ -117,8 +115,9 @@ public class ProductMongoRepositoryIT {
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
 		addTestItemToDatabase("2", "Iphone", 1000.0, 1);
 		addTestItemToDatabase("3", "Lavatrice", 400.0, 1);
-		assertThat(productRepository.findByName("La")).containsExactlyInAnyOrder(new Product("1", "Laptop", 1300),
-				new Product("3", "Lavatrice", 400));
+		assertThat(productRepository.findByName("La")).containsExactlyInAnyOrder(
+				new CatalogItem(new Product("1", "Laptop", 1300), 1),
+				new CatalogItem(new Product("3", "Lavatrice", 400), 1));
 	}
 
 	@Test
@@ -126,8 +125,9 @@ public class ProductMongoRepositoryIT {
 		addTestItemToDatabase("1", "Laptop", 1300.0, 1);
 		addTestItemToDatabase("2", "Iphone", 1000.0, 1);
 		addTestItemToDatabase("3", "Lavatrice", 400.0, 1);
-		assertThat(productRepository.findByName("la")).containsExactlyInAnyOrder(new Product("1", "Laptop", 1300),
-				new Product("3", "Lavatrice", 400));
+		assertThat(productRepository.findByName("la")).containsExactlyInAnyOrder(
+				new CatalogItem(new Product("1", "Laptop", 1300), 1),
+				new CatalogItem (new Product("3", "Lavatrice", 400), 1));
 	}
 
 	@Test

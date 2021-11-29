@@ -59,7 +59,7 @@ public class CartMongoRepository implements CartRepository {
 
 	@Override
 	public void removeFromCart(Product product) {
-		cartCollection.findOneAndDelete(session, Filters.eq("product", product.getId()));
+		cartCollection.findOneAndDelete(session, Filters.eq(REF_FIELD, product.getId()));
 	}
 
 	@Override

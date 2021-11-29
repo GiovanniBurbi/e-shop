@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopController {
@@ -55,7 +56,7 @@ public class EShopController {
 		eShopView.resetTotalCost();
 	}
 
-	public void checkoutFailure(Product productWanted) {
+	public void checkoutFailure(CatalogItem productWanted) {
 		eShopView.showFailureLabel(productWanted);
 	}
 

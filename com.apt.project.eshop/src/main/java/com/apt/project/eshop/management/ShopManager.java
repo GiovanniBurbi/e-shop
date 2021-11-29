@@ -24,26 +24,26 @@ public class ShopManager {
 
 	public void checkout() {
 		transactionManager.doInTransaction((productRepository, cartRepository) -> {
-			List<Product> products = cartRepository.allCart();
+			List<CartItem> items = cartRepository.allCart();
 			try {
-				for (Product product : products) {
-					productRepository.removeFromStorage(product);
-					cartRepository.removeFromCart(product);
+				for (CartItem item : items) {
+					productRepository.removeFromStorage(item);
+					cartRepository.removeFromCart(item.getProduct());
 				}
 			} catch (RepositoryException e) {
-				shopController.checkoutFailure(e.getProduct());
-				throw new RepositoryException("Insufficient stock", e.getProduct());
+				shopController.checkoutFailure(e.getItem());
+				throw new RepositoryException("Insufficient stock", e.getItem());
 			}
 			shopController.checkoutSuccess();
 			return null;
 		});
 	}
 
-	public List<Product> allProducts() {
+	public List<CatalogItem> allProducts() {
 		return transactionManager.doInTransaction((productRepository, cartRepository) -> productRepository.findAll());
 	}
 
-	public List<Product> productsByName(String nameToFind) {
+	public List<CatalogItem> productsByName(String nameToFind) {
 		return transactionManager
 				.doInTransaction((productRepository, cartRepository) -> productRepository.findByName(nameToFind));
 	}

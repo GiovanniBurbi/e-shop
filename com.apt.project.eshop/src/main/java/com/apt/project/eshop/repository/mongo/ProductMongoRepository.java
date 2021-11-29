@@ -1,9 +1,5 @@
 package com.apt.project.eshop.repository.mongo;
 
-import static java.util.Collections.emptyList;
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -11,8 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 
 import com.apt.project.eshop.model.Product;
@@ -41,8 +35,11 @@ public class ProductMongoRepository implements ProductRepository {
 	}
 
 	@Override
-	public List<Product> findAll() {
-		return StreamSupport.stream(productCollection.find(session).spliterator(), false).map(this::fromDocumentToProduct).collect(Collectors.toList());
+	public List<CatalogItem> findAll() {
+		return StreamSupport.stream(productCollection
+				.find(session).spliterator(), false)
+				.map(this::fromDocumentToCatalogItem)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -54,11 +51,11 @@ public class ProductMongoRepository implements ProductRepository {
 
 
 	@Override
-	public List<Product> findByName(String nameSearch) {
+	public List<CatalogItem> findByName(String nameSearch) {
 		return StreamSupport.stream(productCollection
 				.find(session, Filters.regex("name", Pattern.compile(nameSearch, Pattern.CASE_INSENSITIVE)))
 				.spliterator(), false)
-				.map(this::fromDocumentToProduct)
+				.map(this::fromDocumentToCatalogItem)
 				.collect(Collectors.toList());
 	}
 
@@ -89,9 +86,5 @@ public class ProductMongoRepository implements ProductRepository {
 	
 	private CatalogItem fromDocumentToCatalogItem(Document doc) {
 		return new CatalogItem(new Product(""+doc.get("id"), ""+doc.get("name"), doc.getDouble("price")), doc.getInteger("storage"));
-	}
-	
-	private Product fromDocumentToProduct(Document d) {
-		return new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price"));
 	}
 }
