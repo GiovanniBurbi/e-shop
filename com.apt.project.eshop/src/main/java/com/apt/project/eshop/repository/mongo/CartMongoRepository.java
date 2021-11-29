@@ -26,6 +26,8 @@ import com.mongodb.client.model.Updates;
 
 public class CartMongoRepository implements CartRepository {
 
+	private static final String PRICE_NAME = "price";
+	private static final String NAME_FIELD = "name";
 	private static final String REF_FIELD = "product";
 	private static final String QUANTITY_FIELD = "quantity";
 	private static final String ID_EXTERNAL_FIELD = "id";
@@ -76,7 +78,7 @@ public class CartMongoRepository implements CartRepository {
 	}
 	
 	private Product fromDocumentToProduct(Document d) {
-		return new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price"));
+		return new Product(""+d.get(ID_EXTERNAL_FIELD), ""+d.get(NAME_FIELD), d.getDouble(PRICE_NAME));
 	}
 	
 	private List<Document> aggregateCollections() {
