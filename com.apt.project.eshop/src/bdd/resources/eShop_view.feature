@@ -3,14 +3,14 @@ Feature: eShop View
 
   Background: 
 		Given The database contains products with the following values
-			| id | name | price | quantity |
+			| id | name | price | storage |
 			| 1 | Laptop | 1300.0 | 2 |
 			| 2 | Iphone | 1000.0 | 2 |
 			| 3 | Laptop MSI | 1250.0 | 1 |
 			| 4 | Macbook | 1400.0 | 1 |
-			| 5 | SmartTv UHD | 400.0 | 1 |
-			| 6 | Dyson phon | 350.0 | 1 |
-			| 7 | Playstation 5 | 500.0 | 1 |
+			| 5 | SmartTV | 400.0 | 1 |
+			| 6 | Playstation 5 | 500.0 | 1 |
+			| 7 | Xbox | 500.0 | 1 |
 		When The eShop View is shown
   	
   Scenario: The initial state of the view
@@ -20,9 +20,9 @@ Feature: eShop View
 			| 2 | Iphone | 1000.0 |
 			| 3 | Laptop MSI | 1250.0 |
 			| 4 | Macbook | 1400.0 |
-			| 5 | SmartTv UHD | 400.0 |
-			| 6 | Dyson phon | 350.0 |
-			| 7 | Playstation 5 | 500.0 |
+			| 5 | SmartTV | 400.0 |
+			| 6 | Playstation 5 | 500.0 |
+			| 7 | Xbox | 500.0 |
 
 	Scenario: Search a product
 		Given The user enters in the search text field the name "la" 
@@ -43,9 +43,9 @@ Feature: eShop View
 			| 2 | Iphone | 1000.0 |
 			| 3 | Laptop MSI | 1250.0 |
 			| 4 | Macbook | 1400.0 |
-			| 5 | SmartTv UHD | 400.0 |
-			| 6 | Dyson phon | 350.0 |
-			| 7 | Playstation 5 | 500.0 |
+			| 5 | SmartTV | 400.0 |
+			| 6 | Playstation 5 | 500.0 |
+			| 7 | Xbox | 500.0 |
 		And The search text box is empty
  	
  	Scenario: Add Product to Cart
@@ -54,7 +54,7 @@ Feature: eShop View
 		When The user clicks the "Add To Cart" button 2 times
 		Then The cart list contains an element with the following values
 			| id | name | price | quantity |
-			| 5 | SmartTv UHD | 400.0 | 1 |
+			| 5 | SmartTV | 400.0 | 1 |
 			| 1 | Laptop | 1300.0 | 2 |
 		And The view shows the updated total of "3000.0$"
     

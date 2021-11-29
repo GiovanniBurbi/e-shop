@@ -2,7 +2,6 @@ package com.apt.project.eshop.view;
 
 import java.util.List;
 
-import com.apt.project.eshop.model.Product;
 import com.apt.project.eshop.repository.CartItem;
 import com.apt.project.eshop.repository.CatalogItem;
 

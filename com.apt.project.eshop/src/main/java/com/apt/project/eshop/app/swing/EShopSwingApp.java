@@ -70,7 +70,7 @@ public class EShopSwingApp implements Callable<Void> {
 				EShopController eShopController = new EShopController(eShopView, shopManager);
 				shopManager.setShopController(eShopController);
 				eShopView.setEShopController(eShopController);
-				// Carica catalogo se lista prodotti è vuota
+				// Load Catalog if product list is empty
 				if (shopManager.allProducts().isEmpty()) {
 					shopManager.loadCatalog(asList(
 						new CatalogItem(new Product("1", "Laptop", 1300.0), 3),
