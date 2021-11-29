@@ -38,4 +38,11 @@ public class CartItem {
 		CartItem other = (CartItem) obj;
 		return Objects.equals(product, other.product) && quantity == other.quantity;
 	}
+
+	@Override
+	public String toString() {
+		return "CartItem [" + product.toString() + ", quantity=" + quantity + "]";
+	}
+	
+	
 }

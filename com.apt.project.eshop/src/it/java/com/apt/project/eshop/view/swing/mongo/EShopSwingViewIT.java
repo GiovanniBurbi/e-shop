@@ -22,6 +22,8 @@ import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.management.TransactionManager;
 import com.apt.project.eshop.management.mongo.TransactionalShopManager;
 import com.apt.project.eshop.model.Product;
+import com.apt.project.eshop.repository.CartItem;
+import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.repository.RepositoryException;
 import com.apt.project.eshop.repository.mongo.CartMongoRepository;
 import com.apt.project.eshop.repository.mongo.ProductMongoRepository;
@@ -47,7 +49,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	private EShopSwingView eShopSwingView;
 	private EShopController eShopController;
 	private FrameFixture window;
-	private List<Product> catalog;
+	private List<CatalogItem> catalog;
 	private ShopManager shopManager;
 	private TransactionManager transactionManager;
 	private CartMongoRepository cartRepository;
@@ -71,13 +73,13 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		client = new MongoClient(new ServerAddress(mongo.getContainerIpAddress(), mongo.getMappedPort(27017)));
 		ClientSession session = client.startSession();
 		catalog = asList(
-			new Product("1", "Laptop", 1300),
-			new Product("2", "Iphone", 1000),
-			new Product("3", "Cuffie", 300),
-			new Product("4", "Lavatrice", 300)
+			new CatalogItem(new Product("1", "Laptop", 1300), 1),
+			new CatalogItem(new Product("2", "Iphone", 1000), 1),
+			new CatalogItem(new Product("3", "Cuffie", 300), 1),
+			new CatalogItem(new Product("4", "Lavatrice", 300), 1)
 		);
 		productRepository = new ProductMongoRepository(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME, session);
-		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, session);
+		cartRepository = new CartMongoRepository(client, ESHOP_DB_NAME, CART_COLLECTION_NAME, PRODUCTS_COLLECTION_NAME, session);
 		// make sure to start with the initial configuration
 		productRepository.loadCatalog(catalog);
 		transactionManager = new TransactionalShopManager(client, ESHOP_DB_NAME, PRODUCTS_COLLECTION_NAME,
@@ -180,7 +182,7 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.list("productList").selectItem(0);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		assertThat(window.list("cartList").contents()).containsExactly(
-			new Product("1", "Laptop", 1300).toStringExtended()
+			new CartItem(new Product("1", "Laptop", 1300), 1).toString()
 		);
 		window.label("totalCostLabel").requireText("1300.0$");
 	}
@@ -188,16 +190,18 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testAddToCartButtonWhenTheProductSelectedIsAlreadyInTheCartShouldOnlyIncreaseTheFieldQuantityOfThatProductInTheCart() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
-			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
-			eShopController.newCartProduct(new Product("2", "Iphone", 1000));
+			eShopController.newCartProduct(product1);
+			eShopController.newCartProduct(product2);
 		});
 		window.list("productList").selectItem(0);
 		window.button(JButtonMatcher.withText("Add To Cart")).click();
 		assertThat(window.list("cartList").contents()).containsExactly(
-			new Product("1", "Laptop", 1300, 2).toStringExtended(),
-			new Product("2", "Iphone", 1000).toStringExtended()
+			new CartItem(new Product("1", "Laptop", 1300), 2).toString(),
+			new CartItem(new Product("2", "Iphone", 1000), 1).toString()
 		);
 		window.label("totalCostLabel").requireText("3600.0$");
 	}
@@ -205,15 +209,17 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testRemoveFromCartButtonShouldRemoveTheProductSelectedInTheCart() {
+		Product product1 = new Product("1", "Laptop", 1300);
+		Product product2 = new Product("2", "Iphone", 1000);
 		GuiActionRunner.execute(() -> {
 			eShopController.allProducts();
-			eShopController.newCartProduct(new Product("1", "Laptop", 1300));
-			eShopController.newCartProduct(new Product("2", "Iphone", 1000));
+			eShopController.newCartProduct(product1);
+			eShopController.newCartProduct(product2);
 		});
 		window.list("cartList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove From Cart")).click();
 		assertThat(window.list("cartList").contents()).containsExactly(
-			new Product("2", "Iphone", 1000).toStringExtended());
+			new CartItem(new Product("2", "Iphone", 1000), 1).toString());
 		window.label("totalCostLabel").requireText("1000.0$");
 	}
 
@@ -247,8 +253,8 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		window.button(JButtonMatcher.withText("Checkout")).click();
 		assertThat(window.list("cartList").contents()).containsExactly(
-			new Product("1", "Laptop", 1300).toStringExtended(),
-			new Product("2", "Iphone", 1000, 2).toStringExtended()
+			new CartItem(product1, 1).toString(),
+			new CartItem(product2, 2).toString()
 		);
 		window.label("totalCostLabel").requireText("3300.0$");
 		window.label("checkoutResultLabel")
@@ -267,8 +273,8 @@ public class EShopSwingViewIT extends AssertJSwingJUnitTestCase {
 			eShopController.showCart();
 		});
 		assertThat(window.list("cartList").contents()).containsExactly(
-			product1.toStringExtended(),
-			product2.toStringExtended()
+			new CartItem(product1, 1).toString(),
+			new CartItem(product2, 1).toString()
 		);
 	}
 
