@@ -14,8 +14,8 @@ import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 
+import com.apt.project.eshop.model.CartItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;

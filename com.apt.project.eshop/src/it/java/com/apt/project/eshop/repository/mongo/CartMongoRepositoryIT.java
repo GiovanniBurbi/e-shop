@@ -12,9 +12,9 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.ClientSession;

@@ -3,9 +3,9 @@ package com.apt.project.eshop.controller;
 import java.util.List;
 
 import com.apt.project.eshop.management.ShopManager;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopController {

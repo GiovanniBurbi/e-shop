@@ -1,10 +1,8 @@
-package com.apt.project.eshop.repository;
+package com.apt.project.eshop.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
-
-import com.apt.project.eshop.model.Product;
 
 public class CartItemTest {
 

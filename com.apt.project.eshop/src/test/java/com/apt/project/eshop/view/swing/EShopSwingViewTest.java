@@ -23,9 +23,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
 
 @RunWith(GUITestRunner.class)
 public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {

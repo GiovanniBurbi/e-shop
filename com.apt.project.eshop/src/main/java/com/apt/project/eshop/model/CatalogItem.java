@@ -1,8 +1,6 @@
-package com.apt.project.eshop.repository;
+package com.apt.project.eshop.model;
 
 import java.util.Objects;
-
-import com.apt.project.eshop.model.Product;
 
 public class CatalogItem {
 	

@@ -9,9 +9,9 @@ import java.util.stream.StreamSupport;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.repository.RepositoryException;
 import com.mongodb.MongoClient;

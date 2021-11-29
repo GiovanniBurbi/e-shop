@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 import com.apt.project.eshop.controller.EShopController;
 import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.management.mongo.TransactionalShopManager;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.view.swing.EShopSwingView;
 import com.mongodb.MongoClient;
 

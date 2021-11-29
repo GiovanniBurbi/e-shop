@@ -26,9 +26,9 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopSwingView extends JFrame implements EShopView {

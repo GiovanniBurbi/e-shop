@@ -2,8 +2,8 @@ package com.apt.project.eshop.view;
 
 import java.util.List;
 
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 
 public interface EShopView {
 

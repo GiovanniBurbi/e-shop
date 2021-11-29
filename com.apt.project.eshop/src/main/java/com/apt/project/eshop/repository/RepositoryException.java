@@ -1,5 +1,7 @@
 package com.apt.project.eshop.repository;
 
+import com.apt.project.eshop.model.CatalogItem;
+
 public class RepositoryException extends Exception {
 
 	private static final long serialVersionUID = 1L;

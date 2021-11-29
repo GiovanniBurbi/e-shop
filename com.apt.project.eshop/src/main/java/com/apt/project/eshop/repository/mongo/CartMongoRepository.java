@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import com.apt.project.eshop.model.CartItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
 import com.apt.project.eshop.repository.CartRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.client.ClientSession;

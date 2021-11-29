@@ -3,9 +3,9 @@ package com.apt.project.eshop.management;
 import java.util.List;
 
 import com.apt.project.eshop.controller.EShopController;
+import com.apt.project.eshop.model.CartItem;
+import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartItem;
-import com.apt.project.eshop.repository.CatalogItem;
 import com.apt.project.eshop.repository.RepositoryException;
 
 public class ShopManager {
