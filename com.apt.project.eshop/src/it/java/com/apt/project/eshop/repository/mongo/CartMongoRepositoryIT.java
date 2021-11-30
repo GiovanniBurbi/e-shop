@@ -23,6 +23,8 @@ import com.mongodb.client.MongoDatabase;
 
 public class CartMongoRepositoryIT {
 
+	private static final String QUANTITY_FIELD_NAME = "quantity";
+	private static final String PRODUCT_FIELD_NAME = "product";
 	private static final String PRODUCT_COLLECTION_NAME = "products";
 	private static final String CART_COLLECTION_NAME = "cart";
 	private static final String ESHOP_DB_NAME = "eShop";
@@ -77,8 +79,8 @@ public class CartMongoRepositoryIT {
 		cartRepository.addToCart(product);
 		// retrive all documents in cartCollection without field _id
 		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
-				.append("product", product.getId())
-				.append("quantity", 1)
+				.append(PRODUCT_FIELD_NAME, product.getId())
+				.append(QUANTITY_FIELD_NAME, 1)
 		);
 	}
 
@@ -88,8 +90,8 @@ public class CartMongoRepositoryIT {
 		addTestItemToDatabase(product.getId(), 1);
 		cartRepository.addToCart(product);
 		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
-				.append("product", product.getId())
-				.append("quantity", 2)
+				.append(PRODUCT_FIELD_NAME, product.getId())
+				.append(QUANTITY_FIELD_NAME, 2)
 		);
 	}
 
@@ -118,8 +120,8 @@ public class CartMongoRepositoryIT {
 		addTestItemToDatabase(product2.getId(), 3);
 		cartRepository.removeFromCart(product1);
 		assertThat(cartCollection.find(session).projection(excludeId())).containsExactly(new Document()
-				.append("product", product2.getId())
-				.append("quantity", 3)	
+				.append(PRODUCT_FIELD_NAME, product2.getId())
+				.append(QUANTITY_FIELD_NAME, 3)	
 		);
 	}
 
@@ -140,8 +142,8 @@ public class CartMongoRepositoryIT {
 	private void addTestItemToDatabase(String id, int quantity) {
 		cartCollection.insertOne(
 				new Document()
-					.append("product", id)
-					.append("quantity", quantity)
+					.append(PRODUCT_FIELD_NAME, id)
+					.append(QUANTITY_FIELD_NAME, quantity)
 		);
 	}
 }
