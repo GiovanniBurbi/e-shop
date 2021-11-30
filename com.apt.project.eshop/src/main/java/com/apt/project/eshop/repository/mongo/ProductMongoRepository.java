@@ -25,7 +25,7 @@ public class ProductMongoRepository implements ProductRepository {
 
 	private static final String PRICE_FIELD_NAME = "price";
 	private static final String NAME_FIELD_NAME = "name";
-	private static final String ID_FIELD_NAME = "id";
+	private static final String ID_FIELD_NAME = "_id";
 	private static final String STORAGE_FIELD_NAME = "storage";
 	private MongoCollection<Document> productCollection;
 	private MongoDatabase database;

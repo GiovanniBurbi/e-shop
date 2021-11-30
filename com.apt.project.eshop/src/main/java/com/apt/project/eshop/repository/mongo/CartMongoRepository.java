@@ -30,7 +30,7 @@ public class CartMongoRepository implements CartRepository {
 	private static final String NAME_FIELD = "name";
 	private static final String REF_FIELD = "product";
 	private static final String QUANTITY_FIELD = "quantity";
-	private static final String ID_EXTERNAL_FIELD = "id";
+	private static final String ID_EXTERNAL_FIELD = "_id";
 	private MongoCollection<Document> cartCollection;
 	private ClientSession session;
 	private String productCollectionName;

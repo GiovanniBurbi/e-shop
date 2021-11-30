@@ -31,6 +31,11 @@ public class ProductMongoRepositoryIT {
 
 	private static final String PRODUCTS_COLLECTION_NAME = "products";
 	private static final String ESHOP_DB_NAME = "eShop";
+	
+	private static final String PRICE_FIELD_NAME = "price";
+	private static final String NAME_FIELD_NAME = "name";
+	private static final String ID_FIELD_NAME = "_id";
+	private static final String STORAGE_FIELD_NAME = "storage";
 
 	@SuppressWarnings("rawtypes")
 	@ClassRule
@@ -104,7 +109,7 @@ public class ProductMongoRepositoryIT {
 		productRepository.loadCatalog(asList(item1, item2));
 		assertThat(readAllCatalogFromDatabase()).containsExactly(item1, item2);
 	}
-
+	
 	@Test
 	public void testFindByNameWhenDatabaseIsEmpty() {
 		assertThat(productRepository.findByName("Laptop")).isEmpty();
@@ -163,17 +168,17 @@ public class ProductMongoRepositoryIT {
 	private List<CatalogItem> readAllCatalogFromDatabase() {
 		return StreamSupport.
 			stream(productCollection.find(session).spliterator(), false)
-				.map(d -> new CatalogItem(new Product(""+d.get("id"), ""+d.get("name"), d.getDouble("price")), d.getInteger("storage")))
+				.map(d -> new CatalogItem(new Product(""+d.get(ID_FIELD_NAME), ""+d.get(NAME_FIELD_NAME), d.getDouble(PRICE_FIELD_NAME)), d.getInteger(STORAGE_FIELD_NAME)))
 				.collect(Collectors.toList());
 	}
 	
 	private void addTestItemToDatabase(String id, String name, Double price, int storage) {
 		productCollection.insertOne(
 				new Document()
-					.append("id", id)
-					.append("name", name)
-					.append("price", price)
-					.append("storage", storage)
+					.append(ID_FIELD_NAME, id)
+					.append(NAME_FIELD_NAME, name)
+					.append(PRICE_FIELD_NAME, price)
+					.append(STORAGE_FIELD_NAME, storage)
 		);
 	}
 }
