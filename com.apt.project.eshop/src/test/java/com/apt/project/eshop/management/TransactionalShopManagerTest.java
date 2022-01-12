@@ -87,7 +87,7 @@ public class TransactionalShopManagerTest {
 	}
 
 	@Test
-	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowRepositoryExceptionAndDelegateToControllerSuccessCheckout()
+	public void testCheckoutWhenThereIsNotEnoughStockShouldThrowRepositoryExceptionAndDelegateToControllerCheckoutFailure()
 			throws RepositoryException {
 		CatalogItem itemNotAvailable = new CatalogItem(new Product("1", "Laptop", 1300), 1);
 		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 2);
