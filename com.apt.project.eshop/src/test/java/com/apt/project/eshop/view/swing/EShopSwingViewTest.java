@@ -197,7 +197,6 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testClearButtonShouldDelegateToEShopControllerResetSearch() {
 		GuiActionRunner.execute(() -> {
 			eShopSwingView.getBtnClear().setEnabled(true);
@@ -245,7 +244,6 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testAddToCartButtonShouldDelegateToEShopControllerNewCartProduct() {
 		CatalogItem item1 = new CatalogItem(new Product("1", "Laptop", 1300), 1);
 		CatalogItem item2= new CatalogItem(new Product("2", "Iphone", 1000), 1);
@@ -287,7 +285,6 @@ public class EShopSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testRemoveFromCartButtonShouldDelegateToEShopControllerRemoveCartProduct() {
 		CartItem item1 = new CartItem(new Product("1", "Laptop", 1300), 1);
 		CartItem item2= new CartItem(new Product("2", "Iphone", 1000), 1);
