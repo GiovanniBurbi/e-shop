@@ -67,7 +67,7 @@ public class ProductMongoRepository implements ProductRepository {
 	public void removeFromStorage(CartItem item) throws RepositoryException {
 		int quantityRequested = item.getQuantity();
 		Bson filterNameProduct = Filters.eq(ID_FIELD_NAME, item.getProduct().getId());
-		CatalogItem productInStorage = fromDocumentToCatalogItem(productCollection.find(session, filterNameProduct).first());
+		CatalogItem productInStorage = fromDocumentToCatalogItem(productCollection.find(session, filterNameProduct).first()); //se non trova il prodotto in productcollection? Per attuale applicazione non può succedere, nessuno può modificare il catalogo iniziale a run-time 
 		int quantityInStorage = productInStorage.getStorage();
 		if (quantityInStorage < quantityRequested)
 			throw new RepositoryException("Insufficient stock", productInStorage);
