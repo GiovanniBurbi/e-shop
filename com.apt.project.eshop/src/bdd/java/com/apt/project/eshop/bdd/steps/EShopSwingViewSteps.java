@@ -3,6 +3,7 @@ package com.apt.project.eshop.bdd.steps;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +14,6 @@ import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
-
-import com.apt.project.eshop.model.CartItem;
-import com.apt.project.eshop.model.Product;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
@@ -53,8 +51,19 @@ public class EShopSwingViewSteps {
 
 	@Then("The list contains elements with the following values")
 	public void the_list_contains_elements_with_the_following_values(List<Map<String, String>> values) {
-		values.forEach(v -> assertThat(window.list("productList").contents()).anySatisfy(e -> assertThat(e)
-				.contains(new Product(v.get("id"), v.get("name"), Double.parseDouble(v.get("price"))).toString())));
+		List<String> stringValues = productListRenderItems(values);
+		stringValues.forEach(v -> assertThat(window.list("productList").contents()).anySatisfy(e -> assertThat(e)
+				.contains(v)));
+	}
+	
+	private List<String> productListRenderItems(List<Map<String, String>> values) {
+		List<String> renderProductItems = new ArrayList<>();
+		for (Map<String, String> v : values) {
+			String item = "Product [" + "id=" + v.get("id") + ", " 
+					+ "name=" + v.get("name") + ", " + "price=" + Double.parseDouble(v.get("price")) + "]";
+			renderProductItems.add(item);
+		}
+		return renderProductItems;
 	}
 
 	@When("The user enters in the search text field the name {string}")
@@ -106,12 +115,20 @@ public class EShopSwingViewSteps {
 
 	@Then("The cart list contains an element with the following values")
 	public void the_cart_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
-		values.forEach(v -> assertThat(window.list("cartList").contents())
-				.anySatisfy(e -> assertThat(e).contains(
-					new CartItem(new Product(v.get("id"), v.get("name"),
-						Double.parseDouble(v.get("price"))),
-						Integer.parseInt(v.get("quantity"))).toString()
-		)));
+		List<String> stringValues = cartListRenderItems(values);
+		stringValues.forEach(v -> assertThat(window.list("cartList").contents())
+				.anySatisfy(e -> assertThat(e).contains(v)));
+	}
+	
+	private List<String> cartListRenderItems(List<Map<String, String>> values) {
+		List<String> renderCartItems = new ArrayList<>();
+		for (Map<String, String> v : values) {
+			String item = "CartItem [Product [" + "id=" + v.get("id") + ", " 
+					+ "name=" + v.get("name") + ", " + "price=" + Double.parseDouble(v.get("price")) + "]" 
+					+ ", quantity=" + Integer.parseInt(v.get("quantity")) + "]";
+			renderCartItems.add(item);
+		}
+		return renderCartItems;
 	}
 
 	@Given("The cart contains a product")
