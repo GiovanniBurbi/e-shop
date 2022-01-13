@@ -50,20 +50,9 @@ public class EShopSwingViewSteps {
 	}
 
 	@Then("The list contains elements with the following values")
-	public void the_list_contains_elements_with_the_following_values(List<Map<String, String>> values) {
-		List<String> stringValues = productListRenderItems(values);
-		stringValues.forEach(v -> assertThat(window.list("productList").contents()).anySatisfy(e -> assertThat(e)
-				.contains(v)));
-	}
-	
-	private List<String> productListRenderItems(List<Map<String, String>> values) {
-		List<String> renderProductItems = new ArrayList<>();
-		for (Map<String, String> v : values) {
-			String item = "Product [" + "id=" + v.get("id") + ", " 
-					+ "name=" + v.get("name") + ", " + "price=" + Double.parseDouble(v.get("price")) + "]";
-			renderProductItems.add(item);
-		}
-		return renderProductItems;
+	public void the_list_contains_elements_with_the_following_values(List<List<String>> values) {
+		values.forEach(v -> assertThat(window.list("productList").contents())
+				.anySatisfy(e -> assertThat(e).contains(v.get(0), v.get(1), v.get(2))));
 	}
 
 	@When("The user enters in the search text field the name {string}")
@@ -114,21 +103,9 @@ public class EShopSwingViewSteps {
 	}
 
 	@Then("The cart list contains an element with the following values")
-	public void the_cart_list_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
-		List<String> stringValues = cartListRenderItems(values);
-		stringValues.forEach(v -> assertThat(window.list("cartList").contents())
-				.anySatisfy(e -> assertThat(e).contains(v)));
-	}
-	
-	private List<String> cartListRenderItems(List<Map<String, String>> values) {
-		List<String> renderCartItems = new ArrayList<>();
-		for (Map<String, String> v : values) {
-			String item = "CartItem [Product [" + "id=" + v.get("id") + ", " 
-					+ "name=" + v.get("name") + ", " + "price=" + Double.parseDouble(v.get("price")) + "]" 
-					+ ", quantity=" + Integer.parseInt(v.get("quantity")) + "]";
-			renderCartItems.add(item);
-		}
-		return renderCartItems;
+	public void the_cart_list_contains_an_element_with_the_following_values(List<List<String>> values) {
+		values.forEach(v -> assertThat(window.list("cartList").contents())
+				.anySatisfy(e -> assertThat(e).contains(v.get(0), v.get(1), v.get(2), v.get(3))));
 	}
 
 	@Given("The cart contains a product")
