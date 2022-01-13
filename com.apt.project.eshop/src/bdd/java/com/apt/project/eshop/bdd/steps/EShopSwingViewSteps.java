@@ -50,9 +50,9 @@ public class EShopSwingViewSteps {
 	}
 
 	@Then("The list contains elements with the following values")
-	public void the_list_contains_elements_with_the_following_values(List<List<String>> values) {
+	public void the_list_contains_elements_with_the_following_values(List<Map<String, String>> values) {
 		values.forEach(v -> assertThat(window.list("productList").contents())
-				.anySatisfy(e -> assertThat(e).contains(v.get(0), v.get(1), v.get(2))));
+				.anySatisfy(e -> assertThat(e).contains(v.get("id"), v.get("name"), v.get("price"))));
 	}
 
 	@When("The user enters in the search text field the name {string}")
@@ -103,9 +103,9 @@ public class EShopSwingViewSteps {
 	}
 
 	@Then("The cart list contains an element with the following values")
-	public void the_cart_list_contains_an_element_with_the_following_values(List<List<String>> values) {
+	public void the_cart_list_contains_an_element_with_the_following_values(List<Map<String,String>> values) {
 		values.forEach(v -> assertThat(window.list("cartList").contents())
-				.anySatisfy(e -> assertThat(e).contains(v.get(0), v.get(1), v.get(2), v.get(3))));
+				.anySatisfy(e -> assertThat(e).contains(v.get("id"), v.get("name"), v.get("price"), v.get("quantity"))));
 	}
 
 	@Given("The cart contains a product")
