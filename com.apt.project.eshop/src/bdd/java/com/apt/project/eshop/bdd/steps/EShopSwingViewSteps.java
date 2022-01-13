@@ -3,7 +3,6 @@ package com.apt.project.eshop.bdd.steps;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
