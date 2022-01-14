@@ -71,8 +71,8 @@ Feature: eShop View
 		Then The cart list is empty
 		And The view shows the updated total of "0.0$"
 		And The view shows a message about the successful checkout
+		# This feature file is about the eShop view, so this last step is not optimal here
 		And The database storage of the purchased products is updated 
-		# BDD test su view. non serve vedere cosa succede su database, già testato con integration test, ma non l'intera interazione
  	
   Scenario: Checkout failure
 		Given The cart contains some products of which one has quantity greater than the stock
@@ -85,5 +85,5 @@ Feature: eShop View
 			| 3 | Laptop MSI | 1250.0 | 1 |
 		And The view shows the updated total of "5550.0$"
 		And The view shows a message about the outcome of the checkout
+		# This feature file is about the eShop view, so this last step is not optimal here
 		And The database storage of the products has not changed 
-		# BDD test su view. non serve vedere cosa succede su database, già testato con integration test, ma non l'intera interazione
