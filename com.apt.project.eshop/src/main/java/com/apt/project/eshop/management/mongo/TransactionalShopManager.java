@@ -22,6 +22,7 @@ public class TransactionalShopManager implements TransactionManager {
 	private String databaseName;
 	private String productCollectionName;
 	private String cartCollectionName;
+	private Logger logger;
 
 	public TransactionalShopManager(MongoClient client, String databaseName, String productCollectionName,
 			String cartCollectionName) {
@@ -29,6 +30,7 @@ public class TransactionalShopManager implements TransactionManager {
 		this.databaseName = databaseName;
 		this.productCollectionName = productCollectionName;
 		this.cartCollectionName = cartCollectionName;
+		this.logger = Logger.getLogger(getClass().getName());
 	}
 
 	@Override
@@ -46,17 +48,17 @@ public class TransactionalShopManager implements TransactionManager {
 			T result = code.apply(productRepository, cartRepository);
 
 			session.commitTransaction();
-			Logger.getLogger(getClass().getName()).log(Level.INFO, SUCCESSFUL_TRANSACTION);
+			logger.log(Level.INFO, SUCCESSFUL_TRANSACTION);
 			return result;
 
 		} catch (Exception e) {
 			session.abortTransaction();
-			Logger.getLogger(getClass().getName()).log(Level.INFO, ROLLBACK_TRANSACTION);
+			logger.log(Level.INFO, ROLLBACK_TRANSACTION);
 
 		} finally {
 			// close the transaction
 			session.close();
-			Logger.getLogger(getClass().getName()).log(Level.INFO, TRANSACTION_ENDED);
+			logger.log(Level.INFO, TRANSACTION_ENDED);
 		}
 		return null;
 	}
