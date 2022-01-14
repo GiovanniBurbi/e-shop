@@ -23,16 +23,10 @@ import com.apt.project.eshop.management.ShopManager;
 import com.apt.project.eshop.model.CartItem;
 import com.apt.project.eshop.model.CatalogItem;
 import com.apt.project.eshop.model.Product;
-import com.apt.project.eshop.repository.CartRepository;
-import com.apt.project.eshop.repository.ProductRepository;
 import com.apt.project.eshop.view.EShopView;
 
 public class EShopControllerTest {
 
-	@Mock
-	private ProductRepository productRepository;
-	@Mock
-	private CartRepository cartRepository;
 	@Mock
 	private EShopView eShopView;
 	@InjectMocks
